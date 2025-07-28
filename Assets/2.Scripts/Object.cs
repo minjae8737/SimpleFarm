@@ -7,17 +7,6 @@ public class Object : MonoBehaviour
 
     public GameObject marker;
 
-    void Start()
-    {
-
-    }
-
-
-    void Update()
-    {
-
-    }
-
     public void OnMarker()
     {
         marker.SetActive(true);

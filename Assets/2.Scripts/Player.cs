@@ -5,27 +5,19 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
 
-    public Vector2 inputVec;
     public float speed;
     public float scanRange;
     public LayerMask targetLayer;
+    Vector2 inputVec;
     Rigidbody2D rigid;
-
-
-    public Collider2D[] targets;
-    public GameObject nearestTarget;
+    Collider2D[] targets;
+    GameObject nearestTarget;
 
 
     void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
     }
-
-    void Start()
-    {
-
-    }
-
 
     void Update()
     {
@@ -41,6 +33,11 @@ public class Player : MonoBehaviour
 
     void LateUpdate()
     {
+        Interacting();
+    }
+
+    void Interacting()
+    {
         GameObject nearest = null;
         float minDistance = Mathf.Infinity;
 
@@ -53,7 +50,6 @@ public class Player : MonoBehaviour
                 minDistance = dis;
                 nearest = target.gameObject;
             }
-
         }
 
         if (nearestTarget != nearest)

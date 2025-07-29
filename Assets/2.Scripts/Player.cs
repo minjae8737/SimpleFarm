@@ -12,11 +12,15 @@ public class Player : MonoBehaviour
     Rigidbody2D rigid;
     Collider2D[] targets;
     GameObject nearestTarget;
+    Animator anim;
+    bool hasSentTrigger;
 
 
     void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
+        hasSentTrigger = false;
     }
 
     void Update()
@@ -29,11 +33,12 @@ public class Player : MonoBehaviour
     {
         targets = Physics2D.OverlapCircleAll(transform.position, scanRange, targetLayer);
         rigid.MovePosition(rigid.position + (inputVec * speed * Time.fixedDeltaTime));
+        Interacting();
+
     }
 
     void LateUpdate()
     {
-        Interacting();
     }
 
     void Interacting()
@@ -49,6 +54,12 @@ public class Player : MonoBehaviour
             {
                 minDistance = dis;
                 nearest = target.gameObject;
+
+                if (!hasSentTrigger && !target.GetComponent<Object>().isCoolTime)
+                {
+                    hasSentTrigger = true;
+                    anim.SetTrigger("Interact");
+                }
             }
         }
 
@@ -66,5 +77,10 @@ public class Player : MonoBehaviour
                 nearestTarget.GetComponent<Object>().OnMarker();
             }
         }
+    }
+
+    public void OnInteractionEnd()
+    {
+        hasSentTrigger = false;
     }
 }

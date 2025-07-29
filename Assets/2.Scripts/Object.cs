@@ -15,7 +15,7 @@ public class Object : MonoBehaviour
     float coolTime;
     public float maxHp;
     float hp;
-    bool isCoolTime;
+    public bool isCoolTime;
 
     void Awake()
     {

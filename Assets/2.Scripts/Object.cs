@@ -22,6 +22,7 @@ public class Object : MonoBehaviour
         isCoolTime = false;
         // TODO: 나중에는 현재 쿨타임 값도 게임을 끌때 모두 저장되어야함.
         coolTime = 0f;
+        hp = maxHp;
     }
 
     void Start()
@@ -108,7 +109,7 @@ public class Object : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("MainCamera"))
+        if (!collision.CompareTag("Rake"))
             return;
 
         OnInteract();

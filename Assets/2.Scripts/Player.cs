@@ -14,6 +14,7 @@ public class Player : MonoBehaviour
     GameObject nearestTarget;
     Animator anim;
     bool hasSentTrigger;
+    Vector3 reverseScale = new Vector3(-1, 1, 1);
 
 
     void Awake()
@@ -33,12 +34,20 @@ public class Player : MonoBehaviour
     {
         targets = Physics2D.OverlapCircleAll(transform.position, scanRange, targetLayer);
         rigid.MovePosition(rigid.position + (inputVec * speed * Time.fixedDeltaTime));
-        Interacting();
 
+        Interacting();
     }
 
     void LateUpdate()
     {
+
+        anim.SetFloat("Speed", inputVec.magnitude);
+
+        if (inputVec.x != 0)
+        {
+            bool isReverse = inputVec.x < 0 ? true : false;
+            transform.localScale = isReverse ? reverseScale : Vector3.one;
+        }
     }
 
     void Interacting()
@@ -50,12 +59,12 @@ public class Player : MonoBehaviour
         {
             float dis = Vector2.Distance(transform.position, target.transform.position);
 
-            if (dis < minDistance)
+            if (dis < minDistance && !target.GetComponent<Object>().isCoolTime)
             {
                 minDistance = dis;
                 nearest = target.gameObject;
 
-                if (!hasSentTrigger && !target.GetComponent<Object>().isCoolTime)
+                if (!hasSentTrigger)
                 {
                     hasSentTrigger = true;
                     anim.SetTrigger("Interact");

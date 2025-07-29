@@ -107,12 +107,4 @@ public class Object : MonoBehaviour
         uiHp.transform.localScale = new Vector3(hp / maxHp, 1, 1);
     }
 
-    void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (!collision.CompareTag("Rake"))
-            return;
-
-        OnInteract();
-    }
-
 }

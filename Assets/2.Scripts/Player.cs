@@ -90,6 +90,11 @@ public class Player : MonoBehaviour
 
     public void OnInteractionEnd()
     {
+        if (nearestTarget != null)
+        {
+            nearestTarget.GetComponent<Object>().OnInteract();
+        }
+
         hasSentTrigger = false;
     }
 }

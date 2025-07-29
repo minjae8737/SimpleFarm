@@ -6,11 +6,15 @@ public class Object : MonoBehaviour
 {
 
     public GameObject marker;
-    public GameObject gaugeBar;
-    public GameObject gauge;
+    public GameObject uiGaugeBar;
+    public GameObject uiGauge;
+    public GameObject uiHpBar;
+    public GameObject uiHp;
 
     public float maxCoolTime;
     float coolTime;
+    public float maxHp;
+    float hp;
     bool isCoolTime;
 
     void Awake()
@@ -22,8 +26,7 @@ public class Object : MonoBehaviour
 
     void Start()
     {
-        OnGauge();
-        OnInteract();
+
     }
 
     void Update()
@@ -53,25 +56,62 @@ public class Object : MonoBehaviour
 
     public void OnInteract()
     {
-        isCoolTime = true;
-        coolTime = 0f;
+        if (isCoolTime)
+            return;
+
+        Debug.Log("OnInteract()");
+
+        OnHpBar();
+        hp -= 1; // FIXME 나중엔 플레이어 데미지 가져오기
+        SetHp();
+
+        if (hp <= 0)
+        {
+            OffHpBar();
+            OnGauge();
+            isCoolTime = true;
+            coolTime = 0f;
+            hp = maxHp;
+        }
 
     }
 
     public void OnGauge()
     {
-        gaugeBar.SetActive(true);
+        uiGaugeBar.SetActive(true);
     }
 
     public void OffGauge()
     {
-        gaugeBar.SetActive(false);
+        uiGaugeBar.SetActive(false);
     }
 
     public void SetGauge()
     {
-        gauge.transform.localScale = new Vector3(coolTime / maxCoolTime, 1, 1);
+        uiGauge.transform.localScale = new Vector3(coolTime / maxCoolTime, 1, 1);
     }
 
+    public void OnHpBar()
+    {
+        uiHpBar.SetActive(true);
+    }
+
+    public void OffHpBar()
+    {
+        uiHpBar.SetActive(false);
+    }
+
+    public void SetHp()
+    {
+        uiHp.transform.localScale = new Vector3(hp / maxHp, 1, 1);
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("MainCamera"))
+            return;
+
+        OnInteract();
+    }
 
 }

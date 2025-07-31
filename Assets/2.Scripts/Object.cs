@@ -11,23 +11,33 @@ public class Object : MonoBehaviour
     public GameObject uiHpBar;
     public GameObject uiHp;
 
-    public float maxCoolTime;
+    float maxCoolTime;
     float coolTime;
-    public float maxHp;
+    float maxHp;
     float hp;
     public bool isCoolTime;
+    public ObjectData data;
+
+    SpriteRenderer sprite;
 
     void Awake()
     {
-        isCoolTime = false;
-        // TODO: 나중에는 현재 쿨타임 값도 게임을 끌때 모두 저장되어야함.
-        coolTime = 0f;
-        hp = maxHp;
+        sprite = GetComponent<SpriteRenderer>();
+
+        Init();
     }
 
-    void Start()
+    void Init()
     {
+        isCoolTime = false;
+        maxCoolTime = data.coolTime;
+        // TODO: 나중에는 현재 쿨타임 값도 게임을 끌때 모두 저장되어야함.
+        coolTime = 0f;
 
+        maxHp = data.maxHp;
+        hp = maxHp;
+
+        SetSprite();
     }
 
     void Update()
@@ -42,6 +52,7 @@ public class Object : MonoBehaviour
         {
             isCoolTime = false;
             OffGauge();
+            SetSprite();
         }
     }
 
@@ -73,6 +84,7 @@ public class Object : MonoBehaviour
             isCoolTime = true;
             coolTime = 0f;
             hp = maxHp;
+            SetSprite();
         }
 
     }
@@ -107,4 +119,8 @@ public class Object : MonoBehaviour
         uiHp.transform.localScale = new Vector3(hp / maxHp, 1, 1);
     }
 
+    public void SetSprite()
+    {
+        sprite.sprite = isCoolTime ? data.sprites[0] : data.sprites[1];
+    }
 }

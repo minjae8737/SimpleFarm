@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     public Player player;
 
-    const string Gold = "Gold";
+    const string GoldKey = "Gold";
     public long gold;
     long maxGold = 9999999999; // 9,999,999,999
 
@@ -23,16 +23,16 @@ public class GameManager : MonoBehaviour
     {
         gold = 0L;
 
-        if (PlayerPrefs.HasKey(Gold))
+        if (PlayerPrefs.HasKey(GoldKey))
         {
-            string goldStr = PlayerPrefs.GetString(Gold);
+            string goldStr = PlayerPrefs.GetString(GoldKey);
             gold = long.TryParse(goldStr, out long result) ? result : 0L;
         }
     }
 
     void SaveGold()
     {
-        PlayerPrefs.SetString(Gold, gold.ToString());
+        PlayerPrefs.SetString(GoldKey, gold.ToString());
     }
 
     void RestPlayer()

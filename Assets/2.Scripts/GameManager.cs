@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
     public Player player;
+    public QuestManager questManager;
 
     const string GoldKey = "Gold";
     public long gold;
@@ -17,6 +18,9 @@ public class GameManager : MonoBehaviour
         instance = this;
         Application.targetFrameRate = 60;
         Init();
+
+        questManager.Init();
+
     }
 
     void Init()
@@ -28,6 +32,17 @@ public class GameManager : MonoBehaviour
             string goldStr = PlayerPrefs.GetString(GoldKey);
             gold = long.TryParse(goldStr, out long result) ? result : 0L;
         }
+    }
+
+    bool CheckGold(long price)
+    {
+        return price <= gold;
+    }
+
+    void SetGold(long price)
+    {
+        gold += price;
+        if (gold > maxGold) gold = maxGold;
     }
 
     void SaveGold()

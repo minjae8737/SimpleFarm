@@ -1,0 +1,19 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class IslandManager : MonoBehaviour
+{
+
+    public QuestData[] datas;
+
+    void Start()
+    {
+
+    }
+
+    void Update()
+    {
+
+    }
+}

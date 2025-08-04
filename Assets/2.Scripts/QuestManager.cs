@@ -10,12 +10,12 @@ public class QuestManager : MonoBehaviour
     string CurCountKey = "CurCount";
     int curCount;  // 현재 퀘스트 목표횟수
 
-    void Awake()
+    void OnDisable()
     {
-        Init();
+        GameManager.instance.player.onPlayerAction -= OnPlayerAction;
     }
 
-    void Init()
+    public void Init()
     {
         curQuestIndex = 0;
 
@@ -25,11 +25,18 @@ public class QuestManager : MonoBehaviour
         }
 
         curCount = 0;
+
         if (PlayerPrefs.HasKey(CurCountKey))
         {
             curCount = PlayerPrefs.GetInt(CurCountKey);
         }
+
+        GameManager.instance.player.onPlayerAction += OnPlayerAction;
     }
 
+    void OnPlayerAction(string actionName)
+    {
+        Debug.Log("QuestManager Player " + actionName);
+    }
 
 }

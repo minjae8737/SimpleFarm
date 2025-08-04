@@ -1553,6 +1553,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1544102891}
+  questManager: {fileID: 975881890}
   gold: 0
 --- !u!1 &2037130143
 GameObject:
@@ -1800,9 +1801,9 @@ SceneRoots:
   m_Roots:
   - {fileID: 2108330452}
   - {fileID: 519420032}
+  - {fileID: 1544102890}
   - {fileID: 1936808371}
   - {fileID: 975881889}
-  - {fileID: 1544102890}
   - {fileID: 1100381085}
   - {fileID: 146899540}
   - {fileID: 1821455795}

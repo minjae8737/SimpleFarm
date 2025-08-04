@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,6 +16,8 @@ public class Player : MonoBehaviour
     Animator anim;
     bool hasSentTrigger;
     Vector3 reverseScale = new Vector3(-1, 1, 1);
+
+    public event Action<string> onPlayerAction;
 
 
     void Awake()
@@ -93,6 +96,7 @@ public class Player : MonoBehaviour
         if (nearestTarget != null)
         {
             nearestTarget.GetComponent<Object>().OnInteract();
+            onPlayerAction?.Invoke("Interact");
         }
 
         hasSentTrigger = false;

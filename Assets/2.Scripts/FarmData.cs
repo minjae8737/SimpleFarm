@@ -21,9 +21,9 @@ public class FarmData
     [Header("레벨당 생산 확률 증가(%)")]
     public float autoProduceChancePer;
     [Header("자동 생산 확률 기본 골드")]
-    public int basicAutoProduceCanceGold;
+    public int basicAutoProduceChanceGold;
     [Header("레벨별 자동 생산 확률 골드 증가율")]
-    public float autoProduceCanceGoldPer;
+    public float autoProduceChanceGoldPer;
 
 
     [Space(10)]

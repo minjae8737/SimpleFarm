@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     public Player player;
     public QuestManager questManager;
+    public IslandManager islandManager;
 
     const string GoldKey = "Gold";
     public long gold;
@@ -20,7 +21,7 @@ public class GameManager : MonoBehaviour
         Init();
 
         questManager.Init();
-
+        islandManager.Init();
     }
 
     void Init()

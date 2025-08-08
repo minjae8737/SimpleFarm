@@ -17,19 +17,8 @@ public class QuestManager : MonoBehaviour
 
     public void Init()
     {
-        curQuestIndex = 0;
-
-        if (PlayerPrefs.HasKey(CurQuestIndexKey))
-        {
-            curQuestIndex = PlayerPrefs.GetInt(CurQuestIndexKey);
-        }
-
-        curCount = 0;
-
-        if (PlayerPrefs.HasKey(CurCountKey))
-        {
-            curCount = PlayerPrefs.GetInt(CurCountKey);
-        }
+        curQuestIndex = PlayerPrefs.HasKey(CurQuestIndexKey) ? PlayerPrefs.GetInt(CurQuestIndexKey) : 0;
+        curCount = PlayerPrefs.HasKey(CurCountKey) ? PlayerPrefs.GetInt(CurCountKey) : 0;
 
         GameManager.instance.player.onPlayerAction += OnPlayerAction;
     }

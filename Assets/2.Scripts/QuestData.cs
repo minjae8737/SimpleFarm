@@ -12,6 +12,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Quest_", menuName = "ScriptbleObject/Quest Data")]
 public class QuestData : ScriptableObject
 {
+    public enum QuestType { Behaviour, Produce, Drop }
+
     [Header("# Info")]
     public int index;
     public string name;

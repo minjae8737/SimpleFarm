@@ -13,6 +13,8 @@ public class IslandManager : MonoBehaviour
 
     public void Init()
     {
+        islandLevelDic = new Dictionary<string, int[]>();
+
         // Island level 초기화
         for (int i = 0; i < datas.Length; i++)
         {

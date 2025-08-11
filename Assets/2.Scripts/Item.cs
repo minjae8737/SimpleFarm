@@ -21,14 +21,18 @@ public class Item : MonoBehaviour
     {
 
         Vector3 myPos = transform.position;
-        Vector3 ranPos = new Vector3(Random.Range(-0.3f, 0.3f), Random.Range(-0.5f, -0.3f), 0);
+
+        float ranPosX = Random.Range(0.1f, 0.3f);
+        ranPosX *= Random.value < 0.5f ? -1 : 1;
+
+        Vector3 ranPos = new Vector3(ranPosX, Random.Range(-0.3f, -0.1f), 0);
         Vector3 endPos = myPos + ranPos;
 
         Vector3 midPoint = (myPos + endPos) / 2;
         midPoint.y += arcHeight;
 
         Vector3[] path = { myPos, midPoint, endPos };
-        transform.DOPath(path, 0.5f, PathType.CatmullRom);
+        transform.DOPath(path, 0.3f, PathType.CatmullRom);
 
     }
 }

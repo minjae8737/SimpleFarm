@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     public Player player;
     public QuestManager questManager;
     public IslandManager islandManager;
+    public ObjectPoolManager objectPoolManager;
 
     const string GoldKey = "Gold";
     public long gold;
@@ -22,6 +23,7 @@ public class GameManager : MonoBehaviour
 
         questManager.Init();
         islandManager.Init();
+        objectPoolManager.Init();
     }
 
     void Init()
@@ -56,6 +58,10 @@ public class GameManager : MonoBehaviour
         // player.Rest();
     }
 
+    public GameObject DropItem(ObjectType type)
+    {
+        return objectPoolManager.Get(type);
+    }
 
 
 }

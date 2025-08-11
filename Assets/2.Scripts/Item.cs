@@ -8,18 +8,14 @@ public class Item : MonoBehaviour
 
     float arcHeight = 0.2f; // 포물선의 높이
 
-    void Update()
+    public void SetItemPos(Vector3 pos)
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            DropItem();
-        }
+        transform.position = pos;
     }
 
     // 아이템 떨어지는 효과
     public void DropItem()
     {
-
         Vector3 myPos = transform.position;
 
         float ranPosX = Random.Range(0.1f, 0.3f);
@@ -33,6 +29,5 @@ public class Item : MonoBehaviour
 
         Vector3[] path = { myPos, midPoint, endPos };
         transform.DOPath(path, 0.3f, PathType.CatmullRom);
-
     }
 }

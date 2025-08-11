@@ -2,9 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum ObjectType { Wheat, Apple }
+
 public class Object : MonoBehaviour
 {
-
+    public ObjectType type;
     public GameObject marker;
     public GameObject uiGaugeBar;
     public GameObject uiGauge;
@@ -79,6 +81,10 @@ public class Object : MonoBehaviour
 
         if (hp <= 0)
         {
+            Item dropItem = GameManager.instance.DropItem(type).GetComponent<Item>();
+            dropItem.SetItemPos(transform.position);
+            dropItem.DropItem();
+
             OffHpBar();
             OnGauge();
             isCoolTime = true;

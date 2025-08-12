@@ -30,4 +30,6 @@ public class Item : MonoBehaviour
         Vector3[] path = { myPos, midPoint, endPos };
         transform.DOPath(path, 0.3f, PathType.CatmullRom);
     }
+
+
 }

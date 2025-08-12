@@ -80,10 +80,14 @@ public class GameManager : MonoBehaviour
         // player.Rest();
     }
 
-    public GameObject DropItem(ObjectType type)
+    public GameObject GetDropItem(ObjectType type)
     {
         return objectPoolManager.Get(type);
     }
 
-
+    public void PickUpItem(ObjectType type)
+    {
+        if (inventory[type.ToString()] < long.MaxValue)
+            inventory[type.ToString()] += 1;
+    }
 }

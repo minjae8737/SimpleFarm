@@ -7,8 +7,8 @@ public class Item : MonoBehaviour
 {
     public ObjectType type;
     float arcHeight = 0.2f; // 포물선의 높이
-    float pickupSpeed = 1.67f; // 0.5의 거리를 0.3f duration으로 오는 속도
-
+    float pickupSpeed = 2.5f; // 0.5의 거리를 0.2f duration으로 오는 속도
+    bool isTracking;
 
     void Update()
     {
@@ -21,6 +21,7 @@ public class Item : MonoBehaviour
     void OnEnable()
     {
         transform.localScale = Vector3.one;
+        isTracking = false;
     }
 
     public void SetItemPos(Vector3 pos)
@@ -55,8 +56,8 @@ public class Item : MonoBehaviour
         duration = Mathf.Clamp(duration, 0.3f, 1f); // 너무 멀리있는 오브젝트는 시간 보정
 
         Sequence sequence = DOTween.Sequence();
-        Tween moveTween = transform.DOMove(playerPos, duration).SetEase(Ease.OutCubic);
-        Tween scaleTween = transform.DOScale(0f, duration).SetEase(Ease.InSine);
+        Tween moveTween = transform.DOMove(playerPos, duration).SetEase(Ease.InQuint);
+        Tween scaleTween = transform.DOScale(0f, duration).SetEase(Ease.InQuint);
 
         sequence.Append(moveTween)
                 .Join(scaleTween)
@@ -69,5 +70,13 @@ public class Item : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (isTracking)
+            return;
+
+        isTracking = true;
+        PickUpItem();
+    }
 
 }

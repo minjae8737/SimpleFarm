@@ -81,7 +81,7 @@ public class Object : MonoBehaviour
 
         if (hp <= 0)
         {
-            Item dropItem = GameManager.instance.DropItem(type).GetComponent<Item>();
+            Item dropItem = GameManager.instance.GetDropItem(type).GetComponent<Item>();
             dropItem.SetItemPos(transform.position);
             dropItem.DropItem();
 

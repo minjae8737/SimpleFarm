@@ -71,6 +71,9 @@ public class Player : MonoBehaviour
 
     void Interacting()
     {
+        if (hp <= 0)
+            return;
+
         GameObject nearest = null;
         float minDistance = Mathf.Infinity;
 

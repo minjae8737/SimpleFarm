@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,6 +16,8 @@ public class UIManager : MonoBehaviour
 
     public long gold;
 
+    float recoveHpDuration = 3f; // 0 -> 1 까지 걸리는 시간
+
     void Awake()
     {
         Init();
@@ -27,6 +30,10 @@ public class UIManager : MonoBehaviour
             ConvertGoldToText(gold);
             SetPlayerHp();
             SetPlayerHpText();
+        }
+        if (Input.GetKey(KeyCode.A))
+        {
+            RecorvePlayerHpEffect();
         }
     }
 
@@ -75,5 +82,22 @@ public class UIManager : MonoBehaviour
     {
         playerHpText.text = GameManager.instance.player.hp + " / " + GameManager.instance.player.maxHp;
     }
+
+    public void RecorvePlayerHpEffect()
+    {
+        Sequence sequence = DOTween.Sequence();
+
+        float effectSpeed = 1f / recoveHpDuration;
+        float fillTime = (1f - palyerHpImg.fillAmount) / effectSpeed;
+
+        Tween fillHpTween = palyerHpImg.DOFillAmount(1f, fillTime).SetEase(Ease.Linear);
+        Tween scaleBiggerTween = playerHp.GetComponent<RectTransform>().DOScale(1.2f, 0.5f);
+        Tween scaleSmallerTween = playerHp.GetComponent<RectTransform>().DOScale(1f, 0.5f);
+
+        sequence.Append(fillHpTween)
+        .Join(scaleBiggerTween)
+        .Append(scaleSmallerTween);
+    }
+
 
 }

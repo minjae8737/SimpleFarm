@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     public QuestManager questManager;
     public IslandManager islandManager;
     public ObjectPoolManager objectPoolManager;
+    public UIManager uiManager;
 
     const string GoldKey = "Gold";
     const string ItemKey = "Item_";
@@ -77,7 +78,7 @@ public class GameManager : MonoBehaviour
 
     void RestPlayer()
     {
-        // player.Rest();
+        player.RecoverHP();
     }
 
     public GameObject GetDropItem(ObjectType type)

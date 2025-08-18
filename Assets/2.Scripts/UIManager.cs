@@ -25,6 +25,8 @@ public class UIManager : MonoBehaviour
         if (Input.GetKey(KeyCode.Space))
         {
             ConvertGoldToText(gold);
+            SetPlayerHp();
+            SetPlayerHpText();
         }
     }
 
@@ -65,13 +67,13 @@ public class UIManager : MonoBehaviour
 
     public void SetPlayerHp()
     {
-        //float playerHpAmount = GameManager.instance.player.maxhp / GameManager.instance.player.hp;
-        //palyerHpImg.fillAmount = playerHpAmount;
+        float playerHpAmount = (float)GameManager.instance.player.hp / GameManager.instance.player.maxHp;
+        palyerHpImg.fillAmount = playerHpAmount;
     }
 
     public void SetPlayerHpText()
     {
-        //playerHpText.text = GameManager.instance.player.hp  + " / " +  GameManager.instance.player.maxhp;
+        playerHpText.text = GameManager.instance.player.hp + " / " + GameManager.instance.player.maxHp;
     }
 
 }

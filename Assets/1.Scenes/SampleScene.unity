@@ -2373,6 +2373,7 @@ MonoBehaviour:
   questManager: {fileID: 975881890}
   islandManager: {fileID: 357115412}
   objectPoolManager: {fileID: 462329893}
+  uiManager: {fileID: 1173301443}
   gold: 0
 --- !u!1 &2037130143
 GameObject:

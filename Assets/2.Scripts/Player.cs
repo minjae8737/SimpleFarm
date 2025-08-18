@@ -5,7 +5,9 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-
+    [Header("# Stat")]
+    public int maxHp;
+    public int hp;
     public float speed;
     public float scanRange;
     public LayerMask targetLayer;
@@ -25,6 +27,20 @@ public class Player : MonoBehaviour
         rigid = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         hasSentTrigger = false;
+
+        Init();
+    }
+
+    void Init()
+    {
+        maxHp = PlayerPrefs.HasKey("PalyerMaxHp") ? PlayerPrefs.GetInt("PalyerMaxHp") : 10;
+        hp = PlayerPrefs.HasKey("PalyerHp") ? PlayerPrefs.GetInt("PalyerHp") : 10;
+    }
+
+    void SaveData()
+    {
+        PlayerPrefs.SetInt("PalyerMaxHp", maxHp);
+        PlayerPrefs.SetInt("PalyerHp", hp);
     }
 
     void Update()
@@ -97,8 +113,31 @@ public class Player : MonoBehaviour
         {
             nearestTarget.GetComponent<Object>().OnInteract();
             onPlayerAction?.Invoke("Interact");
+            LoseHp();
         }
 
         hasSentTrigger = false;
     }
+
+    public void LoseHp()
+    {
+        if (hp <= 0)
+            return;
+
+        hp -= 1;
+    }
+
+    public void RecoverHP()
+    {
+        hp = maxHp;
+    }
+
+    public void IncreaseMaxHp()
+    {
+        if (maxHp >= int.MaxValue)
+            return;
+
+        maxHp += 1;
+    }
+
 }

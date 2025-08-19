@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
         questManager.Init();
         islandManager.Init();
         objectPoolManager.Init();
+        uiManager.Init();
     }
 
     void Init()
@@ -91,4 +92,5 @@ public class GameManager : MonoBehaviour
         if (inventory[type.ToString()] < long.MaxValue)
             inventory[type.ToString()] += 1;
     }
+
 }

@@ -10,6 +10,9 @@ public class UIManager : MonoBehaviour
     [Header("HUD")]
     public Text goldText;
     public GameObject questPanel;
+    Image questRewardIcon;
+    Text questRewardText;
+    Text questDesc;
     public GameObject playerHp;
     Image palyerHpImg;
     Text playerHpText;
@@ -18,10 +21,7 @@ public class UIManager : MonoBehaviour
 
     float recoveHpDuration = 3f; // 0 -> 1 까지 걸리는 시간
 
-    void Awake()
-    {
-        Init();
-    }
+
 
     void Update()
     {
@@ -41,6 +41,13 @@ public class UIManager : MonoBehaviour
     {
         palyerHpImg = playerHp.transform.GetChild(0).GetComponent<Image>();
         playerHpText = playerHp.transform.GetChild(1).GetComponent<Text>();
+
+        Transform questChild0 = questPanel.transform.GetChild(0);
+        questRewardIcon = questChild0.GetChild(0).GetComponent<Image>();
+        questRewardText = questChild0.GetChild(1).GetComponent<Text>();
+        questDesc = questPanel.transform.GetChild(1).GetComponent<Text>();
+
+        SetQuestPanel();
     }
 
     public void SetGoldText(long gold)
@@ -71,7 +78,6 @@ public class UIManager : MonoBehaviour
         return goldStr;
     }
 
-
     public void SetPlayerHp()
     {
         float playerHpAmount = (float)GameManager.instance.player.hp / GameManager.instance.player.maxHp;
@@ -99,5 +105,19 @@ public class UIManager : MonoBehaviour
         .Append(scaleSmallerTween);
     }
 
+    void SetQuestPanel()
+    {
+        QuestData questData = GameManager.instance.questManager.GetCurrentQuestData();
+
+        if (questData == null)
+        {
+            questPanel.SetActive(false);
+            return;
+        }
+
+        questDesc.text = string.Format("{0} [{1}/{2}]", questData.desc, GameManager.instance.questManager.curCount, questData.targetCount);
+        //questRewardIcon.sprite
+        //questRewardText.text
+    }
 
 }

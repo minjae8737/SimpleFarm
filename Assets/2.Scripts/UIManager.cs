@@ -16,12 +16,13 @@ public class UIManager : MonoBehaviour
     public GameObject playerHp;
     Image palyerHpImg;
     Text playerHpText;
-
-    public long gold;
-
     float recoveHpDuration = 3f; // 0 -> 1 까지 걸리는 시간
 
+    [Header("Sprites")]
+    public Sprite[] rewardIcons; // RewardsType과 매칭
 
+
+    public long gold;
 
     void Update()
     {
@@ -116,8 +117,8 @@ public class UIManager : MonoBehaviour
         }
 
         questDesc.text = string.Format("{0} [{1}/{2}]", questData.desc, GameManager.instance.questManager.curCount, questData.targetCount);
-        //questRewardIcon.sprite
-        //questRewardText.text
+        questRewardIcon.sprite = rewardIcons[(int)questData.rewardsType];
+        questRewardText.text = ConvertGoldToText(questData.rewardAmount);
     }
 
 }

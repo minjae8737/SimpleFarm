@@ -21,6 +21,8 @@ public class GameManager : MonoBehaviour
     public long gold;
     long maxGold = 9999999999; // 9,999,999,999
 
+    public event Action<string> pickedItem;
+
     void Awake()
     {
         instance = this;
@@ -89,8 +91,11 @@ public class GameManager : MonoBehaviour
 
     public void PickUpItem(ObjectType type)
     {
-        if (inventory[type.ToString()] < long.MaxValue)
-            inventory[type.ToString()] += 1;
+        string itemTypeStr = type.ToString();
+        pickedItem?.Invoke(itemTypeStr);
+
+        if (inventory[itemTypeStr] < long.MaxValue)
+            inventory[itemTypeStr] += 1;
     }
 
 }

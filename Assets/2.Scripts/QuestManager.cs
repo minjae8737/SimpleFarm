@@ -1,7 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+
+public enum QuestType { Behaviour, Produce, Drop }
+public enum RewardsType { Gold }
 
 public class QuestManager : MonoBehaviour
 {
@@ -16,17 +20,27 @@ public class QuestManager : MonoBehaviour
         curQuestIndex = PlayerPrefs.HasKey(CurQuestIndexKey) ? PlayerPrefs.GetInt(CurQuestIndexKey) : 0;
         curCount = PlayerPrefs.HasKey(CurCountKey) ? PlayerPrefs.GetInt(CurCountKey) : 0;
 
-        GameManager.instance.player.onPlayerAction += OnPlayerAction;
+        SetQuest();
     }
 
     void OnDisable()
     {
         GameManager.instance.player.onPlayerAction -= OnPlayerAction;
+        GameManager.instance.pickedItem -= OnItemDrop;
     }
 
     void OnPlayerAction(string actionName)
     {
         Debug.Log("QuestManager Player " + actionName);
+    }
+
+    void OnItemDrop(string itemType)
+    {
+        if (!itemType.Equals(datas[curQuestIndex].requiredObjectType.ToString()))
+            return;
+
+        Debug.Log("Drop Item Name " + itemType);
+        curCount++;
     }
 
     public QuestData GetCurrentQuestData()
@@ -36,4 +50,32 @@ public class QuestManager : MonoBehaviour
 
         return datas[curQuestIndex];
     }
+
+    public void SetQuest()
+    {
+        if (curQuestIndex >= datas.Length)
+            return;
+
+        switch (datas[curQuestIndex].type)
+        {
+            case QuestType.Behaviour:
+                GameManager.instance.player.onPlayerAction += OnPlayerAction;
+                break;
+            case QuestType.Produce:
+                break;
+            case QuestType.Drop:
+                GameManager.instance.pickedItem += OnItemDrop;
+                break;
+        }
+    }
+
+    public bool CheckQuestCondition()
+    {
+        if (curQuestIndex >= datas.Length)
+            return false;
+
+        return curCount >= datas[curQuestIndex].rewardAmount;
+    }
+
+
 }

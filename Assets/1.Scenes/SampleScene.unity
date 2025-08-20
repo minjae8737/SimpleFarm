@@ -1463,6 +1463,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   datas:
   - {fileID: 11400000, guid: 4568df14dbad54c0885aa82bd4dc9622, type: 2}
+  curCount: 0
 --- !u!1 &1010649177
 GameObject:
   m_ObjectHideFlags: 0
@@ -1772,6 +1773,8 @@ MonoBehaviour:
   goldText: {fileID: 190482790}
   questPanel: {fileID: 1347163237}
   playerHp: {fileID: 1414162628}
+  rewardIcons:
+  - {fileID: 21300000, guid: 801e8c43179f545b1a4403709a53b866, type: 3}
   gold: 9999999999
 --- !u!1 &1174238137
 GameObject:

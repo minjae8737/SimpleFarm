@@ -77,5 +77,9 @@ public class QuestManager : MonoBehaviour
         return curCount >= datas[curQuestIndex].rewardAmount;
     }
 
+    public void ClearQuest()
+    {
+        
+    }
 
 }

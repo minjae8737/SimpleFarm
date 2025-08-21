@@ -121,4 +121,15 @@ public class UIManager : MonoBehaviour
         questRewardText.text = ConvertGoldToText(questData.rewardAmount);
     }
 
+    void OnBtnEffect(GameObject btn)
+    {
+        Sequence sequence = DOTween.Sequence();
+
+        Tween scaleBiggerTween = btn.GetComponent<RectTransform>().DOScale(1.02f, 0.2f);
+        Tween scaleSmallerTween = btn.GetComponent<RectTransform>().DOScale(1f, 0.2f);
+
+        sequence.Append(scaleBiggerTween)
+        .Append(scaleSmallerTween);
+    }
+
 }

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39bf976184c1f4fce97b756f361c84fa, type: 3}
   m_Name: Quest_0
   m_EditorClassIdentifier: 
-  type: 0
+  type: 2
   index: 0
   name: "\uD018\uC2A4\uD2B8 \uBA85"
   desc: "\uBC00 20\uAC1C \uC218\uD655 \uD558\uAE30"

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ObjectType { Wheat, Apple }
+public enum ObjectType { None, Wheat, Apple }
 
 public class Object : MonoBehaviour
 {

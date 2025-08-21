@@ -12,12 +12,15 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Quest_", menuName = "ScriptbleObject/Quest Data")]
 public class QuestData : ScriptableObject
 {
-    public enum QuestType { Behaviour, Produce, Drop }
-
     [Header("# Info")]
+    public QuestType type;
     public int index;
     public string name;
     [TextArea]
     public string desc;
+    public ObjectType requiredObjectType;
     public int targetCount;
+    [Header("# Rewards")]
+    public RewardsType rewardsType;
+    public int rewardAmount;
 }

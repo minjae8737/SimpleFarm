@@ -14,11 +14,14 @@ public class GameManager : MonoBehaviour
     public QuestManager questManager;
     public IslandManager islandManager;
     public ObjectPoolManager objectPoolManager;
+    public UIManager uiManager;
 
     const string GoldKey = "Gold";
     const string ItemKey = "Item_";
     public long gold;
     long maxGold = 9999999999; // 9,999,999,999
+
+    public event Action<string> pickedItem;
 
     void Awake()
     {
@@ -29,6 +32,7 @@ public class GameManager : MonoBehaviour
         questManager.Init();
         islandManager.Init();
         objectPoolManager.Init();
+        uiManager.Init();
     }
 
     void Init()
@@ -77,7 +81,7 @@ public class GameManager : MonoBehaviour
 
     void RestPlayer()
     {
-        // player.Rest();
+        player.RecoverHP();
     }
 
     public GameObject GetDropItem(ObjectType type)
@@ -87,7 +91,11 @@ public class GameManager : MonoBehaviour
 
     public void PickUpItem(ObjectType type)
     {
-        if (inventory[type.ToString()] < long.MaxValue)
-            inventory[type.ToString()] += 1;
+        string itemTypeStr = type.ToString();
+        pickedItem?.Invoke(itemTypeStr);
+
+        if (inventory[itemTypeStr] < long.MaxValue)
+            inventory[itemTypeStr] += 1;
     }
+
 }

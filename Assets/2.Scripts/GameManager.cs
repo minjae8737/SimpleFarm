@@ -79,9 +79,11 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.SetString(GoldKey, gold.ToString());
     }
 
-    void RestPlayer()
+    public void RestPlayer()
     {
         player.RecoverHP();
+        uiManager.RecorvePlayerHpEffect();
+
     }
 
     public GameObject GetDropItem(ObjectType type)

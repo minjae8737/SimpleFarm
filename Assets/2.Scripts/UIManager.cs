@@ -17,6 +17,7 @@ public class UIManager : MonoBehaviour
     Image palyerHpImg;
     Text playerHpText;
     float recoveHpDuration = 3f; // 0 -> 1 까지 걸리는 시간
+    public Button btn;
 
     [Header("Sprites")]
     public Sprite[] rewardIcons; // RewardsType과 매칭
@@ -103,7 +104,8 @@ public class UIManager : MonoBehaviour
 
         sequence.Append(fillHpTween)
         .Join(scaleBiggerTween)
-        .Append(scaleSmallerTween);
+        .Append(scaleSmallerTween)
+        .OnComplete(GameManager.instance.player.OffSleepEffect);
     }
 
     void SetQuestPanel()

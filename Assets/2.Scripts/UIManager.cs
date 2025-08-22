@@ -5,6 +5,8 @@ using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum UIBtnType { RecoverHP, Shop, }
+
 public class UIManager : MonoBehaviour
 {
     [Header("HUD")]
@@ -17,7 +19,7 @@ public class UIManager : MonoBehaviour
     Image palyerHpImg;
     Text playerHpText;
     float recoveHpDuration = 3f; // 0 -> 1 까지 걸리는 시간
-    public Button btn;
+    public Button interactButton;
 
     [Header("Sprites")]
     public Sprite[] rewardIcons; // RewardsType과 매칭
@@ -50,6 +52,9 @@ public class UIManager : MonoBehaviour
         questDesc = questPanel.transform.GetChild(1).GetComponent<Text>();
 
         SetQuestPanel();
+
+        interactButton.onClick.AddListener(GameManager.instance.RestPlayer);
+
     }
 
     public void SetGoldText(long gold)
@@ -123,15 +128,45 @@ public class UIManager : MonoBehaviour
         questRewardText.text = ConvertGoldToText(questData.rewardAmount);
     }
 
-    void OnBtnEffect(GameObject btn)
+    public void SetInteractBtn(UIBtnType type)
     {
+        interactButton.onClick.RemoveAllListeners();
+
+        switch (type)
+        {
+            case UIBtnType.RecoverHP:
+                interactButton.onClick.AddListener(GameManager.instance.RestPlayer);
+                break;
+            case UIBtnType.Shop:
+                break;
+        }
+
+        OnInteractBtnEffect();
+    }
+
+    void OnInteractBtnEffect()
+    {
+        interactButton.gameObject.SetActive(true);
+
         Sequence sequence = DOTween.Sequence();
 
-        Tween scaleBiggerTween = btn.GetComponent<RectTransform>().DOScale(1.02f, 0.2f);
-        Tween scaleSmallerTween = btn.GetComponent<RectTransform>().DOScale(1f, 0.2f);
+        Tween scaleBiggerTween = interactButton.GetComponent<RectTransform>().DOScale(1.02f, 0.2f);
+        Tween scaleSmallerTween = interactButton.GetComponent<RectTransform>().DOScale(1f, 0.2f);
 
         sequence.Append(scaleBiggerTween)
         .Append(scaleSmallerTween);
     }
+
+    public void OffInteractBtn()
+    {
+        interactButton.gameObject.SetActive(false);
+    }
+
+    void OnClickBtn()
+    {
+        interactButton.onClick?.Invoke();
+    }
+
+
 
 }

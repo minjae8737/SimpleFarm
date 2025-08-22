@@ -132,6 +132,7 @@ public class Player : MonoBehaviour
 
     public void RecoverHP()
     {
+        OnSleepEffect();
         hp = maxHp;
     }
 
@@ -141,6 +142,16 @@ public class Player : MonoBehaviour
             return;
 
         maxHp += 1;
+    }
+
+    public void OnSleepEffect()
+    {
+        gameObject.SetActive(false);
+    }
+
+    public void OffSleepEffect()
+    {
+        gameObject.SetActive(true);
     }
 
 }

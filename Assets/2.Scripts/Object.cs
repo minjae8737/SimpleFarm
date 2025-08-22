@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ObjectType { Wheat, Apple }
+public enum ObjectType { None, Wheat, Apple }
 
 public class Object : MonoBehaviour
 {
@@ -81,7 +81,7 @@ public class Object : MonoBehaviour
 
         if (hp <= 0)
         {
-            Item dropItem = GameManager.instance.DropItem(type).GetComponent<Item>();
+            Item dropItem = GameManager.instance.GetDropItem(type).GetComponent<Item>();
             dropItem.SetItemPos(transform.position);
             dropItem.DropItem();
 

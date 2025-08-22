@@ -5,8 +5,24 @@ using UnityEngine;
 
 public class Item : MonoBehaviour
 {
-
+    public ObjectType type;
     float arcHeight = 0.2f; // 포물선의 높이
+    float pickupSpeed = 2.5f; // 0.5의 거리를 0.2f duration으로 오는 속도
+    bool isTracking;
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            PickUpItem();
+        }
+    }
+
+    void OnEnable()
+    {
+        transform.localScale = Vector3.one;
+        isTracking = false;
+    }
 
     public void SetItemPos(Vector3 pos)
     {
@@ -30,4 +46,37 @@ public class Item : MonoBehaviour
         Vector3[] path = { myPos, midPoint, endPos };
         transform.DOPath(path, 0.3f, PathType.CatmullRom);
     }
+
+    // 아이템 루팅 효과
+    public void PickUpItem()
+    {
+        Vector3 playerPos = GameManager.instance.player.transform.position;
+
+        float duration = Vector3.Distance(playerPos, transform.position) / pickupSpeed;
+        duration = Mathf.Clamp(duration, 0.3f, 1f); // 너무 멀리있는 오브젝트는 시간 보정
+
+        Sequence sequence = DOTween.Sequence();
+        Tween moveTween = transform.DOMove(playerPos, duration).SetEase(Ease.InQuint);
+        Tween scaleTween = transform.DOScale(0f, duration).SetEase(Ease.InQuint);
+
+        sequence.Append(moveTween)
+                .Join(scaleTween)
+                .OnComplete(OnPickupComplete);
+    }
+
+    void OnPickupComplete()
+    {
+        GameManager.instance.PickUpItem(type);
+        gameObject.SetActive(false);
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (isTracking)
+            return;
+
+        isTracking = true;
+        PickUpItem();
+    }
+
 }

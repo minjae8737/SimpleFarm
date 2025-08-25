@@ -2650,6 +2650,7 @@ MonoBehaviour:
     m_Bits: 64
   rake: {fileID: 919844891}
   rotDuration: 0.5
+  interactEase: 16
 --- !u!70 &1544102892
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

@@ -66,7 +66,6 @@ public class Player : MonoBehaviour
 
     void LateUpdate()
     {
-
         anim.SetFloat("Speed", inputVec.magnitude);
 
         if (inputVec.x != 0)
@@ -74,16 +73,6 @@ public class Player : MonoBehaviour
             bool isReverse = inputVec.x < 0 ? true : false;
             transform.localScale = isReverse ? reverseScale : Vector3.one;
         }
-
-        if (Input.GetKey(KeyCode.Space))
-        {
-            if (!hasSentTrigger)
-            {
-                hasSentTrigger = true;
-                OnInteractionEffect();
-            }
-        }
-
     }
 
     void Interacting()
@@ -132,7 +121,7 @@ public class Player : MonoBehaviour
         Sequence sequence = DOTween.Sequence();
 
         rake.transform.localRotation = Quaternion.Euler(startRakeRot);
-        Tween rotateTween = rake.transform.DOLocalRotate(endRakeRot, rotDuration).SetEase(Ease.OutExpo);
+        Tween rotateTween = rake.transform.DOLocalRotate(endRakeRot, rotDuration).SetEase(Ease.InOutExpo);
 
         sequence.Append(rotateTween)
         .OnComplete(OnInteractionEnd);

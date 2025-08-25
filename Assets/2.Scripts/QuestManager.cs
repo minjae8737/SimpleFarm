@@ -15,6 +15,8 @@ public class QuestManager : MonoBehaviour
     string CurCountKey = "CurCount";
     public int curCount;  // 현재 퀘스트 목표횟수
 
+    public event Action refreshQuestInfoEvent;
+
     public void Init()
     {
         curQuestIndex = PlayerPrefs.HasKey(CurQuestIndexKey) ? PlayerPrefs.GetInt(CurQuestIndexKey) : 0;
@@ -32,6 +34,7 @@ public class QuestManager : MonoBehaviour
     void OnPlayerAction(string actionName)
     {
         Debug.Log("QuestManager Player " + actionName);
+        refreshQuestInfoEvent?.Invoke();
     }
 
     void OnItemDrop(string itemType)
@@ -41,14 +44,23 @@ public class QuestManager : MonoBehaviour
 
         Debug.Log("Drop Item Name " + itemType);
         curCount++;
+        refreshQuestInfoEvent?.Invoke();
+
+        if (CheckQuestCondition())
+            ClearQuest();
     }
 
     public QuestData GetCurrentQuestData()
     {
-        if (curQuestIndex >= datas.Length)
+        if (!CheckHaveQuestData())
             return null;
 
         return datas[curQuestIndex];
+    }
+
+    bool CheckHaveQuestData()
+    {
+        return curQuestIndex < datas.Length;
     }
 
     public void SetQuest()
@@ -74,12 +86,38 @@ public class QuestManager : MonoBehaviour
         if (curQuestIndex >= datas.Length)
             return false;
 
-        return curCount >= datas[curQuestIndex].rewardAmount;
+        return curCount >= datas[curQuestIndex].targetCount;
     }
 
     public void ClearQuest()
     {
-        
+        GameManager.instance.uiManager.OnQuestClearBtn();
     }
+
+    public void GetReward()
+    {
+        // 리워드 지급
+        switch (datas[curQuestIndex].rewardsType)
+        {
+            case RewardsType.Gold:
+                GameManager.instance.SetGold(datas[curQuestIndex].rewardAmount);
+                break;
+        }
+
+        curQuestIndex++;
+
+        if (CheckHaveQuestData())
+        {
+            SetQuest();
+            GameManager.instance.uiManager.SetQuestPanel();
+        }
+        else
+        {
+            GameManager.instance.uiManager.OffQuestPanel();
+        }
+
+    }
+
+
 
 }

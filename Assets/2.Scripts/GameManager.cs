@@ -68,7 +68,7 @@ public class GameManager : MonoBehaviour
         return price <= gold;
     }
 
-    void SetGold(long price)
+    public void SetGold(long price)
     {
         gold += price;
         if (gold > maxGold) gold = maxGold;

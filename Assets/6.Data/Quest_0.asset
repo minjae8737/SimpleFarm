@@ -17,6 +17,6 @@ MonoBehaviour:
   name: "\uD018\uC2A4\uD2B8 \uBA85"
   desc: "\uBC00 20\uAC1C \uC218\uD655 \uD558\uAE30"
   requiredObjectType: 1
-  targetCount: 20
+  targetCount: 2
   rewardsType: 0
   rewardAmount: 100

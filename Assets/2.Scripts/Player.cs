@@ -133,8 +133,8 @@ public class Player : MonoBehaviour
         if (nearestTarget != null)
         {
             nearestTarget.GetComponent<Object>().OnInteract();
-            onPlayerAction?.Invoke("Interact");
             LoseHp();
+            onPlayerAction?.Invoke("Interact");
         }
 
         rake.transform.localRotation = Quaternion.identity;
@@ -151,6 +151,9 @@ public class Player : MonoBehaviour
 
     public void RecoverHP()
     {
+        if (hp == 0)
+            IncreaseMaxHp();
+
         OnSleepEffect();
         hp = maxHp;
     }

@@ -68,6 +68,9 @@ public class QuestManager : MonoBehaviour
         if (curQuestIndex >= datas.Length)
             return;
 
+        GameManager.instance.pickedItem -= OnItemDrop;
+        GameManager.instance.player.onPlayerAction -= OnPlayerAction;
+
         switch (datas[curQuestIndex].type)
         {
             case QuestType.Behaviour:
@@ -105,6 +108,7 @@ public class QuestManager : MonoBehaviour
         }
 
         curQuestIndex++;
+        curCount = 0;
 
         if (CheckHaveQuestData())
         {

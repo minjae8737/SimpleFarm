@@ -46,6 +46,7 @@ public class UIManager : MonoBehaviour
         questClearBtnRewardText = questClearReward.GetChild(1).GetComponent<Text>();
         questClearBtnDesc = questClearBtn.transform.GetChild(1).GetComponent<Text>();
 
+        SetPlayerHp();
         SetGoldText();
         SetQuestPanel();
 
@@ -96,6 +97,9 @@ public class UIManager : MonoBehaviour
 
     public void RecorvePlayerHpEffect()
     {
+
+        OffHpbarText();
+
         Sequence sequence = DOTween.Sequence();
 
         float effectSpeed = 1f / recoveHpDuration;
@@ -108,7 +112,14 @@ public class UIManager : MonoBehaviour
         sequence.Append(fillHpTween)
         .Join(scaleBiggerTween)
         .Append(scaleSmallerTween)
-        .OnComplete(GameManager.instance.player.OffSleepEffect);
+        .OnComplete(OnCompleteRecorvePlayerHpEffect);
+    }
+
+    void OnCompleteRecorvePlayerHpEffect()
+    {
+        SetPlayerHpText();
+        OnHpbarText();
+        GameManager.instance.player.OffSleepEffect();
     }
 
     public void SetQuestPanel()
@@ -142,6 +153,16 @@ public class UIManager : MonoBehaviour
     public void OffQuestPanel()
     {
         questPanel.SetActive(false);
+    }
+
+    void OnHpbarText()
+    {
+        playerHpText.gameObject.SetActive(true);
+    }
+
+    void OffHpbarText()
+    {
+        playerHpText.gameObject.SetActive(false);
     }
 
     public void SetInteractBtn(UIBtnType type)

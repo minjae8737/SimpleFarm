@@ -72,6 +72,7 @@ public class GameManager : MonoBehaviour
     {
         gold += price;
         if (gold > maxGold) gold = maxGold;
+        uiManager.SetGoldText();
     }
 
     void SaveGold()

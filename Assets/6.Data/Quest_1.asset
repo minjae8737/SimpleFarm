@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 39bf976184c1f4fce97b756f361c84fa, type: 3}
-  m_Name: Quest_0
+  m_Name: Quest_1
   m_EditorClassIdentifier: 
   type: 2
   index: 0
   name: "\uD018\uC2A4\uD2B8 \uBA85"
-  desc: "\uBC00 5\uAC1C \uC218\uD655 \uD558\uAE30"
+  desc: "\uBC00 10\uAC1C \uC218\uD655 \uD558\uAE30"
   requiredObjectType: 1
-  targetCount: 5
+  targetCount: 10
   rewardsType: 0
-  rewardAmount: 100
+  rewardAmount: 500

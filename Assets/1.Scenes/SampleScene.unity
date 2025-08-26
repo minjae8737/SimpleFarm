@@ -2201,6 +2201,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   datas:
   - {fileID: 11400000, guid: 4568df14dbad54c0885aa82bd4dc9622, type: 2}
+  - {fileID: 11400000, guid: 38abfc72c8ec74994a3e3464c05c16a1, type: 2}
   curCount: 0
 --- !u!1 &1010649177
 GameObject:

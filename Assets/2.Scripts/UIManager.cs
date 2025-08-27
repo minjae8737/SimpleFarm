@@ -183,6 +183,9 @@ public class UIManager : MonoBehaviour
 
     void OnInteractBtnEffect()
     {
+        if (interactButton == null)
+            return;
+
         interactButton.gameObject.SetActive(true);
 
         Sequence sequence = DOTween.Sequence();
@@ -196,6 +199,9 @@ public class UIManager : MonoBehaviour
 
     public void OffInteractBtn()
     {
+        if (interactButton == null)
+            return;
+
         interactButton.gameObject.SetActive(false);
     }
 

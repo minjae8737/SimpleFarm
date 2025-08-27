@@ -89,15 +89,13 @@ public class Player : MonoBehaviour
 
             bool isObject = target.TryGetComponent<Object>(out var component);
 
-            if (dis < minDistance)
+            if (dis < minDistance && ((isObject && !component.isCoolTime) || !isObject))
             {
-                if (!isObject || component.isCoolTime)
-                    continue;
 
                 minDistance = dis;
                 nearest = target.gameObject;
 
-                if (!hasSentTrigger)
+                if (!hasSentTrigger && isObject && !component.isCoolTime)
                 {
                     hasSentTrigger = true;
                     OnInteractionEffect();

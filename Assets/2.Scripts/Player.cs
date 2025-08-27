@@ -87,8 +87,13 @@ public class Player : MonoBehaviour
         {
             float dis = Vector2.Distance(transform.position, target.transform.position);
 
-            if (dis < minDistance && !target.GetComponent<Object>().isCoolTime)
+            bool isObject = target.TryGetComponent<Object>(out var component);
+
+            if (dis < minDistance)
             {
+                if (!isObject || component.isCoolTime)
+                    continue;
+
                 minDistance = dis;
                 nearest = target.gameObject;
 
@@ -104,14 +109,14 @@ public class Player : MonoBehaviour
         {
             if (nearestTarget != null)
             {
-                nearestTarget.GetComponent<Object>().OffMarker();
+                nearestTarget.GetComponent<Marker>().OffMarker();
             }
 
             nearestTarget = nearest;
 
             if (nearestTarget != null)
             {
-                nearestTarget.GetComponent<Object>().OnMarker();
+                nearestTarget.GetComponent<Marker>().OnMarker();
             }
         }
     }

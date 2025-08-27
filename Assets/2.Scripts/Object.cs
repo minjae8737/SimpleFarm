@@ -7,7 +7,6 @@ public enum ObjectType { None, Wheat, Apple }
 public class Object : MonoBehaviour
 {
     public ObjectType type;
-    public GameObject marker;
     public GameObject uiGaugeBar;
     public GameObject uiGauge;
     public GameObject uiHpBar;
@@ -56,16 +55,6 @@ public class Object : MonoBehaviour
             OffGauge();
             SetSprite();
         }
-    }
-
-    public void OnMarker()
-    {
-        marker.SetActive(true);
-    }
-
-    public void OffMarker()
-    {
-        marker.SetActive(false);
     }
 
     public void OnInteract()

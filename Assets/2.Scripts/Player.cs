@@ -87,12 +87,15 @@ public class Player : MonoBehaviour
         {
             float dis = Vector2.Distance(transform.position, target.transform.position);
 
-            if (dis < minDistance && !target.GetComponent<Object>().isCoolTime)
+            bool isObject = target.TryGetComponent<Object>(out var component);
+
+            if (dis < minDistance && ((isObject && !component.isCoolTime) || !isObject))
             {
+
                 minDistance = dis;
                 nearest = target.gameObject;
 
-                if (!hasSentTrigger)
+                if (!hasSentTrigger && isObject && !component.isCoolTime)
                 {
                     hasSentTrigger = true;
                     OnInteractionEffect();
@@ -104,14 +107,14 @@ public class Player : MonoBehaviour
         {
             if (nearestTarget != null)
             {
-                nearestTarget.GetComponent<Object>().OffMarker();
+                nearestTarget.GetComponent<Marker>().OffMarker();
             }
 
             nearestTarget = nearest;
 
             if (nearestTarget != null)
             {
-                nearestTarget.GetComponent<Object>().OnMarker();
+                nearestTarget.GetComponent<Marker>().OnMarker();
             }
         }
     }
@@ -133,8 +136,8 @@ public class Player : MonoBehaviour
         if (nearestTarget != null)
         {
             nearestTarget.GetComponent<Object>().OnInteract();
-            onPlayerAction?.Invoke("Interact");
             LoseHp();
+            onPlayerAction?.Invoke("Interact");
         }
 
         rake.transform.localRotation = Quaternion.identity;
@@ -151,6 +154,9 @@ public class Player : MonoBehaviour
 
     public void RecoverHP()
     {
+        if (hp == 0)
+            IncreaseMaxHp();
+
         OnSleepEffect();
         hp = maxHp;
     }

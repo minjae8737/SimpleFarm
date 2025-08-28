@@ -15,51 +15,57 @@ public class UIManager : MonoBehaviour
     Image questRewardIcon;
     Text questRewardText;
     Text questDesc;
+    GameObject questClearBtn;
+    Image questClearBtnRewardIcon;
+    Text questClearBtnRewardText;
+    Text questClearBtnDesc;
     public GameObject playerHp;
     Image palyerHpImg;
     Text playerHpText;
-    float recoveHpDuration = 3f; // 0 -> 1 까지 걸리는 시간
+    float recoveHpDuration = 3f; // FillAmount 0 -> 1 까지 걸리는 시간
     public Button interactButton;
+    
+    [Header("Shop")]
+    public GameObject shopPanel;
+    RectTransform shopContent;
 
     [Header("Sprites")]
     public Sprite[] rewardIcons; // RewardsType과 매칭
-
-
-    public long gold;
-
-    void Update()
-    {
-        if (Input.GetKey(KeyCode.Space))
-        {
-            ConvertGoldToText(gold);
-            SetPlayerHp();
-            SetPlayerHpText();
-        }
-        if (Input.GetKey(KeyCode.A))
-        {
-            RecorvePlayerHpEffect();
-        }
-    }
 
     public void Init()
     {
         palyerHpImg = playerHp.transform.GetChild(0).GetComponent<Image>();
         playerHpText = playerHp.transform.GetChild(1).GetComponent<Text>();
 
-        Transform questChild0 = questPanel.transform.GetChild(0);
-        questRewardIcon = questChild0.GetChild(0).GetComponent<Image>();
-        questRewardText = questChild0.GetChild(1).GetComponent<Text>();
+        // 퀘스트 리워드
+        Transform questReward = questPanel.transform.GetChild(0);
+        questRewardIcon = questReward.GetChild(0).GetComponent<Image>();
+        questRewardText = questReward.GetChild(1).GetComponent<Text>();
         questDesc = questPanel.transform.GetChild(1).GetComponent<Text>();
 
+        // 퀘스트 클리어 버튼
+        questClearBtn = questPanel.transform.GetChild(2).gameObject;
+        Transform questClearReward = questClearBtn.transform.GetChild(0);
+        questClearBtnRewardIcon = questClearReward.GetChild(0).GetComponent<Image>();
+        questClearBtnRewardText = questClearReward.GetChild(1).GetComponent<Text>();
+        questClearBtnDesc = questClearBtn.transform.GetChild(1).GetComponent<Text>();
+        
+        // 상점
+        shopContent = shopPanel.transform.GetChild(0).transform.GetChild(1).transform.GetChild(0).transform.GetChild(0).GetComponent<RectTransform>();
+
+        SetPlayerHp();
+        SetGoldText();
         SetQuestPanel();
 
-        interactButton.onClick.AddListener(GameManager.instance.RestPlayer);
-
+        GameManager.instance.player.onPlayerAction += SetPlayerHp;
+        GameManager.instance.questManager.refreshQuestInfoEvent += SetQuestPanel;
     }
 
-    public void SetGoldText(long gold)
+    #region Gold
+    
+    public void SetGoldText()
     {
-        goldText.text = ConvertGoldToText(gold);
+        goldText.text = ConvertGoldToText(GameManager.instance.gold);
     }
 
     string ConvertGoldToText(long gold)
@@ -84,20 +90,27 @@ public class UIManager : MonoBehaviour
 
         return goldStr;
     }
-
-    public void SetPlayerHp()
+    
+    #endregion
+    
+    void SetPlayerHp(string defaultPlayerAction = "")
     {
         float playerHpAmount = (float)GameManager.instance.player.hp / GameManager.instance.player.maxHp;
         palyerHpImg.fillAmount = playerHpAmount;
+
+        SetPlayerHpText();
     }
 
-    public void SetPlayerHpText()
+    void SetPlayerHpText()
     {
         playerHpText.text = GameManager.instance.player.hp + " / " + GameManager.instance.player.maxHp;
     }
 
     public void RecorvePlayerHpEffect()
     {
+
+        OffHpbarText();
+
         Sequence sequence = DOTween.Sequence();
 
         float effectSpeed = 1f / recoveHpDuration;
@@ -110,10 +123,17 @@ public class UIManager : MonoBehaviour
         sequence.Append(fillHpTween)
         .Join(scaleBiggerTween)
         .Append(scaleSmallerTween)
-        .OnComplete(GameManager.instance.player.OffSleepEffect);
+        .OnComplete(OnCompleteRecorvePlayerHpEffect);
     }
 
-    void SetQuestPanel()
+    void OnCompleteRecorvePlayerHpEffect()
+    {
+        SetPlayerHpText();
+        OnHpbarText();
+        GameManager.instance.player.OffSleepEffect();
+    }
+
+    public void SetQuestPanel()
     {
         QuestData questData = GameManager.instance.questManager.GetCurrentQuestData();
 
@@ -123,9 +143,37 @@ public class UIManager : MonoBehaviour
             return;
         }
 
-        questDesc.text = string.Format("{0} [{1}/{2}]", questData.desc, GameManager.instance.questManager.curCount, questData.targetCount);
+        string questDescStr = string.Format("{0} [{1}/{2}]", questData.desc, GameManager.instance.questManager.curCount, questData.targetCount);
+        string questRewardAmountStr = ConvertGoldToText(questData.rewardAmount);
+
+
+        questDesc.text = questDescStr;
         questRewardIcon.sprite = rewardIcons[(int)questData.rewardsType];
-        questRewardText.text = ConvertGoldToText(questData.rewardAmount);
+        questRewardText.text = questRewardAmountStr;
+
+        questClearBtnDesc.text = questDescStr;
+        questClearBtnRewardIcon.sprite = rewardIcons[(int)questData.rewardsType];
+        questClearBtnRewardText.text = questRewardAmountStr;
+    }
+
+    public void OnQuestPanel()
+    {
+        questPanel.SetActive(true);
+    }
+
+    public void OffQuestPanel()
+    {
+        questPanel.SetActive(false);
+    }
+
+    void OnHpbarText()
+    {
+        playerHpText.gameObject.SetActive(true);
+    }
+
+    void OffHpbarText()
+    {
+        playerHpText.gameObject.SetActive(false);
     }
 
     public void SetInteractBtn(UIBtnType type)
@@ -138,6 +186,7 @@ public class UIManager : MonoBehaviour
                 interactButton.onClick.AddListener(GameManager.instance.RestPlayer);
                 break;
             case UIBtnType.Shop:
+                interactButton.onClick.AddListener(OpenShop);
                 break;
         }
 
@@ -146,6 +195,9 @@ public class UIManager : MonoBehaviour
 
     void OnInteractBtnEffect()
     {
+        if (interactButton == null)
+            return;
+
         interactButton.gameObject.SetActive(true);
 
         Sequence sequence = DOTween.Sequence();
@@ -159,14 +211,53 @@ public class UIManager : MonoBehaviour
 
     public void OffInteractBtn()
     {
+        if (interactButton == null)
+            return;
+
         interactButton.gameObject.SetActive(false);
     }
 
-    void OnClickBtn()
+    void OnClickInteractBtn()
     {
         interactButton.onClick?.Invoke();
     }
 
+    public void OnQuestClearBtn()
+    {
+        questClearBtn.SetActive(true);
+    }
 
+    void OffQuestClearBtn()
+    {
+        questClearBtn.SetActive(false);
+    }
 
+    public void OnClickQuestClearBtn()
+    {
+        GameManager.instance.questManager.GetReward();
+        OffQuestClearBtn();
+    }
+
+    public void OpenShop()
+    {
+        SetShopItems();
+        shopPanel.SetActive(true);
+        shopPanel.GetComponent<RectTransform>().DOPunchScale(new Vector3(0.02f, 0.02f, 0.02f), 0.2f, 1, 1f);
+    }
+
+    #region Shop
+
+    public void CloseShop()
+    {
+        shopPanel.SetActive(false);
+    }
+
+    public void SetShopItems()
+    {
+        Dictionary<string, long> shopItems = GameManager.instance.inventory;
+        
+        Debug.Log(shopItems.Count);
+    }
+
+    #endregion
 }

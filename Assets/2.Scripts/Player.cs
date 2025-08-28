@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -18,6 +19,12 @@ public class Player : MonoBehaviour
     Animator anim;
     bool hasSentTrigger;
     Vector3 reverseScale = new Vector3(-1, 1, 1);
+
+
+    public GameObject rake;
+    public float rotDuration;
+    Vector3 startRakeRot = new Vector3(0, 0, 45f);
+    Vector3 endRakeRot = new Vector3(0, 0, -35f);
 
     public event Action<string> onPlayerAction;
 
@@ -59,7 +66,6 @@ public class Player : MonoBehaviour
 
     void LateUpdate()
     {
-
         anim.SetFloat("Speed", inputVec.magnitude);
 
         if (inputVec.x != 0)
@@ -81,15 +87,18 @@ public class Player : MonoBehaviour
         {
             float dis = Vector2.Distance(transform.position, target.transform.position);
 
-            if (dis < minDistance && !target.GetComponent<Object>().isCoolTime)
+            bool isObject = target.TryGetComponent<Object>(out var component);
+
+            if (dis < minDistance && ((isObject && !component.isCoolTime) || !isObject))
             {
+
                 minDistance = dis;
                 nearest = target.gameObject;
 
-                if (!hasSentTrigger)
+                if (!hasSentTrigger && isObject && !component.isCoolTime)
                 {
                     hasSentTrigger = true;
-                    anim.SetTrigger("Interact");
+                    OnInteractionEffect();
                 }
             }
         }
@@ -98,27 +107,40 @@ public class Player : MonoBehaviour
         {
             if (nearestTarget != null)
             {
-                nearestTarget.GetComponent<Object>().OffMarker();
+                nearestTarget.GetComponent<Marker>().OffMarker();
             }
 
             nearestTarget = nearest;
 
             if (nearestTarget != null)
             {
-                nearestTarget.GetComponent<Object>().OnMarker();
+                nearestTarget.GetComponent<Marker>().OnMarker();
             }
         }
     }
 
+    void OnInteractionEffect()
+    {
+        Sequence sequence = DOTween.Sequence();
+
+        rake.transform.localRotation = Quaternion.Euler(startRakeRot);
+        Tween rotateTween = rake.transform.DOLocalRotate(endRakeRot, rotDuration).SetEase(Ease.InOutExpo);
+
+        sequence.Append(rotateTween)
+        .OnComplete(OnInteractionEnd);
+    }
+
     public void OnInteractionEnd()
     {
+
         if (nearestTarget != null)
         {
             nearestTarget.GetComponent<Object>().OnInteract();
-            onPlayerAction?.Invoke("Interact");
             LoseHp();
+            onPlayerAction?.Invoke("Interact");
         }
 
+        rake.transform.localRotation = Quaternion.identity;
         hasSentTrigger = false;
     }
 
@@ -132,6 +154,9 @@ public class Player : MonoBehaviour
 
     public void RecoverHP()
     {
+        if (hp == 0)
+            IncreaseMaxHp();
+
         OnSleepEffect();
         hp = maxHp;
     }

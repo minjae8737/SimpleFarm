@@ -24,6 +24,10 @@ public class UIManager : MonoBehaviour
     Text playerHpText;
     float recoveHpDuration = 3f; // FillAmount 0 -> 1 까지 걸리는 시간
     public Button interactButton;
+    
+    [Header("Shop")]
+    public GameObject shopPanel;
+    RectTransform shopContent;
 
     [Header("Sprites")]
     public Sprite[] rewardIcons; // RewardsType과 매칭
@@ -45,6 +49,9 @@ public class UIManager : MonoBehaviour
         questClearBtnRewardIcon = questClearReward.GetChild(0).GetComponent<Image>();
         questClearBtnRewardText = questClearReward.GetChild(1).GetComponent<Text>();
         questClearBtnDesc = questClearBtn.transform.GetChild(1).GetComponent<Text>();
+        
+        // 상점
+        shopContent = shopPanel.transform.GetChild(0).transform.GetChild(1).transform.GetChild(0).transform.GetChild(0).GetComponent<RectTransform>();
 
         SetPlayerHp();
         SetGoldText();
@@ -54,6 +61,8 @@ public class UIManager : MonoBehaviour
         GameManager.instance.questManager.refreshQuestInfoEvent += SetQuestPanel;
     }
 
+    #region Gold
+    
     public void SetGoldText()
     {
         goldText.text = ConvertGoldToText(GameManager.instance.gold);
@@ -81,7 +90,9 @@ public class UIManager : MonoBehaviour
 
         return goldStr;
     }
-
+    
+    #endregion
+    
     void SetPlayerHp(string defaultPlayerAction = "")
     {
         float playerHpAmount = (float)GameManager.instance.player.hp / GameManager.instance.player.maxHp;
@@ -175,6 +186,7 @@ public class UIManager : MonoBehaviour
                 interactButton.onClick.AddListener(GameManager.instance.RestPlayer);
                 break;
             case UIBtnType.Shop:
+                interactButton.onClick.AddListener(OpenShop);
                 break;
         }
 
@@ -226,4 +238,26 @@ public class UIManager : MonoBehaviour
         OffQuestClearBtn();
     }
 
+    public void OpenShop()
+    {
+        SetShopItems();
+        shopPanel.SetActive(true);
+        shopPanel.GetComponent<RectTransform>().DOPunchScale(new Vector3(0.02f, 0.02f, 0.02f), 0.2f, 1, 1f);
+    }
+
+    #region Shop
+
+    public void CloseShop()
+    {
+        shopPanel.SetActive(false);
+    }
+
+    public void SetShopItems()
+    {
+        Dictionary<string, long> shopItems = GameManager.instance.inventory;
+        
+        Debug.Log(shopItems.Count);
+    }
+
+    #endregion
 }

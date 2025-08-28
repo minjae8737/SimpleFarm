@@ -17,3 +17,4 @@ MonoBehaviour:
   sprites:
   - {fileID: 21300000, guid: de3b4bfe123db4600a9661e420b3745a, type: 3}
   - {fileID: 21300000, guid: e77fa1f54f6e44c2786006099203eaa9, type: 3}
+  price: 1

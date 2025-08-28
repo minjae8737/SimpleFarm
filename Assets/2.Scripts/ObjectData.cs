@@ -11,4 +11,8 @@ public class ObjectData : ScriptableObject
     public float coolTime;
     public Sprite[] sprites;
 
+    [Header("# Shop")] 
+    public long price;
+    public Sprite icon;
+
 }

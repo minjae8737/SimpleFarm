@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
     public Player player;
-    public Dictionary<string, long> inventory;
+    public Inventory inventory;
 
     [Header("# Manager")]
     public QuestManager questManager;
@@ -17,12 +17,9 @@ public class GameManager : MonoBehaviour
     public UIManager uiManager;
 
     const string GoldKey = "Gold";
-    const string ItemKey = "Item_";
     public long gold;
     long maxGold = 9999999999; // 9,999,999,999
-
-    public event Action<string> pickedItem;
-
+    
     void Awake()
     {
         instance = this;
@@ -41,17 +38,12 @@ public class GameManager : MonoBehaviour
         gold = GetLongFromPlayerPrefs(GoldKey);
 
         // 인벤토리 초기화
-        inventory = new Dictionary<string, long>();
-
-        foreach (ObjectType type in Enum.GetValues(typeof(ObjectType)))
-        {
-            string key = ItemKey + type.ToString(); // "Item_xxxx"
-            inventory.Add(type.ToString(), GetLongFromPlayerPrefs(key));
-        }
+        inventory = new Inventory();
+        inventory.Init();
 
     }
 
-    private long GetLongFromPlayerPrefs(string key, long defaultValue = 0L)
+    public long GetLongFromPlayerPrefs(string key, long defaultValue = 0L)
     {
         if (!PlayerPrefs.HasKey(key))
             return defaultValue;
@@ -87,18 +79,14 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public GameObject GetDropItem(ObjectType type)
+    public GameObject GetDropItem(ItemType type)
     {
         return objectPoolManager.Get(type);
     }
 
-    public void PickUpItem(ObjectType type)
+    public void PickUpItem(ItemData itemData)
     {
-        string itemTypeStr = type.ToString();
-        pickedItem?.Invoke(itemTypeStr);
-
-        if (inventory[itemTypeStr] < long.MaxValue)
-            inventory[itemTypeStr] += 1;
+        inventory.AddItem(itemData,1);
     }
 
 }

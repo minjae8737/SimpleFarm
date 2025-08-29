@@ -26,7 +26,7 @@ public class Player : MonoBehaviour
     Vector3 startRakeRot = new Vector3(0, 0, 45f);
     Vector3 endRakeRot = new Vector3(0, 0, -35f);
 
-    public event Action<string> onPlayerAction;
+    public event Action<string> OnPlayerAction;
 
 
     void Awake()
@@ -87,7 +87,7 @@ public class Player : MonoBehaviour
         {
             float dis = Vector2.Distance(transform.position, target.transform.position);
 
-            bool isObject = target.TryGetComponent<Object>(out var component);
+            bool isObject = target.TryGetComponent<Producer>(out var component);
 
             if (dis < minDistance && ((isObject && !component.isCoolTime) || !isObject))
             {
@@ -135,9 +135,9 @@ public class Player : MonoBehaviour
 
         if (nearestTarget != null)
         {
-            nearestTarget.GetComponent<Object>().OnInteract();
+            nearestTarget.GetComponent<Producer>().OnInteract();
             LoseHp();
-            onPlayerAction?.Invoke("Interact");
+            OnPlayerAction?.Invoke("Interact");
         }
 
         rake.transform.localRotation = Quaternion.identity;

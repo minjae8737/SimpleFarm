@@ -28,6 +28,8 @@ public class UIManager : MonoBehaviour
     [Header("Shop")]
     public GameObject shopPanel;
     RectTransform shopContent;
+    public GameObject shopItemPrefab;
+    List<GameObject>  shopItems;
 
     [Header("Sprites")]
     public Sprite[] rewardIcons; // RewardsType과 매칭
@@ -56,9 +58,13 @@ public class UIManager : MonoBehaviour
         SetPlayerHp();
         SetGoldText();
         SetQuestPanel();
-
+        InitShopItems();
+        
         GameManager.instance.player.OnPlayerAction += SetPlayerHp;
         GameManager.instance.questManager.OnQuestProgressChanged += SetQuestPanel;
+
+        GameManager.instance.inventory.OnItemAdded += RefreshShopItem;
+        GameManager.instance.inventory.OnItemRemoved += RefreshShopItem;
     }
 
     #region Gold
@@ -240,7 +246,6 @@ public class UIManager : MonoBehaviour
 
     public void OpenShop()
     {
-        SetShopItems();
         shopPanel.SetActive(true);
         shopPanel.GetComponent<RectTransform>().DOPunchScale(new Vector3(0.02f, 0.02f, 0.02f), 0.2f, 1, 1f);
     }
@@ -252,11 +257,23 @@ public class UIManager : MonoBehaviour
         shopPanel.SetActive(false);
     }
 
-    public void SetShopItems()
+    public void InitShopItems()
     {
-        Dictionary<string, long> shopItems = GameManager.instance.inventory.items;
+        shopItems = new  List<GameObject>();
         
-        Debug.Log(shopItems.Count);
+        foreach (ItemType type in Enum.GetValues(typeof(ItemType)))
+        {
+            GameObject newShopItem = Instantiate(shopItemPrefab, shopContent);
+            shopItems.Add(newShopItem);
+            newShopItem.GetComponent<ShopItem>().Init(GameManager.instance.itemDatas[(int)type]);
+        }
+    }
+
+    void RefreshShopItem(ItemData itemData, long quantity)
+    {
+        GameObject findShopItem = shopItems.Find(item => item.GetComponent<ShopItem>().itemName == itemData.itemName);
+        long itemQuantity = GameManager.instance.inventory.GetItemQuantity(itemData.itemName);
+        findShopItem?.GetComponent<ShopItem>().RefreshQuantity(itemQuantity);
     }
 
     #endregion

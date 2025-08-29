@@ -8,8 +8,11 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
     public Player player;
+    
+    [Header("# Item")]
     public Inventory inventory;
-
+    public ItemData[] itemDatas;
+    
     [Header("# Manager")]
     public QuestManager questManager;
     public IslandManager islandManager;

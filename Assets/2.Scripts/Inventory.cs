@@ -6,8 +6,13 @@ using UnityEngine;
 [System.Serializable]
 public class Inventory
 {
-    public Dictionary<string, long> items;
-    
+    private Dictionary<string, long> items;
+
+    public Dictionary<string, long> Items
+    {
+        get => items;
+    }
+
     const string ItemKey = "Item_";
     
     public event Action<ItemData, long> OnItemAdded;
@@ -52,5 +57,10 @@ public class Inventory
             
             OnItemRemoved?.Invoke(itemData, quantity);
         }
+    }
+
+    public long GetItemQuantity(string itemName)
+    {
+        return items[ItemKey + itemName];
     }
 }

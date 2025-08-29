@@ -3,20 +3,15 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
-public class Item : MonoBehaviour
+public class DroppedItem : MonoBehaviour
 {
-    public ObjectType type;
+    [Header("Item Info")]
+    public ItemData itemData;
+
+    [Header("Animation Setting")]
     float arcHeight = 0.2f; // 포물선의 높이
     float pickupSpeed = 2.5f; // 0.5의 거리를 0.2f duration으로 오는 속도
     bool isTracking;
-
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            PickUpItem();
-        }
-    }
 
     void OnEnable()
     {
@@ -66,7 +61,7 @@ public class Item : MonoBehaviour
 
     void OnPickupComplete()
     {
-        GameManager.instance.PickUpItem(type);
+        GameManager.instance.PickUpItem(itemData);
         gameObject.SetActive(false);
     }
 

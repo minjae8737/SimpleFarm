@@ -18,7 +18,7 @@ public class ObjectPoolManager : MonoBehaviour
         }
     }
 
-    public GameObject Get(ObjectType type)
+    public GameObject Get(ItemType type)
     {
         int typeIdx = (int)type;
         GameObject obj = null;

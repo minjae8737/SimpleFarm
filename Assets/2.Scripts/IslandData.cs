@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Island_", menuName = "ScriptbleObject/Island Data")]
+[CreateAssetMenu(fileName = "Island_", menuName = "ScriptableObject/Island Data")]
 public class IslandData : ScriptableObject
 {
     public enum IslandType { Basic, Wheat, Apple }

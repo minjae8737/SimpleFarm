@@ -1649,12 +1649,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
+  productData: {fileID: 11400000, guid: d4084b82475444e29bb7b29c19114287, type: 2}
   uiGaugeBar: {fileID: 654105359}
   uiGauge: {fileID: 2093125673}
   uiHpBar: {fileID: 1881602985}
   uiHp: {fileID: 1744011109}
   isCoolTime: 0
-  data: {fileID: 11400000, guid: 7910a8ebb9908433eb818bd27b754519, type: 2}
 --- !u!61 &489997229
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2217,7 +2217,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   icon: {fileID: 181730771}
-  amount: {fileID: 1502420671}
+  quantity: {fileID: 0}
   price: {fileID: 1729150850}
 --- !u!1 &638092082
 GameObject:
@@ -2824,12 +2824,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
+  productData: {fileID: 11400000, guid: d4084b82475444e29bb7b29c19114287, type: 2}
   uiGaugeBar: {fileID: 1905085870}
   uiGauge: {fileID: 2037130143}
   uiHpBar: {fileID: 1488008623}
   uiHp: {fileID: 2090129793}
   isCoolTime: 0
-  data: {fileID: 11400000, guid: 7910a8ebb9908433eb818bd27b754519, type: 2}
 --- !u!61 &757162804
 BoxCollider2D:
   m_ObjectHideFlags: 0

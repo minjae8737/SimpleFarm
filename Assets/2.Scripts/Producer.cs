@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ObjectType { Wheat, Apple }
-
-public class Object : MonoBehaviour
+public class Producer : MonoBehaviour
 {
-    public ObjectType type;
+    [Header("# Producer Info")]
+    public ItemType type;
+    public ProductData productData;
+    
+    [Header("# Gauge UI")]
     public GameObject uiGaugeBar;
     public GameObject uiGauge;
     public GameObject uiHpBar;
@@ -16,8 +18,9 @@ public class Object : MonoBehaviour
     float coolTime;
     float maxHp;
     float hp;
+    
     public bool isCoolTime;
-    public ObjectData data;
+    
 
     SpriteRenderer sprite;
 
@@ -31,11 +34,11 @@ public class Object : MonoBehaviour
     void Init()
     {
         isCoolTime = false;
-        maxCoolTime = data.coolTime;
+        maxCoolTime = productData.coolTime;
         // TODO: 나중에는 현재 쿨타임 값도 게임을 끌때 모두 저장되어야함.
         coolTime = 0f;
 
-        maxHp = data.maxHp;
+        maxHp = productData.maxHp;
         hp = maxHp;
 
         SetSprite();
@@ -70,9 +73,9 @@ public class Object : MonoBehaviour
 
         if (hp <= 0)
         {
-            Item dropItem = GameManager.instance.GetDropItem(type).GetComponent<Item>();
-            dropItem.SetItemPos(transform.position);
-            dropItem.DropItem();
+            DroppedItem droppedItem = GameManager.instance.GetDropItem(type).GetComponent<DroppedItem>();
+            droppedItem.SetItemPos(transform.position);
+            droppedItem.DropItem();
 
             OffHpBar();
             OnGauge();
@@ -116,6 +119,6 @@ public class Object : MonoBehaviour
 
     public void SetSprite()
     {
-        sprite.sprite = isCoolTime ? data.sprites[0] : data.sprites[1];
+        sprite.sprite = isCoolTime ? productData.sprites[0] : productData.sprites[1];
     }
 }

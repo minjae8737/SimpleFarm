@@ -57,8 +57,8 @@ public class UIManager : MonoBehaviour
         SetGoldText();
         SetQuestPanel();
 
-        GameManager.instance.player.onPlayerAction += SetPlayerHp;
-        GameManager.instance.questManager.refreshQuestInfoEvent += SetQuestPanel;
+        GameManager.instance.player.OnPlayerAction += SetPlayerHp;
+        GameManager.instance.questManager.OnQuestProgressChanged += SetQuestPanel;
     }
 
     #region Gold
@@ -254,7 +254,7 @@ public class UIManager : MonoBehaviour
 
     public void SetShopItems()
     {
-        Dictionary<string, long> shopItems = GameManager.instance.inventory;
+        Dictionary<string, long> shopItems = GameManager.instance.inventory.items;
         
         Debug.Log(shopItems.Count);
     }

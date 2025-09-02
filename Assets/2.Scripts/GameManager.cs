@@ -58,6 +58,8 @@ public class GameManager : MonoBehaviour
         return defaultValue;
     }
 
+    #region Gold
+    
     bool CheckGold(long price)
     {
         return price <= gold;
@@ -74,6 +76,8 @@ public class GameManager : MonoBehaviour
     {
         PlayerPrefs.SetString(GoldKey, gold.ToString());
     }
+    
+    #endregion
 
     public void RestPlayer()
     {
@@ -81,6 +85,8 @@ public class GameManager : MonoBehaviour
         uiManager.RecorvePlayerHpEffect();
 
     }
+
+    #region Item
 
     public GameObject GetDropItem(ItemType type)
     {
@@ -92,4 +98,10 @@ public class GameManager : MonoBehaviour
         inventory.AddItem(itemData,1);
     }
 
+    public ItemData GetItemData(ItemType type)
+    {
+        return itemDatas[(int)type];
+    }
+
+    #endregion
 }

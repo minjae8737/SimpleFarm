@@ -30,6 +30,7 @@ public class UIManager : MonoBehaviour
     RectTransform shopContent;
     public GameObject shopItemPrefab;
     List<GameObject>  shopItems;
+    public ItemSellPanel itemSellPanel;
 
     [Header("Sprites")]
     public Sprite[] rewardIcons; // RewardsType과 매칭
@@ -74,7 +75,7 @@ public class UIManager : MonoBehaviour
         goldText.text = ConvertGoldToText(GameManager.instance.gold);
     }
 
-    string ConvertGoldToText(long gold)
+    public string ConvertGoldToText(long gold)
     {
         string goldStr = "";
         string[] postFixUnit = { "", "K", "M", "B" };
@@ -247,7 +248,7 @@ public class UIManager : MonoBehaviour
     public void OpenShop()
     {
         shopPanel.SetActive(true);
-        shopPanel.GetComponent<RectTransform>().DOPunchScale(new Vector3(0.02f, 0.02f, 0.02f), 0.2f, 1, 1f);
+        shopPanel.transform.DOPunchScale(new Vector3(0.02f, 0.02f, 0.02f), 0.2f, 1, 1f);
     }
 
     #region Shop
@@ -274,6 +275,15 @@ public class UIManager : MonoBehaviour
         GameObject findShopItem = shopItems.Find(item => item.GetComponent<ShopItem>().itemName == itemData.itemName);
         long itemQuantity = GameManager.instance.inventory.GetItemQuantity(itemData.itemName);
         findShopItem?.GetComponent<ShopItem>().RefreshQuantity(itemQuantity);
+    }
+
+    #endregion
+    
+    #region ItemSellPanel
+
+    void SetItemSellPanel()
+    {
+        itemSellPanel.Init(GameManager.instance.GetItemData((int)ItemType.Wheat),this);
     }
 
     #endregion

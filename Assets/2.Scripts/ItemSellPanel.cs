@@ -32,7 +32,11 @@ public class ItemSellPanel : MonoBehaviour
     {
         this.uiManager = uiManager;
         this.itemData = itemData;
-        
+        Refresh();
+    }
+
+    void Refresh()
+    {
         long itemQuantity = GameManager.instance.inventory.GetItemQuantity(itemData.itemName);
         
         productIcon.sprite = itemData.icon;
@@ -43,7 +47,6 @@ public class ItemSellPanel : MonoBehaviour
         slider.value = itemQuantity;
 
         totalPriceText.text = uiManager.ConvertGoldToText(itemQuantity * itemData.price);
-
     }
 
     public void OnChangedValue()
@@ -54,6 +57,12 @@ public class ItemSellPanel : MonoBehaviour
 
     public void OnClickSellButton()
     {
+        if (slider.value <= 0) 
+            return;
+        
         OnItemSell?.Invoke(itemData, (long)slider.value);
+        Refresh();
     }
+    
+    
 }

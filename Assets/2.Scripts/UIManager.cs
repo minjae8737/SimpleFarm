@@ -266,7 +266,9 @@ public class UIManager : MonoBehaviour
         {
             GameObject newShopItem = Instantiate(shopItemPrefab, shopContent);
             shopItems.Add(newShopItem);
-            newShopItem.GetComponent<ShopItem>().Init(GameManager.instance.itemDatas[(int)type]);
+            ShopItem shopItem = newShopItem.GetComponent<ShopItem>();
+            shopItem.Init(GameManager.instance.itemDatas[(int)type]);
+            shopItem.OnClickShopItem += OnItemSellPanel;
         }
     }
 
@@ -281,9 +283,15 @@ public class UIManager : MonoBehaviour
     
     #region ItemSellPanel
 
-    void SetItemSellPanel()
+    void OnItemSellPanel(ItemData itemData)
     {
-        itemSellPanel.Init(GameManager.instance.GetItemData((int)ItemType.Wheat),this);
+        SetItemSellPanel(itemData);
+        itemSellPanel.gameObject.SetActive(true);
+    }
+
+    void SetItemSellPanel(ItemData itemData)
+    {
+        itemSellPanel.Init(itemData,this);
     }
 
     #endregion

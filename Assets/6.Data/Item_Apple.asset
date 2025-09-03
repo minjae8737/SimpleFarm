@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Item_Apple
   m_EditorClassIdentifier: 
   type: 1
-  itemName: Apple
-  description: 
+  itemName: "\uC0AC\uACFC"
+  description: "\uC544\uC0AD\uC544\uC0AD\uD558\uACE0 \uB2EC\uC544\uC694."
   maxStackSize: 99999
   price: 10
   icon: {fileID: 21300000, guid: 1711b690366254474bdcf10f5a911c54, type: 3}

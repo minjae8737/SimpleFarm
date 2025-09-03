@@ -59,8 +59,8 @@ public class Inventory
         }
     }
 
-    public long GetItemQuantity(string itemName)
+    public long GetItemQuantity(string itemType)
     {
-        return items[ItemKey + itemName];
+        return items[ItemKey + itemType];
     }
 }

@@ -20,7 +20,7 @@ public class ShopItem : MonoBehaviour
         this.itemData = itemData;
         itemName = itemData.itemName;
         icon.sprite = itemData.icon;
-        long itemQuantity = GameManager.instance.inventory.GetItemQuantity(itemData.itemName);
+        long itemQuantity = GameManager.instance.inventory.GetItemQuantity(itemData.type.ToString());
         RefreshQuantity(itemQuantity);
         priceText.text = itemData.price.ToString();
     }

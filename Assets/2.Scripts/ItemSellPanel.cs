@@ -22,6 +22,7 @@ public class ItemSellPanel : MonoBehaviour
     public Text totalPriceText;
 
     public event Action<ItemData, long> OnItemSell;
+    public event Action OffItemInfoPanel;
 
     private void OnEnable()
     {
@@ -37,7 +38,7 @@ public class ItemSellPanel : MonoBehaviour
 
     void Refresh()
     {
-        long itemQuantity = GameManager.instance.inventory.GetItemQuantity(itemData.itemName);
+        long itemQuantity = GameManager.instance.inventory.GetItemQuantity(itemData.type.ToString());
         
         productIcon.sprite = itemData.icon;
         productQuantity.text = itemQuantity.ToString();
@@ -64,5 +65,10 @@ public class ItemSellPanel : MonoBehaviour
         Refresh();
     }
     
+    public void OnClickExitButton()
+    {
+        OffItemInfoPanel?.Invoke();
+        gameObject.SetActive(false);
+    }
     
 }

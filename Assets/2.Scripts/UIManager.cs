@@ -5,12 +5,15 @@ using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum UIBtnType { RecoverHP, Shop, }
+public enum UIBtnType
+{
+    RecoverHP,
+    Shop,
+}
 
 public class UIManager : MonoBehaviour
 {
-    [Header("HUD")]
-    public Text goldText;
+    [Header("HUD")] public Text goldText;
     public GameObject questPanel;
     Image questRewardIcon;
     Text questRewardText;
@@ -24,13 +27,21 @@ public class UIManager : MonoBehaviour
     Text playerHpText;
     float recoveHpDuration = 3f; // FillAmount 0 -> 1 까지 걸리는 시간
     public Button interactButton;
-    
-    [Header("Shop")]
-    public GameObject shopPanel;
-    RectTransform shopContent;
 
-    [Header("Sprites")]
-    public Sprite[] rewardIcons; // RewardsType과 매칭
+    [Header("Shop")] public GameObject shopPanel;
+    RectTransform shopContent;
+    public GameObject shopItemPrefab;
+    List<GameObject> shopItems;
+    public ItemSellPanel itemSellPanel;
+
+    [Header("Item")] public GameObject itemInfoPanel;
+    Text itemNameText;
+    Image itemIcon;
+    Text itemPriceText;
+    Text itemQuantityText;
+    Text itemDescriptionText;
+
+    [Header("Sprites")] public Sprite[] rewardIcons; // RewardsType과 매칭
 
     public void Init()
     {
@@ -49,26 +60,42 @@ public class UIManager : MonoBehaviour
         questClearBtnRewardIcon = questClearReward.GetChild(0).GetComponent<Image>();
         questClearBtnRewardText = questClearReward.GetChild(1).GetComponent<Text>();
         questClearBtnDesc = questClearBtn.transform.GetChild(1).GetComponent<Text>();
-        
+
         // 상점
-        shopContent = shopPanel.transform.GetChild(0).transform.GetChild(1).transform.GetChild(0).transform.GetChild(0).GetComponent<RectTransform>();
+        shopContent = shopPanel.transform.GetChild(0).transform.GetChild(1).transform.GetChild(0).transform.GetChild(0)
+            .GetComponent<RectTransform>();
+
+        // 아이템
+        itemNameText = itemInfoPanel.transform.GetChild(0).GetComponent<Text>();
+        itemIcon = itemInfoPanel.transform.GetChild(1).transform.GetChild(0).GetComponent<Image>();
+        itemPriceText = itemInfoPanel.transform.GetChild(2).transform.GetChild(0).transform.GetChild(0)
+            .GetComponent<Text>();
+        itemQuantityText = itemInfoPanel.transform.GetChild(2).transform.GetChild(1).transform.GetChild(0)
+            .GetComponent<Text>();
+        itemDescriptionText = itemInfoPanel.transform.GetChild(3).transform.GetChild(0).GetComponent<Text>();
 
         SetPlayerHp();
         SetGoldText();
         SetQuestPanel();
+        InitShopItems();
 
         GameManager.instance.player.OnPlayerAction += SetPlayerHp;
         GameManager.instance.questManager.OnQuestProgressChanged += SetQuestPanel;
+
+        GameManager.instance.inventory.OnItemAdded += RefreshShopItem;
+        GameManager.instance.inventory.OnItemRemoved += RefreshShopItem;
+
+        itemSellPanel.OffItemInfoPanel += OffItemInfoPanel;
     }
 
     #region Gold
-    
+
     public void SetGoldText()
     {
         goldText.text = ConvertGoldToText(GameManager.instance.gold);
     }
 
-    string ConvertGoldToText(long gold)
+    public string ConvertGoldToText(long gold)
     {
         string goldStr = "";
         string[] postFixUnit = { "", "K", "M", "B" };
@@ -85,14 +112,14 @@ public class UIManager : MonoBehaviour
         if (count >= postFixUnit.Length)
             count = postFixUnit.Length - 1;
 
-        goldD = Math.Floor(goldD * 100) / 100;  // 반올림 방지
+        goldD = Math.Floor(goldD * 100) / 100; // 반올림 방지
         goldStr = string.Format("{0:0.##}", goldD) + postFixUnit[count];
 
         return goldStr;
     }
-    
+
     #endregion
-    
+
     void SetPlayerHp(string defaultPlayerAction = "")
     {
         float playerHpAmount = (float)GameManager.instance.player.hp / GameManager.instance.player.maxHp;
@@ -108,7 +135,6 @@ public class UIManager : MonoBehaviour
 
     public void RecorvePlayerHpEffect()
     {
-
         OffHpbarText();
 
         Sequence sequence = DOTween.Sequence();
@@ -121,9 +147,9 @@ public class UIManager : MonoBehaviour
         Tween scaleSmallerTween = playerHp.GetComponent<RectTransform>().DOScale(1f, 0.5f);
 
         sequence.Append(fillHpTween)
-        .Join(scaleBiggerTween)
-        .Append(scaleSmallerTween)
-        .OnComplete(OnCompleteRecorvePlayerHpEffect);
+            .Join(scaleBiggerTween)
+            .Append(scaleSmallerTween)
+            .OnComplete(OnCompleteRecorvePlayerHpEffect);
     }
 
     void OnCompleteRecorvePlayerHpEffect()
@@ -143,7 +169,8 @@ public class UIManager : MonoBehaviour
             return;
         }
 
-        string questDescStr = string.Format("{0} [{1}/{2}]", questData.desc, GameManager.instance.questManager.curCount, questData.targetCount);
+        string questDescStr = string.Format("{0} [{1}/{2}]", questData.desc, GameManager.instance.questManager.curCount,
+            questData.targetCount);
         string questRewardAmountStr = ConvertGoldToText(questData.rewardAmount);
 
 
@@ -206,7 +233,7 @@ public class UIManager : MonoBehaviour
         Tween scaleSmallerTween = interactButton.GetComponent<RectTransform>().DOScale(1f, 0.2f);
 
         sequence.Append(scaleBiggerTween)
-        .Append(scaleSmallerTween);
+            .Append(scaleSmallerTween);
     }
 
     public void OffInteractBtn()
@@ -240,9 +267,8 @@ public class UIManager : MonoBehaviour
 
     public void OpenShop()
     {
-        SetShopItems();
         shopPanel.SetActive(true);
-        shopPanel.GetComponent<RectTransform>().DOPunchScale(new Vector3(0.02f, 0.02f, 0.02f), 0.2f, 1, 1f);
+        shopPanel.transform.DOPunchScale(new Vector3(0.02f, 0.02f, 0.02f), 0.2f, 1, 1f);
     }
 
     #region Shop
@@ -252,11 +278,66 @@ public class UIManager : MonoBehaviour
         shopPanel.SetActive(false);
     }
 
-    public void SetShopItems()
+    public void InitShopItems()
     {
-        Dictionary<string, long> shopItems = GameManager.instance.inventory.items;
-        
-        Debug.Log(shopItems.Count);
+        shopItems = new List<GameObject>();
+
+        foreach (ItemType type in Enum.GetValues(typeof(ItemType)))
+        {
+            GameObject newShopItem = Instantiate(shopItemPrefab, shopContent);
+            shopItems.Add(newShopItem);
+            ShopItem shopItem = newShopItem.GetComponent<ShopItem>();
+            shopItem.Init(GameManager.instance.itemDatas[(int)type]);
+            shopItem.OnClickShopItem += OnItemSellPanel;
+        }
+    }
+
+    void RefreshShopItem(ItemData itemData, long quantity)
+    {
+        GameObject findShopItem = shopItems.Find(item => item.GetComponent<ShopItem>().itemName == itemData.itemName);
+        long itemQuantity = GameManager.instance.inventory.GetItemQuantity(itemData.type.ToString());
+        findShopItem?.GetComponent<ShopItem>().RefreshQuantity(itemQuantity);
+    }
+
+    #endregion
+
+    #region ItemSellPanel
+
+    void OnItemSellPanel(ItemData itemData)
+    {
+        SetItemSellPanel(itemData);
+        itemSellPanel.gameObject.SetActive(true);
+        OnItemInfoPanel(itemData);
+    }
+
+    void SetItemSellPanel(ItemData itemData)
+    {
+        itemSellPanel.Init(itemData, this);
+    }
+
+    #endregion
+
+    #region ItemInfoPanel
+
+    void OnItemInfoPanel(ItemData itemData)
+    {
+        SetItemInfoPanel(itemData);
+        itemInfoPanel.SetActive(true);
+        itemInfoPanel.transform.DOPunchScale(new Vector3(0.02f, 0.02f, 0.02f), 0.2f, 1, 1f);
+    }
+
+    void OffItemInfoPanel()
+    {
+        itemInfoPanel.SetActive(false);
+    }
+
+    void SetItemInfoPanel(ItemData itemData)
+    {
+        itemNameText.text = itemData.itemName;
+        itemIcon.sprite = itemData.icon;
+        itemPriceText.text = "가격:" + itemData.price;
+        itemQuantityText.text = "수량:x" + GameManager.instance.inventory.GetItemQuantity(itemData.type.ToString());
+        itemDescriptionText.text = itemData.description;
     }
 
     #endregion

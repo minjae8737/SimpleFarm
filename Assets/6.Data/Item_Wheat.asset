@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Item_Wheat
   m_EditorClassIdentifier: 
   type: 0
-  itemName: Wheat
+  itemName: "\uBC00"
   description: 
   maxStackSize: 99999
   price: 1

@@ -13,28 +13,33 @@ public class Player : MonoBehaviour
     public float scanRange;
     public LayerMask targetLayer;
     Vector2 inputVec;
+    
     Rigidbody2D rigid;
     Collider2D[] targets;
     GameObject nearestTarget;
-    Animator anim;
-    bool hasSentTrigger;
-    Vector3 reverseScale = new Vector3(-1, 1, 1);
-
-
-    public GameObject rake;
-    public float rotDuration;
-    Vector3 startRakeRot = new Vector3(0, 0, 45f);
-    Vector3 endRakeRot = new Vector3(0, 0, -35f);
+    
+    SpriteRenderer hairSprite;
+    SpriteRenderer bodySprite;
+    Animator hairAnim;
+    Animator bodyAnim;
+    PlayerAnimationEvent animationEvent;
+    bool isActionAnim;
 
     public event Action<string> OnPlayerAction;
-
 
     void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
-        anim = GetComponent<Animator>();
-        hasSentTrigger = false;
+        hairSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
+        bodySprite = transform.GetChild(1).GetComponent<SpriteRenderer>();
+        hairAnim = transform.GetChild(0).GetComponent<Animator>();
+        bodyAnim = transform.GetChild(1).GetComponent<Animator>();
+        animationEvent = transform.GetChild(1).GetComponent<PlayerAnimationEvent>();
+        
+        isActionAnim = false;
 
+        animationEvent.OnStateEnd += OnInteractionEnd;
+        
         Init();
     }
 
@@ -59,23 +64,34 @@ public class Player : MonoBehaviour
     void FixedUpdate()
     {
         targets = Physics2D.OverlapCircleAll(transform.position, scanRange, targetLayer);
-        rigid.MovePosition(rigid.position + (inputVec * speed * Time.fixedDeltaTime));
+        if (!isActionAnim)
+        { 
+            rigid.MovePosition(rigid.position + (inputVec * speed * Time.fixedDeltaTime));
+        }
 
-        Interacting();
+        SuchObject();
     }
 
     void LateUpdate()
     {
-        anim.SetFloat("Speed", inputVec.magnitude);
+        
+        hairAnim.SetFloat("Speed", inputVec.normalized.magnitude);
+        bodyAnim.SetFloat("Speed", inputVec.normalized.magnitude);
 
         if (inputVec.x != 0)
         {
-            bool isReverse = inputVec.x < 0 ? true : false;
-            transform.localScale = isReverse ? reverseScale : Vector3.one;
+            bool isReverse = inputVec.x < 0;
+            hairSprite.flipX = isReverse;
+            bodySprite.flipX = isReverse;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Interacting();
         }
     }
 
-    void Interacting()
+    void SuchObject()
     {
         if (hp <= 0)
             return;
@@ -91,15 +107,8 @@ public class Player : MonoBehaviour
 
             if (dis < minDistance && ((isObject && !component.isCoolTime) || !isObject))
             {
-
                 minDistance = dis;
                 nearest = target.gameObject;
-
-                if (!hasSentTrigger && isObject && !component.isCoolTime)
-                {
-                    hasSentTrigger = true;
-                    OnInteractionEffect();
-                }
             }
         }
 
@@ -119,29 +128,38 @@ public class Player : MonoBehaviour
         }
     }
 
-    void OnInteractionEffect()
+    void Interacting()
     {
-        Sequence sequence = DOTween.Sequence();
+        Producer producer = nearestTarget.GetComponent<Producer>();
+        
+        if (isActionAnim || producer == null) return;
+        
+        isActionAnim = true;
 
-        rake.transform.localRotation = Quaternion.Euler(startRakeRot);
-        Tween rotateTween = rake.transform.DOLocalRotate(endRakeRot, rotDuration).SetEase(Ease.InOutExpo);
-
-        sequence.Append(rotateTween)
-        .OnComplete(OnInteractionEnd);
+        switch (producer?.type)
+        {
+            case ItemType.Wheat:
+            case ItemType.Apple:
+                hairAnim.SetTrigger("DoDoing");
+                bodyAnim.SetTrigger("DoDoing");
+                break;
+                // bodyAnim.SetTrigger("DoAxe");
+                // bodyAnim.SetTrigger("DoHamering");
+                // bodyAnim.SetTrigger("DoMining");
+        }
+        
     }
 
     public void OnInteractionEnd()
     {
-
         if (nearestTarget != null)
         {
-            nearestTarget.GetComponent<Producer>().OnInteract();
+            nearestTarget.GetComponent<Producer>()?.OnInteract();
             LoseHp();
             OnPlayerAction?.Invoke("Interact");
         }
 
-        rake.transform.localRotation = Quaternion.identity;
-        hasSentTrigger = false;
+        isActionAnim = false;
     }
 
     public void LoseHp()

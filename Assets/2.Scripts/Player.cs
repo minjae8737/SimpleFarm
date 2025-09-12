@@ -139,7 +139,6 @@ public class Player : MonoBehaviour
         switch (producer?.type)
         {
             case ItemType.Wheat:
-            case ItemType.Apple:
                 hairAnim.SetTrigger("DoDoing");
                 bodyAnim.SetTrigger("DoDoing");
                 break;

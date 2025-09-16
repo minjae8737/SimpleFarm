@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ItemType { Wheat }
+public enum ItemType { Wheat,Beet,Cabbage,Carrot,Cauliflower,Kale,Parsnip,Potato,Pumpkin,Radish,Sunflower }
 
 [CreateAssetMenu(fileName = "Item_", menuName = "ScriptableObject/Item")]
 public class ItemData : ScriptableObject

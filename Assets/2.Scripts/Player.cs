@@ -130,7 +130,7 @@ public class Player : MonoBehaviour
 
     void Interacting()
     {
-        Producer producer = nearestTarget.GetComponent<Producer>();
+        Producer producer = nearestTarget?.GetComponent<Producer>();
         
         if (isActionAnim || producer == null) return;
         

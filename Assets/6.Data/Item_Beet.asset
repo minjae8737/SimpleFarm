@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2822044c6aa2148598fd4d9c011dbb06, type: 3}
-  m_Name: Item_Wheat
+  m_Name: Item_Beet
   m_EditorClassIdentifier: 
-  type: 0
-  itemName: "\uBC00"
+  type: 1
+  itemName: "\uBE44\uD2B8"
   description: 
   maxStackSize: 99999
-  price: 1
-  icon: {fileID: 21300000, guid: 77a867fa9f60e4349ba7fc5c2fe1b470, type: 3}
+  price: 3
+  icon: {fileID: 21300000, guid: 8f6c1ab8a0be2492ca9aeae670342091, type: 3}

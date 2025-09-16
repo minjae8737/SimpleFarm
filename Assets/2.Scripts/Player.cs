@@ -139,6 +139,16 @@ public class Player : MonoBehaviour
         switch (producer?.type)
         {
             case ItemType.Wheat:
+            case ItemType.Beet:
+            case ItemType.Cabbage:
+            case ItemType.Carrot:
+            case ItemType.Cauliflower:
+            case ItemType.Kale:
+            case ItemType.Parsnip:
+            case ItemType.Potato:
+            case ItemType.Pumpkin:
+            case ItemType.Radish:
+            case ItemType.Sunflower:
                 hairAnim.SetTrigger("DoDoing");
                 bodyAnim.SetTrigger("DoDoing");
                 break;

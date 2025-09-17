@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f94168c3d47694814a5e686e660842a2, type: 3}
+  m_Name: Product_Carrot
+  m_EditorClassIdentifier: 
+  productName: "\uB2F9\uADFC"
+  maxHp: 15
+  coolTime: 20
+  sprites:
+  - {fileID: 21300000, guid: 0eb02298673614f14a1d74ce8d1f8a1b, type: 3}
+  - {fileID: 21300000, guid: 6c9f2927f938446d4ad30a56878c98b8, type: 3}
+  - {fileID: 21300000, guid: 33aba1edf32de43fa874021e806dd748, type: 3}
+  - {fileID: 21300000, guid: 82bc7bbe96a9449918526084b0e9dfd5, type: 3}
+  productItems:
+  - {fileID: 11400000, guid: 2c50ed7878b534b3196c8947c7006d0f, type: 2}
+  productQuantities: 01000000

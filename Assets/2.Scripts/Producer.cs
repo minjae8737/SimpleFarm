@@ -4,12 +4,10 @@ using UnityEngine;
 
 public class Producer : MonoBehaviour
 {
-    [Header("# Producer Info")]
-    public ItemType type;
+    [Header("# Producer Info")] public ItemType type;
     public ProductData productData;
-    
-    [Header("# Gauge UI")]
-    public GameObject uiGaugeBar;
+
+    [Header("# Gauge UI")] public GameObject uiGaugeBar;
     public GameObject uiGauge;
     public GameObject uiHpBar;
     public GameObject uiHp;
@@ -18,9 +16,9 @@ public class Producer : MonoBehaviour
     float coolTime;
     float maxHp;
     float hp;
-    
+
     public bool isCoolTime;
-    
+
 
     SpriteRenderer sprite;
 
@@ -51,12 +49,12 @@ public class Producer : MonoBehaviour
 
         coolTime += Time.deltaTime;
         SetGauge();
+        SetSprite();
 
         if (maxCoolTime <= coolTime)
         {
             isCoolTime = false;
             OffGauge();
-            SetSprite();
         }
     }
 
@@ -84,7 +82,6 @@ public class Producer : MonoBehaviour
             hp = maxHp;
             SetSprite();
         }
-
     }
 
     public void OnGauge()
@@ -119,6 +116,7 @@ public class Producer : MonoBehaviour
 
     public void SetSprite()
     {
-        sprite.sprite = isCoolTime ? productData.sprites[0] : productData.sprites[1];
+        int idx = (int)(uiGauge.transform.localScale.x * (productData.sprites.Length - 1));
+        sprite.sprite = productData.sprites[idx];
     }
 }

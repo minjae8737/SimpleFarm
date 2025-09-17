@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f94168c3d47694814a5e686e660842a2, type: 3}
+  m_Name: Product_Potato
+  m_EditorClassIdentifier: 
+  productName: "\uAC10\uC790"
+  maxHp: 45
+  coolTime: 50
+  sprites:
+  - {fileID: 21300000, guid: 79beaa9bb0cd64b12bb2f52e7dd1fd6d, type: 3}
+  - {fileID: 21300000, guid: 1175c8310aaf54883841420ebf78100f, type: 3}
+  - {fileID: 21300000, guid: 40604e663c79b4c51a0574276bac591a, type: 3}
+  - {fileID: 21300000, guid: 016ef4cfba3b942a1a4be9bc68073d85, type: 3}
+  productItems:
+  - {fileID: 11400000, guid: e1594ac61f695414da6f6574f500f766, type: 2}
+  productQuantities: 01000000

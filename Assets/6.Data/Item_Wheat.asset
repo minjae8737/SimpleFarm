@@ -17,4 +17,4 @@ MonoBehaviour:
   description: 
   maxStackSize: 99999
   price: 1
-  icon: {fileID: 21300000, guid: dc7782869cd9d47ae80845a038892c4b, type: 3}
+  icon: {fileID: 21300000, guid: 77a867fa9f60e4349ba7fc5c2fe1b470, type: 3}

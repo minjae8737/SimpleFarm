@@ -10232,7 +10232,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: spr_tileset_sunnysideworld_16px_507
+      name: box_shadow_1
       rect:
         serializedVersion: 2
         x: 576
@@ -10253,7 +10253,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: spr_tileset_sunnysideworld_16px_508
+      name: box_shadow_2
       rect:
         serializedVersion: 2
         x: 592
@@ -10274,7 +10274,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: spr_tileset_sunnysideworld_16px_509
+      name: box_shadow_3
       rect:
         serializedVersion: 2
         x: 608
@@ -34068,6 +34068,9 @@ TextureImporter:
       box_7: -524867264
       box_8: -1343845728
       box_9: -1263929202
+      box_shadow_1: 541518418
+      box_shadow_2: -875836
+      box_shadow_3: -774735119
       bridge_0: 887493449
       bridge_1: -2014071527
       bridge_10: -68969194
@@ -35347,9 +35350,6 @@ TextureImporter:
       spr_tileset_sunnysideworld_16px_488: -402272296
       spr_tileset_sunnysideworld_16px_49: 571535776
       spr_tileset_sunnysideworld_16px_50: -1883500330
-      spr_tileset_sunnysideworld_16px_507: 541518418
-      spr_tileset_sunnysideworld_16px_508: -875836
-      spr_tileset_sunnysideworld_16px_509: -774735119
       spr_tileset_sunnysideworld_16px_51: 1052273273
       spr_tileset_sunnysideworld_16px_513: -1211873095
       spr_tileset_sunnysideworld_16px_514: 1143881104

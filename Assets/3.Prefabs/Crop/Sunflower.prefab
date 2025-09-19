@@ -436,7 +436,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54315a7af83fe4ca491c021a2177e27f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 10
+  type: 12
   productData: {fileID: 11400000, guid: 978180a88b9a54561a2696b5c2473c7a, type: 2}
   uiGaugeBar: {fileID: 3789617512151358599}
   uiGauge: {fileID: 8077471511257340534}

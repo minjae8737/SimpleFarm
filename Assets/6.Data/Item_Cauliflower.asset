@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2822044c6aa2148598fd4d9c011dbb06, type: 3}
   m_Name: Item_Cauliflower
   m_EditorClassIdentifier: 
-  type: 4
+  type: 6
   itemName: "\uCEEC\uB9AC\uD50C\uB77C\uC6CC"
   description: 
   maxStackSize: 99999

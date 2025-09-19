@@ -9,6 +9,7 @@ public enum UIBtnType
 {
     RecoverHP,
     Shop,
+    
 }
 
 public class UIManager : MonoBehaviour

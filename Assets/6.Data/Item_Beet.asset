@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2822044c6aa2148598fd4d9c011dbb06, type: 3}
   m_Name: Item_Beet
   m_EditorClassIdentifier: 
-  type: 1
+  type: 3
   itemName: "\uBE44\uD2B8"
   description: 
   maxStackSize: 99999

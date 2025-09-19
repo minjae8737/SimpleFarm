@@ -62,9 +62,7 @@ public class Producer : MonoBehaviour
     {
         if (isCoolTime)
             return;
-
-        Debug.Log("OnInteract()");
-
+        
         OnHpBar();
         hp -= 1; // FIXME 나중엔 플레이어 데미지 가져오기
         SetHp();
@@ -80,7 +78,6 @@ public class Producer : MonoBehaviour
             isCoolTime = true;
             coolTime = 0f;
             hp = maxHp;
-            SetSprite();
         }
     }
 

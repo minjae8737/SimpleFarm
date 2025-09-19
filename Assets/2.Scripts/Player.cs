@@ -93,9 +93,6 @@ public class Player : MonoBehaviour
 
     void SuchObject()
     {
-        if (hp <= 0)
-            return;
-
         GameObject nearest = null;
         float minDistance = Mathf.Infinity;
 
@@ -130,6 +127,9 @@ public class Player : MonoBehaviour
 
     void Interacting()
     {
+        if (hp <= 0)
+            return;
+        
         Producer producer = nearestTarget?.GetComponent<Producer>();
         
         if (isActionAnim || producer == null) return;
@@ -152,9 +152,15 @@ public class Player : MonoBehaviour
                 hairAnim.SetTrigger("DoDoing");
                 bodyAnim.SetTrigger("DoDoing");
                 break;
-                // bodyAnim.SetTrigger("DoAxe");
+            case ItemType.Tree:
+                hairAnim.SetTrigger("DoAxe");
+                bodyAnim.SetTrigger("DoAxe");
+                break;
+            case ItemType.Rock:
+                hairAnim.SetTrigger("DoMining");
+                bodyAnim.SetTrigger("DoMining");
+                break;
                 // bodyAnim.SetTrigger("DoHamering");
-                // bodyAnim.SetTrigger("DoMining");
         }
         
     }

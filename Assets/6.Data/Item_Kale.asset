@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2822044c6aa2148598fd4d9c011dbb06, type: 3}
   m_Name: Item_Kale
   m_EditorClassIdentifier: 
-  type: 5
+  type: 7
   itemName: "\uCF00\uC77C"
   description: 
   maxStackSize: 99999

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2822044c6aa2148598fd4d9c011dbb06, type: 3}
   m_Name: Item_Carrot
   m_EditorClassIdentifier: 
-  type: 3
+  type: 5
   itemName: "\uB2F9\uADFC"
   description: 
   maxStackSize: 99999

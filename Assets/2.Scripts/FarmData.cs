@@ -15,9 +15,9 @@ public class FarmData
 
     [Space(10)]
     [Header("최대 자동 생산 확률 레벨")]
-    public int maxAutoProduceCanceLevel;
+    public int maxAutoProduceChanceLevel;
     [Header("기본 자동 생산 확률(%)")]
-    public float basicAutoProduceCance;
+    public float basicAutoProduceChance;
     [Header("레벨당 생산 확률 증가(%)")]
     public float autoProduceChancePer;
     [Header("자동 생산 확률 기본 골드")]

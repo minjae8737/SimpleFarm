@@ -9,12 +9,13 @@ public enum UIBtnType
 {
     RecoverHP,
     Shop,
-    
+    Island_Wheat,
 }
 
 public class UIManager : MonoBehaviour
 {
-    [Header("HUD")] public Text goldText;
+    [Header("HUD")] 
+    public Text goldText;
     public GameObject questPanel;
     Image questRewardIcon;
     Text questRewardText;
@@ -29,20 +30,26 @@ public class UIManager : MonoBehaviour
     float recoveHpDuration = 3f; // FillAmount 0 -> 1 까지 걸리는 시간
     public Button interactButton;
 
-    [Header("Shop")] public GameObject shopPanel;
+    [Header("Shop")] 
+    public GameObject shopPanel;
     RectTransform shopContent;
     public GameObject shopItemPrefab;
     List<GameObject> shopItems;
     public ItemSellPanel itemSellPanel;
 
-    [Header("Item")] public GameObject itemInfoPanel;
+    [Header("Item")] 
+    public GameObject itemInfoPanel;
     Text itemNameText;
     Image itemIcon;
     Text itemPriceText;
     Text itemQuantityText;
     Text itemDescriptionText;
 
-    [Header("Sprites")] public Sprite[] rewardIcons; // RewardsType과 매칭
+    [Header("Farm")]
+    public GameObject farmUpgradePanel;
+    
+    [Header("Sprites")] 
+    public Sprite[] rewardIcons; // RewardsType과 매칭
 
     public void Init()
     {
@@ -216,6 +223,9 @@ public class UIManager : MonoBehaviour
             case UIBtnType.Shop:
                 interactButton.onClick.AddListener(OpenShop);
                 break;
+            case UIBtnType.Island_Wheat:
+                interactButton.onClick.AddListener(() => SetFarmUpgradePanel(IslandType.Wheat));
+                break;
         }
 
         OnInteractBtnEffect();
@@ -341,5 +351,14 @@ public class UIManager : MonoBehaviour
         itemDescriptionText.text = itemData.description;
     }
 
+    #endregion
+    
+    #region FarmUpgradePanel
+
+    void SetFarmUpgradePanel(IslandType islandType)
+    {
+        Debug.Log(islandType);
+    }
+    
     #endregion
 }

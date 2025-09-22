@@ -13,14 +13,14 @@ MonoBehaviour:
   m_Name: Island_1
   m_EditorClassIdentifier: 
   islandType: 1
-  name: Wheat_Island
+  name: "\uBC00 \uC12C"
   farmData:
     name: Wheat
     maxFarmLevel: 20
     basicFarmGold: 100
     farmGoldPer: 1.05
-    maxAutoProduceCanceLevel: 20
-    basicAutoProduceCance: 0
+    maxAutoProduceChanceLevel: 20
+    basicAutoProduceChance: 0
     autoProduceChancePer: 4
     basicAutoProduceChanceGold: 0
     autoProduceChanceGoldPer: 0

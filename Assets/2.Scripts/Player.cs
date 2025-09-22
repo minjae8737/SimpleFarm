@@ -113,14 +113,14 @@ public class Player : MonoBehaviour
         {
             if (nearestTarget != null)
             {
-                nearestTarget.GetComponent<Marker>().OffMarker();
+                nearestTarget.GetComponent<Marker>()?.OffMarker();
             }
 
             nearestTarget = nearest;
 
             if (nearestTarget != null)
             {
-                nearestTarget.GetComponent<Marker>().OnMarker();
+                nearestTarget.GetComponent<Marker>()?.OnMarker();
             }
         }
     }

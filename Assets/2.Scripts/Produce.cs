@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Producer : MonoBehaviour
+public class Produce : MonoBehaviour
 {
-    [Header("# Producer Info")] public ItemType type;
+    [Header("# Produce Info")] 
+    public ItemType type;
     public ProductData productData;
 
-    [Header("# Gauge UI")] public GameObject uiGaugeBar;
+    [Header("# Gauge UI")] 
+    public GameObject uiGaugeBar;
     public GameObject uiGauge;
     public GameObject uiHpBar;
     public GameObject uiHp;
@@ -40,6 +42,11 @@ public class Producer : MonoBehaviour
         hp = maxHp;
 
         SetSprite();
+    }
+
+    public void SetDatas(float produceChance, float produceCooldown)
+    {
+        maxCoolTime  = produceCooldown;
     }
 
     void Update()

@@ -100,7 +100,7 @@ public class Player : MonoBehaviour
         {
             float dis = Vector2.Distance(transform.position, target.transform.position);
 
-            bool isObject = target.TryGetComponent<Producer>(out var component);
+            bool isObject = target.TryGetComponent<Produce>(out var component);
 
             if (dis < minDistance && ((isObject && !component.isCoolTime) || !isObject))
             {
@@ -130,13 +130,13 @@ public class Player : MonoBehaviour
         if (hp <= 0)
             return;
         
-        Producer producer = nearestTarget?.GetComponent<Producer>();
+        Produce produce = nearestTarget?.GetComponent<Produce>();
         
-        if (isActionAnim || producer == null) return;
+        if (isActionAnim || produce == null) return;
         
         isActionAnim = true;
 
-        switch (producer?.type)
+        switch (produce?.type)
         {
             case ItemType.Wheat:
             case ItemType.Beet:
@@ -169,7 +169,7 @@ public class Player : MonoBehaviour
     {
         if (nearestTarget != null)
         {
-            nearestTarget.GetComponent<Producer>()?.OnInteract();
+            nearestTarget.GetComponent<Produce>()?.OnInteract();
             LoseHp();
             OnPlayerAction?.Invoke("Interact");
         }

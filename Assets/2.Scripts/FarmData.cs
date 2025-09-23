@@ -2,9 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum CropType
+{
+    Wheat,
+    Beet,
+    Cabbage,
+    Carrot,
+    Cauliflower,
+    Kale,
+    Parsnip,
+    Potato,
+    Pumpkin,
+    Radish,
+    Sunflower,
+}
+
 [System.Serializable]
 public class FarmData
 {
+    public CropType farmType;
     public string name;
     [Header("최대 농장 레벨")]
     public int maxFarmLevel;
@@ -29,7 +45,7 @@ public class FarmData
     [Space(10)]
     [Header("최대 생산 시간 레벨")]
     public int maxProduceCooldownLevel;
-    [Header("기본 생산 시간")]
+    [Header("기본 생산 시간(sec)")]
     public float basicProduceCooldown;
     [Header("레벨당 생산 시간 감소(sec)")]
     public float produceCooldownPer;

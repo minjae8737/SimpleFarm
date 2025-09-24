@@ -14,14 +14,14 @@ public class Produce : MonoBehaviour
     public GameObject uiHpBar;
     public GameObject uiHp;
 
-    float maxCoolTime;
+    float autoProduceChance; // (%)
+    float maxCoolTime;  // (sec)
     float coolTime;
     float maxHp;
     float hp;
 
     public bool isCoolTime;
-
-
+    
     SpriteRenderer sprite;
 
     void Awake()
@@ -35,6 +35,7 @@ public class Produce : MonoBehaviour
     {
         isCoolTime = false;
         maxCoolTime = productData.coolTime;
+        autoProduceChance = 0;
         // TODO: 나중에는 현재 쿨타임 값도 게임을 끌때 모두 저장되어야함.
         coolTime = 0f;
 
@@ -46,6 +47,7 @@ public class Produce : MonoBehaviour
 
     public void SetDatas(float produceChance, float produceCooldown)
     {
+        autoProduceChance = produceChance;
         maxCoolTime  = produceCooldown;
     }
 
@@ -62,6 +64,7 @@ public class Produce : MonoBehaviour
         {
             isCoolTime = false;
             OffGauge();
+            TryAutoProduce();
         }
     }
 
@@ -76,16 +79,21 @@ public class Produce : MonoBehaviour
 
         if (hp <= 0)
         {
-            DroppedItem droppedItem = GameManager.instance.GetDropItem(type).GetComponent<DroppedItem>();
-            droppedItem.SetItemPos(transform.position);
-            droppedItem.DropItem();
-
-            OffHpBar();
-            OnGauge();
-            isCoolTime = true;
-            coolTime = 0f;
-            hp = maxHp;
+            DropItem();
         }
+    }
+
+    private void DropItem()
+    {
+        DroppedItem droppedItem = GameManager.instance.GetDropItem(type).GetComponent<DroppedItem>();
+        droppedItem.SetItemPos(transform.position);
+        droppedItem.DropItem();
+
+        OffHpBar();
+        OnGauge();
+        isCoolTime = true;
+        coolTime = 0f;
+        hp = maxHp;
     }
 
     public void OnGauge()
@@ -122,5 +130,11 @@ public class Produce : MonoBehaviour
     {
         int idx = (int)(uiGauge.transform.localScale.x * (productData.sprites.Length - 1));
         sprite.sprite = productData.sprites[idx];
+    }
+
+    private void TryAutoProduce()
+    {
+        if (Random.Range(0f, 100f) < autoProduceChance) 
+            DropItem();
     }
 }

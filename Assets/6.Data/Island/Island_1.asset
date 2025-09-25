@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8c8f30171bec4f6fb421f0cb7207476, type: 3}
   m_Name: Island_1
   m_EditorClassIdentifier: 
-  islandType: 1
+  islandType: 0
   name: "\uBC00 \uC12C"
   farmData:
     farmType: 0

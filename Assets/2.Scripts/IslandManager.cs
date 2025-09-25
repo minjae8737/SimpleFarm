@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Callbacks;
 using UnityEngine;
 
 
@@ -34,7 +35,7 @@ public class IslandManager : MonoBehaviour
 
             int farmLevel = PlayerPrefs.HasKey(key + "_FarmLevel") ? PlayerPrefs.GetInt(key + "_FarmLevel") : 0; // key = Island_'n'_FarmLevel , 0 is unlock
             int autoLevel = PlayerPrefs.HasKey(key + "_AutoLevel") ? PlayerPrefs.GetInt(key + "_AutoLevel") : 0; // key = Island_'n'_AutoLevel , 0 is unlock
-            int cooldownLevel = PlayerPrefs.HasKey(key + "_CoolDownLevel") ? PlayerPrefs.GetInt(key + "_CoolDownLevel") : 0; // key = Island_'n'_CoolDownLevel , 0 is unlock
+            int cooldownLevel = PlayerPrefs.HasKey(key + "_CooldownLevel") ? PlayerPrefs.GetInt(key + "_CooldownLevel") : 0; // key = Island_'n'_CooldownLevel , 0 is unlock
             
             levelArr[FARM_LEVEL_INDEX] = farmLevel;
             levelArr[AUTOPRODUCECHANCE_LEVEL_INDEX] = autoLevel;
@@ -106,7 +107,7 @@ public class IslandManager : MonoBehaviour
         FarmData farmData = islandDatas[islandIndex].farmData;
 
         islandLevelDic[IslandKey + islandIndex][FARM_LEVEL_INDEX] += 1;
-
+        // crop 추가 로직
         SaveData(islandIndex);
     }
 
@@ -115,7 +116,7 @@ public class IslandManager : MonoBehaviour
         FarmData farmData = islandDatas[islandIndex].farmData;
 
         islandLevelDic[IslandKey + islandIndex][AUTOPRODUCECHANCE_LEVEL_INDEX] += 1;
-
+        // autoProduce 재적용 로직
         SaveData(islandIndex);
     }
 
@@ -124,7 +125,7 @@ public class IslandManager : MonoBehaviour
         FarmData farmData = islandDatas[islandIndex].farmData;
 
         islandLevelDic[IslandKey + islandIndex][PRODUCECOOLDOWN_LEVEL_INDEX] += 1;
-
+        // cooldown 재적용 로직
         SaveData(islandIndex);
     }
 
@@ -158,15 +159,43 @@ public class IslandManager : MonoBehaviour
     public float GetAutoProduceChance(int islandIndex, int level)
     {
         FarmData farmData = islandDatas[islandIndex].farmData;
-        
-        return farmData.basicAutoProduceChance * Mathf.Pow(farmData.autoProduceChancePer, level - 1);
+
+        return farmData.basicAutoProduceChance + (farmData.autoProduceChancePer * (level - 1));
     }
     
     public float GetProduceCooldown(int islandIndex, int level)
     {
         FarmData farmData = islandDatas[islandIndex].farmData;
         
-        return farmData.basicProduceCooldown - (farmData.produceCooldownPer * level - 1);
+        return farmData.basicProduceCooldown - (farmData.produceCooldownPer * (level - 1));
+    }
+
+    public FarmUpgradePanelDTO GetFarmUpgradePanelDTO(int islandIndex)
+    {
+        IslandData islandData = islandDatas[islandIndex];
+        FarmData farmData = islandData.farmData;
+        int[] islandLevelArr = islandLevelDic[IslandKey + islandIndex];
+
+        return new FarmUpgradePanelDTO
+        {
+            islandType = islandData.islandType,
+            farmTitle = farmData.name,
+            maxFarmLevel = farmData.maxFarmLevel,
+            farmLevel = islandLevelArr[FARM_LEVEL_INDEX],
+            farmCurrentValue = islandLevelArr[FARM_LEVEL_INDEX],
+            farmNextValue = islandLevelArr[FARM_LEVEL_INDEX] + 1,
+            farmGold = GetUpgradeFarmGold(islandIndex),
+            autoLevel = islandLevelArr[AUTOPRODUCECHANCE_LEVEL_INDEX],
+            maxAutoLevel = farmData.maxAutoProduceChanceLevel,
+            autoCurrentValue = GetAutoProduceChance(islandIndex, islandLevelArr[AUTOPRODUCECHANCE_LEVEL_INDEX]),
+            autoNextValue = GetAutoProduceChance(islandIndex, islandLevelArr[AUTOPRODUCECHANCE_LEVEL_INDEX] + 1),
+            autoGold = GetUpgradeAutoProduceChanceGold(islandIndex),
+            cooldownLevel = islandLevelArr[PRODUCECOOLDOWN_LEVEL_INDEX],
+            maxCooldownLevel = farmData.maxProduceCooldownLevel,
+            cooldownCurrentValue = GetProduceCooldown(islandIndex, islandLevelArr[PRODUCECOOLDOWN_LEVEL_INDEX]),
+            cooldownNextValue = GetProduceCooldown(islandIndex, islandLevelArr[PRODUCECOOLDOWN_LEVEL_INDEX] + 1),
+            cooldownGold = GetUpgradeProduceCooldownGold(islandIndex),
+        };
     }
     
     public void SaveData(int islandIndex)
@@ -176,7 +205,7 @@ public class IslandManager : MonoBehaviour
 
         PlayerPrefs.SetInt(key + "_FarmLevel", levelArr[FARM_LEVEL_INDEX]); // key = Island_'n'_FarmLevel
         PlayerPrefs.SetInt(key + "_AutoLevel", levelArr[AUTOPRODUCECHANCE_LEVEL_INDEX]); // key = Island_'n'_AutoLevel
-        PlayerPrefs.SetInt(key + "_CoolDownLevel", levelArr[PRODUCECOOLDOWN_LEVEL_INDEX]); // key = Island_'n'_CoolDownLevel
+        PlayerPrefs.SetInt(key + "_CooldownLevel", levelArr[PRODUCECOOLDOWN_LEVEL_INDEX]); // key = Island_'n'_CooldownLevel
     }
 
     public void SaveDataAll()
@@ -189,7 +218,7 @@ public class IslandManager : MonoBehaviour
 
             PlayerPrefs.SetInt(key + "_FarmLevel", levelArr[FARM_LEVEL_INDEX]); // key = Island_'n'_FarmLevel
             PlayerPrefs.SetInt(key + "_AutoLevel", levelArr[AUTOPRODUCECHANCE_LEVEL_INDEX]); // key = Island_'n'_AutoLevel
-            PlayerPrefs.SetInt(key + "_CoolDownLevel", levelArr[PRODUCECOOLDOWN_LEVEL_INDEX]); // key = Island_'n'_CoolDownLevel
+            PlayerPrefs.SetInt(key + "_CooldownLevel", levelArr[PRODUCECOOLDOWN_LEVEL_INDEX]); // key = Island_'n'_CooldownLevel
         }
     }
 }

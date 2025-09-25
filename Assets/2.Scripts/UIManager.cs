@@ -46,7 +46,7 @@ public class UIManager : MonoBehaviour
     Text itemDescriptionText;
 
     [Header("Farm")]
-    public GameObject farmUpgradePanel;
+    public FarmUpgradePanel farmUpgradePanel;
     
     [Header("Sprites")] 
     public Sprite[] rewardIcons; // RewardsType과 매칭
@@ -70,20 +70,18 @@ public class UIManager : MonoBehaviour
         questClearBtnDesc = questClearBtn.transform.GetChild(1).GetComponent<Text>();
 
         // 상점
-        shopContent = shopPanel.transform.GetChild(0).transform.GetChild(1).transform.GetChild(0).transform.GetChild(0)
-            .GetComponent<RectTransform>();
+        shopContent = shopPanel.transform.GetChild(0).transform.GetChild(1).transform.GetChild(0).transform.GetChild(0).GetComponent<RectTransform>();
 
         // 아이템
         itemNameText = itemInfoPanel.transform.GetChild(0).GetComponent<Text>();
         itemIcon = itemInfoPanel.transform.GetChild(1).transform.GetChild(0).GetComponent<Image>();
-        itemPriceText = itemInfoPanel.transform.GetChild(2).transform.GetChild(0).transform.GetChild(0)
-            .GetComponent<Text>();
-        itemQuantityText = itemInfoPanel.transform.GetChild(2).transform.GetChild(1).transform.GetChild(0)
-            .GetComponent<Text>();
+        itemPriceText = itemInfoPanel.transform.GetChild(2).transform.GetChild(0).transform.GetChild(0).GetComponent<Text>();
+        itemQuantityText = itemInfoPanel.transform.GetChild(2).transform.GetChild(1).transform.GetChild(0).GetComponent<Text>();
         itemDescriptionText = itemInfoPanel.transform.GetChild(3).transform.GetChild(0).GetComponent<Text>();
-
+        
+        
         SetPlayerHp();
-        SetGoldText();
+        RefreshGoldText();
         SetQuestPanel();
         InitShopItems();
 
@@ -94,11 +92,15 @@ public class UIManager : MonoBehaviour
         GameManager.instance.inventory.OnItemRemoved += RefreshShopItem;
 
         itemSellPanel.OffItemInfoPanel += OffItemInfoPanel;
+        
+        farmUpgradePanel.OnClickFarmUpgradeBtn += OnClickFarmUpgradeBtn;
+        farmUpgradePanel.OnClickAutoUpgradeBtn += OnClickAutoUpgradeBtn;
+        farmUpgradePanel.OnClickCooldownUpgradeBtn += OnClickCooldownUpgradeBtn;
     }
 
     #region Gold
 
-    public void SetGoldText()
+    public void RefreshGoldText()
     {
         goldText.text = ConvertGoldToText(GameManager.instance.gold);
     }
@@ -355,9 +357,37 @@ public class UIManager : MonoBehaviour
     
     #region FarmUpgradePanel
 
-    void SetFarmUpgradePanel(IslandType islandType)
+    private void SetFarmUpgradePanel(IslandType islandType)
     {
-        Debug.Log(islandType);
+        farmUpgradePanel.RefreshPanel(GameManager.instance.islandManager.GetFarmUpgradePanelDTO((int)islandType));
+        farmUpgradePanel.gameObject.SetActive(true);
+    }
+
+    private void OnClickFarmUpgradeBtn(IslandType islandType, long gold)
+    {
+        if (!GameManager.instance.CheckGold(gold)) return;
+        
+        GameManager.instance.islandManager.LevelUpFarm((int)islandType);
+        GameManager.instance.SetGold(-gold);
+        farmUpgradePanel.RefreshPanel(GameManager.instance.islandManager.GetFarmUpgradePanelDTO((int)islandType));
+    }
+
+    private void OnClickAutoUpgradeBtn(IslandType islandType, long gold)
+    {
+        if (!GameManager.instance.CheckGold(gold)) return;
+        
+        GameManager.instance.islandManager.LevelUpAutoProduceChance((int)islandType);
+        GameManager.instance.SetGold(-gold);
+        farmUpgradePanel.RefreshPanel(GameManager.instance.islandManager.GetFarmUpgradePanelDTO((int)islandType));
+    }
+
+    private void OnClickCooldownUpgradeBtn(IslandType islandType, long gold)
+    {
+        if (!GameManager.instance.CheckGold(gold)) return;
+        
+        GameManager.instance.islandManager.LevelUpProduceCooldown((int)islandType);
+        GameManager.instance.SetGold(-gold);
+        farmUpgradePanel.RefreshPanel(GameManager.instance.islandManager.GetFarmUpgradePanelDTO((int)islandType));
     }
     
     #endregion

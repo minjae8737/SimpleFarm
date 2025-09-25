@@ -59,7 +59,7 @@ public class GameManager : MonoBehaviour
 
     #region Gold
 
-    bool CheckGold(long price)
+    public bool CheckGold(long price)
     {
         return price <= gold;
     }
@@ -68,7 +68,7 @@ public class GameManager : MonoBehaviour
     {
         gold += price;
         if (gold > maxGold) gold = maxGold;
-        uiManager.SetGoldText();
+        uiManager.RefreshGoldText();
     }
 
     void SaveGold()
@@ -105,7 +105,7 @@ public class GameManager : MonoBehaviour
     {
         inventory.RemoveItem(itemData, quantity);
         SetGold(itemData.price * quantity);
-        uiManager.SetGoldText();
+        uiManager.RefreshGoldText();
     }
 
     #endregion

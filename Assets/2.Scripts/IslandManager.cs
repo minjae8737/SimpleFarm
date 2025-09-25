@@ -107,7 +107,20 @@ public class IslandManager : MonoBehaviour
         FarmData farmData = islandDatas[islandIndex].farmData;
 
         islandLevelDic[IslandKey + islandIndex][FARM_LEVEL_INDEX] += 1;
+        
         // crop 추가 로직
+        int cropCount = crops[islandIndex].Count;
+        List<GameObject> soilList = soils[islandIndex];
+        List<Produce> cropList = crops[islandIndex];
+        
+        float produceChance = GetAutoProduceChance(islandIndex, islandLevelDic[IslandKey + islandIndex][AUTOPRODUCECHANCE_LEVEL_INDEX]);
+        float produceCooldown = GetProduceCooldown(islandIndex, islandLevelDic[IslandKey + islandIndex][PRODUCECOOLDOWN_LEVEL_INDEX]);
+
+        GameObject newCrop = Instantiate(cropPrefabs[(int)farmData.farmType], soilList[cropCount].transform);
+        Produce produce = newCrop.GetComponent<Produce>();
+        produce.SetDatas(produceChance, produceCooldown);
+        cropList.Add(produce);
+        
         SaveData(islandIndex);
     }
 
@@ -116,7 +129,16 @@ public class IslandManager : MonoBehaviour
         FarmData farmData = islandDatas[islandIndex].farmData;
 
         islandLevelDic[IslandKey + islandIndex][AUTOPRODUCECHANCE_LEVEL_INDEX] += 1;
+        
         // autoProduce 재적용 로직
+        List<Produce> cropList = crops[islandIndex];
+        float autoProduceChance = GetAutoProduceChance(islandIndex, islandLevelDic[IslandKey + islandIndex][AUTOPRODUCECHANCE_LEVEL_INDEX]);
+
+        foreach (Produce produce in cropList)
+        {
+            produce.SetAutoProduce(autoProduceChance);
+        }
+        
         SaveData(islandIndex);
     }
 
@@ -125,7 +147,16 @@ public class IslandManager : MonoBehaviour
         FarmData farmData = islandDatas[islandIndex].farmData;
 
         islandLevelDic[IslandKey + islandIndex][PRODUCECOOLDOWN_LEVEL_INDEX] += 1;
+        
         // cooldown 재적용 로직
+        List<Produce> cropList = crops[islandIndex];
+        float produceCooldown = GetProduceCooldown(islandIndex, islandLevelDic[IslandKey + islandIndex][PRODUCECOOLDOWN_LEVEL_INDEX]);
+
+        foreach (Produce produce in cropList)
+        {
+            produce.SetCoolTime(produceCooldown);
+        }
+        
         SaveData(islandIndex);
     }
 

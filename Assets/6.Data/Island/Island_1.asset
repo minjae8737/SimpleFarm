@@ -17,7 +17,7 @@ MonoBehaviour:
   farmData:
     farmType: 0
     name: "\uBC00 \uB18D\uC7A5"
-    maxFarmLevel: 20
+    maxFarmLevel: 25
     basicFarmGold: 100
     farmGoldPer: 1.05
     maxAutoProduceChanceLevel: 20

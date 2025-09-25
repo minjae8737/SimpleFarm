@@ -51,6 +51,16 @@ public class Produce : MonoBehaviour
         maxCoolTime  = produceCooldown;
     }
 
+    public void SetAutoProduce(float produceChance)
+    {
+        autoProduceChance = produceChance;
+    }
+
+    public void SetCoolTime(float produceCooldown)
+    {
+        maxCoolTime = produceCooldown;
+    }
+
     void Update()
     {
         if (!isCoolTime)

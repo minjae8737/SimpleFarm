@@ -84,7 +84,7 @@ public class FarmUpgradePanel : MonoBehaviour
         bool canUpgradeCooldownLevel = farmUpgradePanelDTO.cooldownLevel < farmUpgradePanelDTO.maxCooldownLevel;
         cooldownLevelText.text = "Lv." + farmUpgradePanelDTO.cooldownLevel;
         cooldownCurrentText.text = farmUpgradePanelDTO.cooldownCurrentValue + "s";
-        cooldownNextText.text = farmUpgradePanelDTO.cooldownNextValue < farmUpgradePanelDTO.maxCooldownLevel ? farmUpgradePanelDTO.cooldownNextValue + "s" : "Max";
+        cooldownNextText.text = farmUpgradePanelDTO.cooldownLevel < farmUpgradePanelDTO.maxCooldownLevel ? farmUpgradePanelDTO.cooldownNextValue + "s" : "Max";
         cooldownBtnLevelText.text = farmUpgradePanelDTO.cooldownLevel + 1 <= farmUpgradePanelDTO.maxCooldownLevel ? "Lv." + (farmUpgradePanelDTO.cooldownLevel + 1) : "Max";
         cooldownGold = farmUpgradePanelDTO.cooldownGold;
         cooldownBtnGoldText.text = GameManager.instance.uiManager.ConvertGoldToText(cooldownGold);

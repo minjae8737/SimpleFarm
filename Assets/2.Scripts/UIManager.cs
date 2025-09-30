@@ -48,6 +48,9 @@ public class UIManager : MonoBehaviour
     [Header("Farm")]
     public FarmUpgradePanel farmUpgradePanel;
     
+    [Header("Inventory")]
+    public InventoryPanel inventoryPanel;
+    
     [Header("Sprites")] 
     public Sprite[] rewardIcons; // RewardsType과 매칭
 
@@ -84,12 +87,15 @@ public class UIManager : MonoBehaviour
         RefreshGoldText();
         SetQuestPanel();
         InitShopItems();
-
+        InitInventoryPanel();
+        
         GameManager.instance.player.OnPlayerAction += SetPlayerHp;
         GameManager.instance.questManager.OnQuestProgressChanged += SetQuestPanel;
 
         GameManager.instance.inventory.OnItemAdded += RefreshShopItem;
         GameManager.instance.inventory.OnItemRemoved += RefreshShopItem;
+        GameManager.instance.inventory.OnItemAdded += RefreshInventoryPanel;
+        GameManager.instance.inventory.OnItemRemoved += RefreshInventoryPanel;
 
         itemSellPanel.OffItemInfoPanel += OffItemInfoPanel;
         
@@ -332,7 +338,7 @@ public class UIManager : MonoBehaviour
 
     #region ItemInfoPanel
 
-    void OnItemInfoPanel(ItemData itemData)
+    public void OnItemInfoPanel(ItemData itemData)
     {
         SetItemInfoPanel(itemData);
         itemInfoPanel.SetActive(true);
@@ -390,5 +396,34 @@ public class UIManager : MonoBehaviour
         farmUpgradePanel.RefreshPanel(GameManager.instance.islandManager.GetFarmUpgradePanelDTO((int)islandType));
     }
     
+    #endregion
+
+    #region InventoryPanel
+
+    void InitInventoryPanel()
+    {
+        inventoryPanel.Init();
+    }
+    
+    void RefreshInventoryPanel(ItemData itemData, long quantity)
+    {
+        inventoryPanel.RefreshInventoryPanel(itemData);
+    }
+
+    public void OpenInventoryPanel()
+    {
+        questPanel.SetActive(false);
+        playerHp.SetActive(false);
+        inventoryPanel.gameObject.SetActive(true);
+        inventoryPanel.transform.DOPunchScale(new Vector3(0.02f, 0.02f, 0.02f), 0.2f, 1, 1f);
+    }
+
+    public void OffInventoryPanel()
+    {
+        inventoryPanel.gameObject.SetActive(false);
+        questPanel.SetActive(true);
+        playerHp.SetActive(true);
+    }
+
     #endregion
 }

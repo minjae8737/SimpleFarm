@@ -43,8 +43,11 @@ public class DroppedItem : MonoBehaviour
     }
 
     // 아이템 루팅 효과
-    public void PickUpItem()
+    public void 
+        PickUpItem()
     {
+        isTracking = true;
+
         Vector3 playerPos = GameManager.instance.player.transform.position;
 
         float duration = Vector3.Distance(playerPos, transform.position) / pickupSpeed;
@@ -70,7 +73,6 @@ public class DroppedItem : MonoBehaviour
         if (isTracking)
             return;
 
-        isTracking = true;
         PickUpItem();
     }
 

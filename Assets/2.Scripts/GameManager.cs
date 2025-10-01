@@ -9,10 +9,12 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     public Player player;
 
-    [Header("# Item")] public Inventory inventory;
+    [Header("# Item")] 
+    public Inventory inventory;
     public ItemData[] itemDatas;
 
-    [Header("# Manager")] public QuestManager questManager;
+    [Header("# Manager")] 
+    public QuestManager questManager;
     public IslandManager islandManager;
     public ObjectPoolManager objectPoolManager;
     public UIManager uiManager;
@@ -106,6 +108,11 @@ public class GameManager : MonoBehaviour
         inventory.RemoveItem(itemData, quantity);
         SetGold(itemData.price * quantity);
         uiManager.RefreshGoldText();
+    }
+
+    public void PickUpAllItems()
+    {
+        objectPoolManager.PickUpAllItems();
     }
 
     #endregion

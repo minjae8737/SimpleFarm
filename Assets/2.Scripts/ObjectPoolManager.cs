@@ -44,4 +44,18 @@ public class ObjectPoolManager : MonoBehaviour
 
         return obj;
     }
+
+    public void PickUpAllItems()
+    {
+        foreach (List<GameObject> pool in pools)
+        {
+            foreach (GameObject item in pool)
+            {
+                if (!item.activeSelf) 
+                    continue;
+                
+                item.GetComponent<DroppedItem>()?.PickUpItem();
+            }
+        }
+    }
 }

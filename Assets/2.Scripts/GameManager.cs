@@ -18,7 +18,9 @@ public class GameManager : MonoBehaviour
     public IslandManager islandManager;
     public ObjectPoolManager objectPoolManager;
     public UIManager uiManager;
-
+    
+    private Timer timer;
+    
     const string GoldKey = "Gold";
     public long gold;
     long maxGold = 9999999999; // 9,999,999,999
@@ -112,7 +114,9 @@ public class GameManager : MonoBehaviour
 
     public void PickUpAllItems()
     {
+        TimerHandler timerHandler = timer.StartTimer(30f);
         objectPoolManager.PickUpAllItems();
+        
     }
 
     #endregion

@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f94168c3d47694814a5e686e660842a2, type: 3}
+  m_Name: Product_Wheat
+  m_EditorClassIdentifier: 
+  productName: "\uBC00"
+  maxHp: 2
+  coolTime: 5
+  sprites:
+  - {fileID: 21300000, guid: 86267c33c34fe4654bb00deda8c70cd9, type: 3}
+  - {fileID: 21300000, guid: ab393c4e036a546b6863b65d7ba7a28c, type: 3}
+  - {fileID: 21300000, guid: e983a551962b144fcb3f9f048b256caa, type: 3}
+  - {fileID: 21300000, guid: 9725aab37486d43b18b0fbed2be5c262, type: 3}
+  productItems:
+  - {fileID: 11400000, guid: 540ad44744d5d495db25348bfa6f41cc, type: 2}
+  productQuantities: 01000000

@@ -3,10 +3,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Island_", menuName = "ScriptbleObject/Island Data")]
+public enum IslandType {     
+    Wheat,
+    Beet,
+    Cabbage,
+    Carrot,
+    Cauliflower,
+    Kale,
+    Parsnip,
+    Potato,
+    Pumpkin,
+    Radish,
+    Sunflower, 
+}
+
+[CreateAssetMenu(fileName = "Island_", menuName = "ScriptableObject/Island Data")]
 public class IslandData : ScriptableObject
 {
-    public enum IslandType { Basic, Wheat, Apple }
 
     [Header("# Info")]
     public IslandType islandType;

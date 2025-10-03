@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f94168c3d47694814a5e686e660842a2, type: 3}
+  m_Name: Product_Pumpkin
+  m_EditorClassIdentifier: 
+  productName: "\uD638\uBC15"
+  maxHp: 50
+  coolTime: 66
+  sprites:
+  - {fileID: 21300000, guid: 25ae4ddced5164df9a8f0f47051739be, type: 3}
+  - {fileID: 21300000, guid: a8ff35e2e59e14f40b35b67fc48076b0, type: 3}
+  - {fileID: 21300000, guid: 3c514227785f34615914b49e7549a692, type: 3}
+  - {fileID: 21300000, guid: 3f6e04ba84eb94502af84819da825bb9, type: 3}
+  productItems:
+  - {fileID: 11400000, guid: 6add3c36aada74ba18e8904c4b97c900, type: 2}
+  productQuantities: 01000000

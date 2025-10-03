@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f94168c3d47694814a5e686e660842a2, type: 3}
+  m_Name: Product_Cauliflower
+  m_EditorClassIdentifier: 
+  productName: "\uCEEC\uB9AC\uD50C\uB77C\uC6CC"
+  maxHp: 25
+  coolTime: 33
+  sprites:
+  - {fileID: 21300000, guid: 364ce2ff071c14efe933f2f999e7dfdd, type: 3}
+  - {fileID: 21300000, guid: 70e77d8a3430245639c06bf57f278f73, type: 3}
+  - {fileID: 21300000, guid: 451e50d754be24be6aa08ea5a3be78e9, type: 3}
+  - {fileID: 21300000, guid: 92de41a76775a43e3b20c3893aed8fca, type: 3}
+  productItems:
+  - {fileID: 11400000, guid: 39719e92405d5459dbd8683ad1a37e1e, type: 2}
+  productQuantities: 01000000

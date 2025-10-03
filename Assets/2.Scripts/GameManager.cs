@@ -8,20 +8,23 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
     public Player player;
-    public Dictionary<string, long> inventory;
 
-    [Header("# Manager")]
+    [Header("# Item")] 
+    public Inventory inventory;
+    public ItemData[] itemDatas;
+
+    [Header("# Manager")] 
     public QuestManager questManager;
     public IslandManager islandManager;
     public ObjectPoolManager objectPoolManager;
     public UIManager uiManager;
-
+    
+    public Timer timer;
+    
     const string GoldKey = "Gold";
-    const string ItemKey = "Item_";
     public long gold;
     long maxGold = 9999999999; // 9,999,999,999
-
-    public event Action<string> pickedItem;
+    public bool canPickUp = true;
 
     void Awake()
     {
@@ -41,17 +44,13 @@ public class GameManager : MonoBehaviour
         gold = GetLongFromPlayerPrefs(GoldKey);
 
         // 인벤토리 초기화
-        inventory = new Dictionary<string, long>();
+        inventory = new Inventory();
+        inventory.Init();
 
-        foreach (ObjectType type in Enum.GetValues(typeof(ObjectType)))
-        {
-            string key = ItemKey + type.ToString(); // "Item_xxxx"
-            inventory.Add(type.ToString(), GetLongFromPlayerPrefs(key));
-        }
-
+        uiManager.itemSellPanel.OnItemSell += SellItem;
     }
 
-    private long GetLongFromPlayerPrefs(string key, long defaultValue = 0L)
+    public long GetLongFromPlayerPrefs(string key, long defaultValue = 0L)
     {
         if (!PlayerPrefs.HasKey(key))
             return defaultValue;
@@ -63,7 +62,9 @@ public class GameManager : MonoBehaviour
         return defaultValue;
     }
 
-    bool CheckGold(long price)
+    #region Gold
+
+    public bool CheckGold(long price)
     {
         return price <= gold;
     }
@@ -72,7 +73,7 @@ public class GameManager : MonoBehaviour
     {
         gold += price;
         if (gold > maxGold) gold = maxGold;
-        uiManager.SetGoldText();
+        uiManager.RefreshGoldText();
     }
 
     void SaveGold()
@@ -80,25 +81,52 @@ public class GameManager : MonoBehaviour
         PlayerPrefs.SetString(GoldKey, gold.ToString());
     }
 
+    #endregion
+
     public void RestPlayer()
     {
         player.RecoverHP();
         uiManager.RecorvePlayerHpEffect();
-
     }
 
-    public GameObject GetDropItem(ObjectType type)
+    #region Item
+
+    public GameObject GetDropItem(ItemType type)
     {
         return objectPoolManager.Get(type);
     }
 
-    public void PickUpItem(ObjectType type)
+    public void PickUpItem(ItemData itemData)
     {
-        string itemTypeStr = type.ToString();
-        pickedItem?.Invoke(itemTypeStr);
-
-        if (inventory[itemTypeStr] < long.MaxValue)
-            inventory[itemTypeStr] += 1;
+        inventory.AddItem(itemData, 1);
     }
 
+    public ItemData GetItemData(ItemType type)
+    {
+        return itemDatas[(int)type];
+    }
+
+    void SellItem(ItemData itemData, long quantity)
+    {
+        inventory.RemoveItem(itemData, quantity);
+        SetGold(itemData.price * quantity);
+        uiManager.RefreshGoldText();
+    }
+
+    public void PickUpAllItems()
+    {
+        if (!canPickUp) return;
+        
+        canPickUp = false;
+        TimerHandler timerHandler = timer.StartTimer(30f, PickUpItemsCooldownEnd);
+        uiManager.OnClickMagnetBtn(timerHandler);
+        objectPoolManager.PickUpAllItems();
+    }
+
+    public void PickUpItemsCooldownEnd()
+    {
+        canPickUp = true;
+    }
+
+    #endregion
 }

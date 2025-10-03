@@ -15,7 +15,7 @@ public class QuestManager : MonoBehaviour
     string CurCountKey = "CurCount";
     public int curCount;  // 현재 퀘스트 목표횟수
 
-    public event Action refreshQuestInfoEvent;
+    public event Action OnQuestProgressChanged;
 
     public void Init()
     {
@@ -27,24 +27,23 @@ public class QuestManager : MonoBehaviour
 
     void OnDisable()
     {
-        GameManager.instance.player.onPlayerAction -= OnPlayerAction;
-        GameManager.instance.pickedItem -= OnItemDrop;
+        GameManager.instance.player.OnPlayerAction -= OnPlayerAction;
+        GameManager.instance.inventory.OnItemAdded -= OnItemDrop;
     }
 
     void OnPlayerAction(string actionName)
     {
         Debug.Log("QuestManager Player " + actionName);
-        refreshQuestInfoEvent?.Invoke();
+        OnQuestProgressChanged?.Invoke();
     }
 
-    void OnItemDrop(string itemType)
+    void OnItemDrop(ItemData itemdata,long quantity)
     {
-        if (!itemType.Equals(datas[curQuestIndex].requiredObjectType.ToString()))
+        if (!itemdata.type.Equals(datas[curQuestIndex].requiredItemType))
             return;
 
-        Debug.Log("Drop Item Name " + itemType);
         curCount++;
-        refreshQuestInfoEvent?.Invoke();
+        OnQuestProgressChanged?.Invoke();
 
         if (CheckQuestCondition())
             ClearQuest();
@@ -68,18 +67,18 @@ public class QuestManager : MonoBehaviour
         if (curQuestIndex >= datas.Length)
             return;
 
-        GameManager.instance.pickedItem -= OnItemDrop;
-        GameManager.instance.player.onPlayerAction -= OnPlayerAction;
+        GameManager.instance.inventory.OnItemAdded -= OnItemDrop;
+        GameManager.instance.player.OnPlayerAction -= OnPlayerAction;
 
         switch (datas[curQuestIndex].type)
         {
             case QuestType.Behaviour:
-                GameManager.instance.player.onPlayerAction += OnPlayerAction;
+                GameManager.instance.player.OnPlayerAction += OnPlayerAction;
                 break;
             case QuestType.Produce:
                 break;
             case QuestType.Drop:
-                GameManager.instance.pickedItem += OnItemDrop;
+                GameManager.instance.inventory.OnItemAdded += OnItemDrop;
                 break;
         }
     }

@@ -13,28 +13,33 @@ public class Player : MonoBehaviour
     public float scanRange;
     public LayerMask targetLayer;
     Vector2 inputVec;
+    
     Rigidbody2D rigid;
     Collider2D[] targets;
     GameObject nearestTarget;
-    Animator anim;
-    bool hasSentTrigger;
-    Vector3 reverseScale = new Vector3(-1, 1, 1);
+    
+    SpriteRenderer hairSprite;
+    SpriteRenderer bodySprite;
+    Animator hairAnim;
+    Animator bodyAnim;
+    PlayerAnimationEvent animationEvent;
+    bool isActionAnim;
 
-
-    public GameObject rake;
-    public float rotDuration;
-    Vector3 startRakeRot = new Vector3(0, 0, 45f);
-    Vector3 endRakeRot = new Vector3(0, 0, -35f);
-
-    public event Action<string> onPlayerAction;
-
+    public event Action<string> OnPlayerAction;
 
     void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
-        anim = GetComponent<Animator>();
-        hasSentTrigger = false;
+        hairSprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
+        bodySprite = transform.GetChild(1).GetComponent<SpriteRenderer>();
+        hairAnim = transform.GetChild(0).GetComponent<Animator>();
+        bodyAnim = transform.GetChild(1).GetComponent<Animator>();
+        animationEvent = transform.GetChild(1).GetComponent<PlayerAnimationEvent>();
+        
+        isActionAnim = false;
 
+        animationEvent.OnStateEnd += OnInteractionEnd;
+        
         Init();
     }
 
@@ -59,27 +64,35 @@ public class Player : MonoBehaviour
     void FixedUpdate()
     {
         targets = Physics2D.OverlapCircleAll(transform.position, scanRange, targetLayer);
-        rigid.MovePosition(rigid.position + (inputVec * speed * Time.fixedDeltaTime));
+        if (!isActionAnim)
+        { 
+            rigid.MovePosition(rigid.position + (inputVec * speed * Time.fixedDeltaTime));
+        }
 
-        Interacting();
+        SuchObject();
     }
 
     void LateUpdate()
     {
-        anim.SetFloat("Speed", inputVec.magnitude);
+        
+        hairAnim.SetFloat("Speed", inputVec.normalized.magnitude);
+        bodyAnim.SetFloat("Speed", inputVec.normalized.magnitude);
 
         if (inputVec.x != 0)
         {
-            bool isReverse = inputVec.x < 0 ? true : false;
-            transform.localScale = isReverse ? reverseScale : Vector3.one;
+            bool isReverse = inputVec.x < 0;
+            hairSprite.flipX = isReverse;
+            bodySprite.flipX = isReverse;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Interacting();
         }
     }
 
-    void Interacting()
+    void SuchObject()
     {
-        if (hp <= 0)
-            return;
-
         GameObject nearest = null;
         float minDistance = Mathf.Infinity;
 
@@ -87,19 +100,12 @@ public class Player : MonoBehaviour
         {
             float dis = Vector2.Distance(transform.position, target.transform.position);
 
-            bool isObject = target.TryGetComponent<Object>(out var component);
+            bool isObject = target.TryGetComponent<Produce>(out var component);
 
             if (dis < minDistance && ((isObject && !component.isCoolTime) || !isObject))
             {
-
                 minDistance = dis;
                 nearest = target.gameObject;
-
-                if (!hasSentTrigger && isObject && !component.isCoolTime)
-                {
-                    hasSentTrigger = true;
-                    OnInteractionEffect();
-                }
             }
         }
 
@@ -107,41 +113,68 @@ public class Player : MonoBehaviour
         {
             if (nearestTarget != null)
             {
-                nearestTarget.GetComponent<Marker>().OffMarker();
+                nearestTarget.GetComponent<Marker>()?.OffMarker();
             }
 
             nearestTarget = nearest;
 
             if (nearestTarget != null)
             {
-                nearestTarget.GetComponent<Marker>().OnMarker();
+                nearestTarget.GetComponent<Marker>()?.OnMarker();
             }
         }
     }
 
-    void OnInteractionEffect()
+    void Interacting()
     {
-        Sequence sequence = DOTween.Sequence();
+        if (hp <= 0)
+            return;
+        
+        Produce produce = nearestTarget?.GetComponent<Produce>();
+        
+        if (isActionAnim || produce == null) return;
+        
+        isActionAnim = true;
 
-        rake.transform.localRotation = Quaternion.Euler(startRakeRot);
-        Tween rotateTween = rake.transform.DOLocalRotate(endRakeRot, rotDuration).SetEase(Ease.InOutExpo);
-
-        sequence.Append(rotateTween)
-        .OnComplete(OnInteractionEnd);
+        switch (produce?.type)
+        {
+            case ItemType.Wheat:
+            case ItemType.Beet:
+            case ItemType.Cabbage:
+            case ItemType.Carrot:
+            case ItemType.Cauliflower:
+            case ItemType.Kale:
+            case ItemType.Parsnip:
+            case ItemType.Potato:
+            case ItemType.Pumpkin:
+            case ItemType.Radish:
+            case ItemType.Sunflower:
+                hairAnim.SetTrigger("DoDoing");
+                bodyAnim.SetTrigger("DoDoing");
+                break;
+            case ItemType.Tree:
+                hairAnim.SetTrigger("DoAxe");
+                bodyAnim.SetTrigger("DoAxe");
+                break;
+            case ItemType.Rock:
+                hairAnim.SetTrigger("DoMining");
+                bodyAnim.SetTrigger("DoMining");
+                break;
+                // bodyAnim.SetTrigger("DoHamering");
+        }
+        
     }
 
     public void OnInteractionEnd()
     {
-
         if (nearestTarget != null)
         {
-            nearestTarget.GetComponent<Object>().OnInteract();
+            nearestTarget.GetComponent<Produce>()?.OnInteract();
             LoseHp();
-            onPlayerAction?.Invoke("Interact");
+            OnPlayerAction?.Invoke("Interact");
         }
 
-        rake.transform.localRotation = Quaternion.identity;
-        hasSentTrigger = false;
+        isActionAnim = false;
     }
 
     public void LoseHp()

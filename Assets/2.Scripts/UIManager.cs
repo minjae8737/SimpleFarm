@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -29,6 +30,11 @@ public class UIManager : MonoBehaviour
     Text playerHpText;
     float recoveHpDuration = 3f; // FillAmount 0 -> 1 까지 걸리는 시간
     public Button interactButton;
+
+    [Header("Menu")] 
+    public Button inventoryBtn;
+    public Button magnetBtn;
+    private TextMeshProUGUI magnetBtnText;
 
     [Header("Shop")] 
     public GameObject shopPanel;
@@ -82,6 +88,8 @@ public class UIManager : MonoBehaviour
         itemQuantityText = itemInfoPanel.transform.GetChild(2).transform.GetChild(1).transform.GetChild(0).GetComponent<Text>();
         itemDescriptionText = itemInfoPanel.transform.GetChild(3).transform.GetChild(0).GetComponent<Text>();
         
+        // 메뉴 버튼
+        magnetBtnText =  magnetBtn.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         
         SetPlayerHp();
         RefreshGoldText();
@@ -425,5 +433,25 @@ public class UIManager : MonoBehaviour
         playerHp.SetActive(true);
     }
 
+    #endregion
+    
+    #region MenuBtn
+
+    public void OnClickMagnetBtn(TimerHandler timerHandler)
+    {
+        StartCoroutine(StartUpdateText(timerHandler));
+    }
+
+    private IEnumerator StartUpdateText(TimerHandler timerHandler)
+    {
+        while (!GameManager.instance.canPickUp)
+        {
+            magnetBtnText.text = string.Format("{0:0.#}s", timerHandler.TimeLimit);
+            yield return null;
+        }
+
+        magnetBtnText.text = "READY";
+    }
+    
     #endregion
 }

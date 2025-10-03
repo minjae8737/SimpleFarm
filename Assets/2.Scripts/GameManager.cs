@@ -19,11 +19,12 @@ public class GameManager : MonoBehaviour
     public ObjectPoolManager objectPoolManager;
     public UIManager uiManager;
     
-    private Timer timer;
+    public Timer timer;
     
     const string GoldKey = "Gold";
     public long gold;
     long maxGold = 9999999999; // 9,999,999,999
+    public bool canPickUp = true;
 
     void Awake()
     {
@@ -114,9 +115,17 @@ public class GameManager : MonoBehaviour
 
     public void PickUpAllItems()
     {
-        TimerHandler timerHandler = timer.StartTimer(30f);
-        objectPoolManager.PickUpAllItems();
+        if (!canPickUp) return;
         
+        canPickUp = false;
+        TimerHandler timerHandler = timer.StartTimer(30f, PickUpItemsCooldownEnd);
+        uiManager.OnClickMagnetBtn(timerHandler);
+        objectPoolManager.PickUpAllItems();
+    }
+
+    public void PickUpItemsCooldownEnd()
+    {
+        canPickUp = true;
     }
 
     #endregion

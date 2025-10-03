@@ -18,8 +18,8 @@ public class Timer : MonoBehaviour
     {
         TimerHandler timerHandler = new TimerHandler(timerId++, timeLimit);
         timerHandler.OnTimerEnd = onTimerEnd;
-        
-        timer[timerHandler.Id] = timerHandler;
+
+        timer.Add(timerHandler.Id, timerHandler);
         StartCoroutine(StartTimer(timerHandler));
         
         return timerHandler;
@@ -30,7 +30,7 @@ public class Timer : MonoBehaviour
         while (timerHandler.TimeLimit > 0)
         {
             timerHandler.TimeLimit -= Time.deltaTime;
-            yield return new WaitForSeconds(0.2f);
+            yield return null;
         }
 
         timerHandler.OnTimerEnd?.Invoke();

@@ -93,9 +93,6 @@ public class Player : MonoBehaviour
 
     void SuchObject()
     {
-        if (hp <= 0)
-            return;
-
         GameObject nearest = null;
         float minDistance = Mathf.Infinity;
 
@@ -103,7 +100,7 @@ public class Player : MonoBehaviour
         {
             float dis = Vector2.Distance(transform.position, target.transform.position);
 
-            bool isObject = target.TryGetComponent<Producer>(out var component);
+            bool isObject = target.TryGetComponent<Produce>(out var component);
 
             if (dis < minDistance && ((isObject && !component.isCoolTime) || !isObject))
             {
@@ -116,27 +113,30 @@ public class Player : MonoBehaviour
         {
             if (nearestTarget != null)
             {
-                nearestTarget.GetComponent<Marker>().OffMarker();
+                nearestTarget.GetComponent<Marker>()?.OffMarker();
             }
 
             nearestTarget = nearest;
 
             if (nearestTarget != null)
             {
-                nearestTarget.GetComponent<Marker>().OnMarker();
+                nearestTarget.GetComponent<Marker>()?.OnMarker();
             }
         }
     }
 
     void Interacting()
     {
-        Producer producer = nearestTarget?.GetComponent<Producer>();
+        if (hp <= 0)
+            return;
         
-        if (isActionAnim || producer == null) return;
+        Produce produce = nearestTarget?.GetComponent<Produce>();
+        
+        if (isActionAnim || produce == null) return;
         
         isActionAnim = true;
 
-        switch (producer?.type)
+        switch (produce?.type)
         {
             case ItemType.Wheat:
             case ItemType.Beet:
@@ -152,9 +152,15 @@ public class Player : MonoBehaviour
                 hairAnim.SetTrigger("DoDoing");
                 bodyAnim.SetTrigger("DoDoing");
                 break;
-                // bodyAnim.SetTrigger("DoAxe");
+            case ItemType.Tree:
+                hairAnim.SetTrigger("DoAxe");
+                bodyAnim.SetTrigger("DoAxe");
+                break;
+            case ItemType.Rock:
+                hairAnim.SetTrigger("DoMining");
+                bodyAnim.SetTrigger("DoMining");
+                break;
                 // bodyAnim.SetTrigger("DoHamering");
-                // bodyAnim.SetTrigger("DoMining");
         }
         
     }
@@ -163,7 +169,7 @@ public class Player : MonoBehaviour
     {
         if (nearestTarget != null)
         {
-            nearestTarget.GetComponent<Producer>()?.OnInteract();
+            nearestTarget.GetComponent<Produce>()?.OnInteract();
             LoseHp();
             OnPlayerAction?.Invoke("Interact");
         }

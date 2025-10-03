@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2822044c6aa2148598fd4d9c011dbb06, type: 3}
   m_Name: Item_Cabbage
   m_EditorClassIdentifier: 
-  type: 2
+  type: 4
   itemName: "\uC591\uBC30\uCD94"
   description: 
   maxStackSize: 99999

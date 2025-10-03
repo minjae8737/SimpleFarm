@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2822044c6aa2148598fd4d9c011dbb06, type: 3}
   m_Name: Item_Wheat
   m_EditorClassIdentifier: 
-  type: 0
+  type: 2
   itemName: "\uBC00"
   description: 
   maxStackSize: 99999

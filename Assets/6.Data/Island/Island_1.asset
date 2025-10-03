@@ -12,18 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8c8f30171bec4f6fb421f0cb7207476, type: 3}
   m_Name: Island_1
   m_EditorClassIdentifier: 
-  islandType: 1
-  name: Wheat_Island
+  islandType: 0
+  name: "\uBC00 \uC12C"
   farmData:
-    name: Wheat
-    maxFarmLevel: 20
+    farmType: 0
+    name: "\uBC00 \uB18D\uC7A5"
+    maxFarmLevel: 25
     basicFarmGold: 100
     farmGoldPer: 1.05
-    maxAutoProduceCanceLevel: 20
-    basicAutoProduceCance: 0
+    maxAutoProduceChanceLevel: 20
+    basicAutoProduceChance: 0
     autoProduceChancePer: 4
-    basicAutoProduceChanceGold: 0
-    autoProduceChanceGoldPer: 0
+    basicAutoProduceChanceGold: 100
+    autoProduceChanceGoldPer: 1.05
     maxProduceCooldownLevel: 20
     basicProduceCooldown: 15
     produceCooldownPer: 0.2

@@ -8,18 +8,17 @@ public class PlayerInteractionDetector : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.transform.tag != "Player")
-            return;
-
-        GameManager.instance.uiManager.SetInteractBtn(uiBtnType);
+        if (collision.transform.CompareTag("Player"))
+        {
+            GameManager.instance.uiManager.SetInteractBtn(uiBtnType);
+        }
     }
 
     void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.transform.tag != "Player")
-            return;
-
-        GameManager.instance.uiManager.OffInteractBtn();
+        if (collision.transform.CompareTag("Player"))
+        {
+            GameManager.instance.uiManager.OffInteractBtn();
+        }
     }
-
 }

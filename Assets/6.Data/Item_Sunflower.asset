@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2822044c6aa2148598fd4d9c011dbb06, type: 3}
   m_Name: Item_Sunflower
   m_EditorClassIdentifier: 
-  type: 9
+  type: 12
   itemName: "\uD574\uBC14\uB77C\uAE30"
   description: 
   maxStackSize: 99999

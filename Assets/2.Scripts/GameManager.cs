@@ -9,17 +9,22 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     public Player player;
 
-    [Header("# Item")] public Inventory inventory;
+    [Header("# Item")] 
+    public Inventory inventory;
     public ItemData[] itemDatas;
 
-    [Header("# Manager")] public QuestManager questManager;
+    [Header("# Manager")] 
+    public QuestManager questManager;
     public IslandManager islandManager;
     public ObjectPoolManager objectPoolManager;
     public UIManager uiManager;
-
+    
+    public Timer timer;
+    
     const string GoldKey = "Gold";
     public long gold;
     long maxGold = 9999999999; // 9,999,999,999
+    public bool canPickUp = true;
 
     void Awake()
     {
@@ -59,7 +64,7 @@ public class GameManager : MonoBehaviour
 
     #region Gold
 
-    bool CheckGold(long price)
+    public bool CheckGold(long price)
     {
         return price <= gold;
     }
@@ -68,7 +73,7 @@ public class GameManager : MonoBehaviour
     {
         gold += price;
         if (gold > maxGold) gold = maxGold;
-        uiManager.SetGoldText();
+        uiManager.RefreshGoldText();
     }
 
     void SaveGold()
@@ -105,7 +110,22 @@ public class GameManager : MonoBehaviour
     {
         inventory.RemoveItem(itemData, quantity);
         SetGold(itemData.price * quantity);
-        uiManager.SetGoldText();
+        uiManager.RefreshGoldText();
+    }
+
+    public void PickUpAllItems()
+    {
+        if (!canPickUp) return;
+        
+        canPickUp = false;
+        TimerHandler timerHandler = timer.StartTimer(30f, PickUpItemsCooldownEnd);
+        uiManager.OnClickMagnetBtn(timerHandler);
+        objectPoolManager.PickUpAllItems();
+    }
+
+    public void PickUpItemsCooldownEnd()
+    {
+        canPickUp = true;
     }
 
     #endregion

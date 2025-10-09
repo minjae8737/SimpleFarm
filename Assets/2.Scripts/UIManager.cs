@@ -57,6 +57,9 @@ public class UIManager : MonoBehaviour
     [Header("Inventory")]
     public InventoryPanel inventoryPanel;
     
+    [Header("AddIslandBtn")]
+    public AddIslandBtn addIslandBtn;
+    
     [Header("Sprites")] 
     public Sprite[] rewardIcons; // RewardsType과 매칭
 
@@ -96,6 +99,7 @@ public class UIManager : MonoBehaviour
         SetQuestPanel();
         InitShopItems();
         InitInventoryPanel();
+        InitAddIslandBtn();
         
         GameManager.instance.player.OnPlayerAction += SetPlayerHp;
         GameManager.instance.questManager.OnQuestProgressChanged += SetQuestPanel;
@@ -453,5 +457,24 @@ public class UIManager : MonoBehaviour
         magnetBtnText.text = "READY";
     }
     
+    #endregion
+
+    #region AddIslandBtn
+
+    private void InitAddIslandBtn()
+    {
+        addIslandBtn.OnClick += OnclickAddIslandBtn;
+    }
+    
+    private void SetAddIslandBtn(IslandType islandType, string islandName, long unlockPrice)
+    {
+        addIslandBtn.SetIslandBtn(islandType, islandName, ConvertGoldToText(unlockPrice));
+    }
+    
+    private void OnclickAddIslandBtn(IslandType islandType)
+    {
+        GameManager.instance.islandManager.UnlockIsland((int)islandType);
+    }
+
     #endregion
 }

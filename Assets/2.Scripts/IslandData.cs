@@ -24,6 +24,9 @@ public class IslandData : ScriptableObject
     [Header("# Info")]
     public IslandType islandType;
     public string name;
+    public Vector3 addIslandBtnPos;
+    public long unlockPrice;
+    
     public FarmData farmData;
 
 }

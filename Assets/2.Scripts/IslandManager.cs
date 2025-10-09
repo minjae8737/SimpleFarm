@@ -7,19 +7,22 @@ using UnityEngine;
 
 public class IslandManager : MonoBehaviour
 {
-
-    public IslandData[] islandDatas;
-    public Dictionary<string, int[]> islandLevelDic;
+    
+    [SerializeField] private IslandData[] islandDatas;
+    private Dictionary<string, int[]> islandLevelDic;
+   
     const int FARM_LEVEL_INDEX = 0;
     const int AUTOPRODUCECHANCE_LEVEL_INDEX = 1;
     const int PRODUCECOOLDOWN_LEVEL_INDEX = 2;
     string IslandKey = "Island_";
-    
-    public GameObject[] farmlands;
-    public Dictionary<int, List<GameObject>> soils;
-    public Dictionary<int, List<Produce>> crops;
 
-    public GameObject[] cropPrefabs;
+    [Header("Island")]
+    [SerializeField] private GameObject[] islands;
+    [SerializeField] private  GameObject[] farmlands;
+    private Dictionary<int, List<GameObject>> soils;
+    private Dictionary<int, List<Produce>> crops;
+
+    [SerializeField] private GameObject[] cropPrefabs;
     
     public void Init()
     {
@@ -83,16 +86,25 @@ public class IslandManager : MonoBehaviour
             
             crops.Add(key, cropList);
         }
-        
+
     }
 
     public void UnlockIsland(int islandIndex)
     {
+        IslandData islandData = islandDatas[islandIndex];
         string key = IslandKey + islandIndex; // key = Island_'n'
         int[] levelArr = islandLevelDic[key];  // 각 level을 저장한 배열
 
+        // unlock 되어있는 섬이었다면 return
         if (levelArr[FARM_LEVEL_INDEX] > 1 || levelArr[AUTOPRODUCECHANCE_LEVEL_INDEX] > 1 || levelArr[PRODUCECOOLDOWN_LEVEL_INDEX] > 1) return;
 
+        // gold가 충분한지 
+        if (!GameManager.instance.CheckGold(islandData.unlockPrice)) return;
+
+        GameManager.instance.SetGold(-islandData.unlockPrice);
+        
+        islands[islandIndex].gameObject.SetActive(true);
+        
         // 언락되는 섬 level init
         levelArr[FARM_LEVEL_INDEX] = 1;
         levelArr[AUTOPRODUCECHANCE_LEVEL_INDEX] = 1;
@@ -122,6 +134,28 @@ public class IslandManager : MonoBehaviour
         cropList.Add(produce);
         
         SaveData(islandIndex);
+    }
+
+    public int GetCurrentIslandLevel()
+    {
+        int level = 0;
+
+        foreach (KeyValuePair<string, int[]> levels in islandLevelDic)
+        {
+            Debug.Log(levels.Key + "   " + string.Join(",", levels.Value));
+            string[] split = levels.Key.Split("_");
+            int islandLevel = int.Parse(split[1]);
+
+            // 언락되었고 && level 보다 다음 단계인 섬인경우  / unlock 되지 않은 섬들은 level = 0 으로 초기화되어있음
+            if (0 < levels.Value[0] && level < islandLevel)
+            {
+                level = islandLevel;
+            }
+        }
+        
+        Debug.Log(level);
+        
+        return level;
     }
 
     public void LevelUpAutoProduceChance(int islandIndex)

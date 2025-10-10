@@ -13,11 +13,12 @@ public class AddIslandBtn : MonoBehaviour
     [SerializeField] private TextMeshProUGUI islandPriceText;
     public event Action<IslandType> OnClick;
 
-    public void SetIslandBtn(IslandType islandType, string islandName, string islandPrice)
+    public void SetIslandBtn(IslandType islandType, string islandName, string islandPrice, Vector3 position)
     {
-        addIslandType =  islandType;
+        addIslandType = islandType;
         islandNameText.text = islandName;
         islandPriceText.text = islandPrice;
+        transform.position = position;
     }
 
     public void OnClickBtn()

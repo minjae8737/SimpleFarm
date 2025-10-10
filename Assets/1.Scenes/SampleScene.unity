@@ -1335,10 +1335,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 373077014}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0.89, y: -0.29999998}
+  m_SizeDelta: {x: 0.375, y: 0.375}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &138830537
 MonoBehaviour:
@@ -12075,7 +12075,7 @@ Camera:
   far clip plane: 1060.2
   field of view: 60
   orthographic: 1
-  orthographic size: 6.111111
+  orthographic size: 13.75
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -12119,8 +12119,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_AssetsPPU: 16
-  m_RefResolutionX: 100
-  m_RefResolutionY: 220
+  m_RefResolutionX: 190
+  m_RefResolutionY: 418
   m_UpscaleRT: 0
   m_PixelSnapping: 1
   m_CropFrameX: 0
@@ -50707,7 +50707,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1594279876
 Transform:
   m_ObjectHideFlags: 0
@@ -51549,7 +51549,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1641106446
 RectTransform:
   m_ObjectHideFlags: 0
@@ -51568,7 +51568,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 10.4, y: -19.05}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 3, y: 1.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1641106447
@@ -54703,10 +54703,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 373077014}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 1.7375, y: -0.29999998}
+  m_SizeDelta: {x: 1.12, y: 0.41}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1966269482
 MonoBehaviour:
@@ -56156,7 +56156,7 @@ MonoBehaviour:
   m_Follow: {fileID: 851285310}
   m_Lens:
     FieldOfView: 60
-    OrthographicSize: 6.111111
+    OrthographicSize: 13.75
     NearClipPlane: 0.3
     FarClipPlane: 1060.2
     Dutch: 0

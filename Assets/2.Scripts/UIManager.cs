@@ -464,16 +464,30 @@ public class UIManager : MonoBehaviour
     private void InitAddIslandBtn()
     {
         addIslandBtn.OnClick += OnclickAddIslandBtn;
+        SetAddIslandBtn();
     }
     
-    private void SetAddIslandBtn(IslandType islandType, string islandName, long unlockPrice)
+    private void SetAddIslandBtn()
     {
-        addIslandBtn.SetIslandBtn(islandType, islandName, ConvertGoldToText(unlockPrice));
+        int currentIslandLevel = GameManager.instance.islandManager.GetCurrentIslandLevel();
+        Debug.Log(currentIslandLevel);
+        AddIslandBtnDTO addIslandBtnDto = GameManager.instance.islandManager.GetAddIslandBtnDTO(currentIslandLevel);
+
+        if (addIslandBtnDto == null)
+        {
+            addIslandBtn.gameObject.SetActive(false);
+        }
+        else
+        {
+            addIslandBtn.gameObject.SetActive(true);
+            addIslandBtn.SetIslandBtn(addIslandBtnDto.islandType, addIslandBtnDto.islandName, ConvertGoldToText(addIslandBtnDto.unlockPrice), addIslandBtnDto.position);
+        }
     }
     
     private void OnclickAddIslandBtn(IslandType islandType)
     {
         GameManager.instance.islandManager.UnlockIsland((int)islandType);
+        SetAddIslandBtn();
     }
 
     #endregion

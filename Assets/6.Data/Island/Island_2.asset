@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   islandType: 1
   name: "\uBE44\uD2B8 \uC12C"
-  addIslandBtnPos: {x: 0, y: 0, z: 0}
+  addIslandBtnPos: {x: 8.96, y: -18.7, z: 0}
   unlockPrice: 2000
   farmData:
     farmType: 1

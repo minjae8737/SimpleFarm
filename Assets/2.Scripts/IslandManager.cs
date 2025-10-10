@@ -89,17 +89,19 @@ public class IslandManager : MonoBehaviour
 
     }
 
-    public void UnlockIsland(int islandIndex)
+    public bool UnlockIsland(int islandIndex)
     {
+        if (islandIndex >= islandDatas.Length) return false;
+        
         IslandData islandData = islandDatas[islandIndex];
         string key = IslandKey + islandIndex; // key = Island_'n'
         int[] levelArr = islandLevelDic[key];  // 각 level을 저장한 배열
 
         // unlock 되어있는 섬이었다면 return
-        if (levelArr[FARM_LEVEL_INDEX] > 1 || levelArr[AUTOPRODUCECHANCE_LEVEL_INDEX] > 1 || levelArr[PRODUCECOOLDOWN_LEVEL_INDEX] > 1) return;
+        if (levelArr[FARM_LEVEL_INDEX] > 1 || levelArr[AUTOPRODUCECHANCE_LEVEL_INDEX] > 1 || levelArr[PRODUCECOOLDOWN_LEVEL_INDEX] > 1) return false;
 
         // gold가 충분한지 
-        if (!GameManager.instance.CheckGold(islandData.unlockPrice)) return;
+        if (!GameManager.instance.CheckGold(islandData.unlockPrice)) return false;
 
         GameManager.instance.SetGold(-islandData.unlockPrice);
         
@@ -112,6 +114,23 @@ public class IslandManager : MonoBehaviour
 
         // 저장
         SaveData(islandIndex);
+        
+        return true;
+    }
+    
+    public AddIslandBtnDTO GetAddIslandBtnDTO(int islandIndex)
+    {
+        if (islandIndex >= islandDatas.Length) return null;
+        
+        IslandData islandData = islandDatas[islandIndex];
+        
+        return new AddIslandBtnDTO
+        {
+            islandType = islandData.islandType,
+            islandName =  islandData.name,
+            unlockPrice = islandData.unlockPrice,
+            position = islandData.addIslandBtnPos
+        };
     }
 
     public void LevelUpFarm(int islandIndex)
@@ -142,7 +161,6 @@ public class IslandManager : MonoBehaviour
 
         foreach (KeyValuePair<string, int[]> levels in islandLevelDic)
         {
-            Debug.Log(levels.Key + "   " + string.Join(",", levels.Value));
             string[] split = levels.Key.Split("_");
             int islandLevel = int.Parse(split[1]);
 
@@ -153,9 +171,7 @@ public class IslandManager : MonoBehaviour
             }
         }
         
-        Debug.Log(level);
-        
-        return level;
+        return level + 1;
     }
 
     public void LevelUpAutoProduceChance(int islandIndex)

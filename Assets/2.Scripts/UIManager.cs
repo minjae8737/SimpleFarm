@@ -11,7 +11,8 @@ public enum UIBtnType
     RecoverHP,
     Shop,
     Island_Wheat,
-    Island_Beet
+    Island_Beet,
+    Island_Cabbage
 }
 
 public class UIManager : MonoBehaviour
@@ -249,6 +250,9 @@ public class UIManager : MonoBehaviour
                 break;
             case UIBtnType.Island_Beet:
                 interactButton.onClick.AddListener(() => SetFarmUpgradePanel(IslandType.Beet));
+                break;
+            case UIBtnType.Island_Cabbage:
+                interactButton.onClick.AddListener(() => SetFarmUpgradePanel(IslandType.Cabbage));
                 break;
         }
 

@@ -38,6 +38,11 @@ public class GameManager : MonoBehaviour
         uiManager.Init();
     }
 
+    private void OnApplicationQuit()
+    {
+        SaveGold();
+    }
+
     void Init()
     {
         // 골드 초기화
@@ -61,6 +66,30 @@ public class GameManager : MonoBehaviour
 
         return defaultValue;
     }
+    
+    public int GetIntFromPlayerPrefs(string key, int defaultValue = 0)
+    {
+        if (!PlayerPrefs.HasKey(key))
+            return defaultValue;
+
+        string longStr = PlayerPrefs.GetString(key);
+        if (int.TryParse(longStr, out int result))
+            return result;
+
+        return defaultValue;
+    }
+    
+    public void SaveLongToPlayerPrefs(string key, long value)
+    {
+        PlayerPrefs.SetString(key, value.ToString());
+        PlayerPrefs.Save();
+    }
+    
+    public void SaveIntToPlayerPrefs(string key, int value)
+    {
+        PlayerPrefs.SetString(key, value.ToString());
+        PlayerPrefs.Save();
+    }
 
     #region Gold
 
@@ -78,7 +107,7 @@ public class GameManager : MonoBehaviour
 
     void SaveGold()
     {
-        PlayerPrefs.SetString(GoldKey, gold.ToString());
+        SaveLongToPlayerPrefs(GoldKey, gold);
     }
 
     #endregion

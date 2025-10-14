@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [System.Serializable]
@@ -26,6 +27,15 @@ public class Inventory
         {
             string key = ItemKey + type; // "Item_xxxx"
             items.Add(key, GameManager.instance.GetLongFromPlayerPrefs(key));
+        }
+    }
+
+    private void SaveDataAll()
+    {
+        foreach (ItemType type in Enum.GetValues(typeof(ItemType)))
+        {
+            string key = ItemKey + type; // "Item_xxxx"
+            GameManager.instance.SaveLongToPlayerPrefs(key, items[key]);
         }
     }
 

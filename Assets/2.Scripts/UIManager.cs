@@ -478,7 +478,6 @@ public class UIManager : MonoBehaviour
     private void SetAddIslandBtn()
     {
         int currentIslandLevel = GameManager.instance.islandManager.GetCurrentIslandLevel();
-        Debug.Log(currentIslandLevel);
         AddIslandBtnDTO addIslandBtnDto = GameManager.instance.islandManager.GetAddIslandBtnDTO(currentIslandLevel);
 
         if (addIslandBtnDto == null)

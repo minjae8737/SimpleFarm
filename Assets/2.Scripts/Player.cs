@@ -43,16 +43,21 @@ public class Player : MonoBehaviour
         Init();
     }
 
+    private void OnApplicationQuit()
+    {
+        SaveData();
+    }
+
     void Init()
     {
-        maxHp = PlayerPrefs.HasKey("PalyerMaxHp") ? PlayerPrefs.GetInt("PalyerMaxHp") : 10;
-        hp = PlayerPrefs.HasKey("PalyerHp") ? PlayerPrefs.GetInt("PalyerHp") : 10;
+        maxHp = GameManager.instance.GetIntFromPlayerPrefs("PalyerMaxHp") == 0 ? 10 : GameManager.instance.GetIntFromPlayerPrefs("PalyerMaxHp");
+        hp = GameManager.instance.GetIntFromPlayerPrefs("PalyerHp") == 0 ? 10 : GameManager.instance.GetIntFromPlayerPrefs("PalyerHp"); ;
     }
 
     void SaveData()
     {
-        PlayerPrefs.SetInt("PalyerMaxHp", maxHp);
-        PlayerPrefs.SetInt("PalyerHp", hp);
+        GameManager.instance.SaveIntToPlayerPrefs("PalyerMaxHp", maxHp);
+        GameManager.instance.SaveIntToPlayerPrefs("PalyerHp", hp);
     }
 
     void Update()

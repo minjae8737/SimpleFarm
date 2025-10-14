@@ -69745,7 +69745,7 @@ MonoBehaviour:
   objectPoolManager: {fileID: 462329893}
   uiManager: {fileID: 1173301443}
   timer: {fileID: 1528185234}
-  gold: 0
+  gold: 999999999
   canPickUp: 1
 --- !u!1001 &1939300085
 PrefabInstance:

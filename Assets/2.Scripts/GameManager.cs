@@ -32,6 +32,7 @@ public class GameManager : MonoBehaviour
         Application.targetFrameRate = 60;
         Init();
 
+        player.Init();
         questManager.Init();
         islandManager.Init();
         objectPoolManager.Init();

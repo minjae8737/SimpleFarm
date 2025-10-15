@@ -39,8 +39,6 @@ public class Player : MonoBehaviour
         isActionAnim = false;
 
         animationEvent.OnStateEnd += OnInteractionEnd;
-        
-        Init();
     }
 
     private void OnApplicationQuit()
@@ -48,7 +46,7 @@ public class Player : MonoBehaviour
         SaveData();
     }
 
-    void Init()
+    public void Init()
     {
         maxHp = GameManager.instance.GetIntFromPlayerPrefs("PalyerMaxHp") == 0 ? 10 : GameManager.instance.GetIntFromPlayerPrefs("PalyerMaxHp");
         hp = GameManager.instance.GetIntFromPlayerPrefs("PalyerHp") == 0 ? 10 : GameManager.instance.GetIntFromPlayerPrefs("PalyerHp"); ;

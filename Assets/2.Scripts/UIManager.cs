@@ -40,8 +40,14 @@ public class UIManager : MonoBehaviour
     
     [Space(5)]
     [Header("InteractButton")]
-    public Button interactBtn;
-    private Text interactBtnText;
+    public Button interactUIBtn;
+    private Text interactUIBtnText;
+    
+    [Space(5)]
+    [Header("ActionButton")]
+    public ActionBtn actionBtn;
+
+    public Sprite[] actionBtnIconSprites;
 
     [Header("Menu")] 
     public Button inventoryBtn;
@@ -94,7 +100,7 @@ public class UIManager : MonoBehaviour
         questClearBtnDesc = questClearBtn.transform.GetChild(1).GetComponent<Text>();
 
         // 상호작용 버튼
-        interactBtnText =  interactBtn.transform.GetChild(0).GetComponent<Text>();
+        interactUIBtnText =  interactUIBtn.transform.GetChild(0).GetComponent<Text>();
         
         // 상점
         shopContent = shopPanel.transform.GetChild(0).transform.GetChild(1).transform.GetChild(0).transform.GetChild(0).GetComponent<RectTransform>();
@@ -116,14 +122,6 @@ public class UIManager : MonoBehaviour
         InitInventoryPanel();
         InitAddIslandBtn();
         
-        GameManager.instance.player.OnPlayerAction += SetPlayerHp;
-        GameManager.instance.questManager.OnQuestProgressChanged += SetQuestPanel;
-
-        GameManager.instance.inventory.OnItemAdded += RefreshShopItem;
-        GameManager.instance.inventory.OnItemRemoved += RefreshShopItem;
-        GameManager.instance.inventory.OnItemAdded += RefreshInventoryPanel;
-        GameManager.instance.inventory.OnItemRemoved += RefreshInventoryPanel;
-
         itemSellPanel.OffItemInfoPanel += OffItemInfoPanel;
         
         farmUpgradePanel.OnClickFarmUpgradeBtn += OnClickFarmUpgradeBtn;
@@ -163,7 +161,7 @@ public class UIManager : MonoBehaviour
 
     #endregion
 
-    void SetPlayerHp(string defaultPlayerAction = "")
+    public void SetPlayerHp(string defaultPlayerAction = "")
     {
         float playerHpAmount = (float)GameManager.instance.player.hp / GameManager.instance.player.maxHp;
         palyerHpImg.fillAmount = playerHpAmount;
@@ -248,29 +246,29 @@ public class UIManager : MonoBehaviour
 
     public void SetInteractBtn(UIBtnType type)
     {
-        interactBtn.onClick.RemoveAllListeners();
+        interactUIBtn.onClick.RemoveAllListeners();
 
         switch (type)
         {
             case UIBtnType.RecoverHP:
-                interactBtnText.text = "휴식 하기";
-                interactBtn.onClick.AddListener(GameManager.instance.RestPlayer);
+                interactUIBtnText.text = "휴식 하기";
+                interactUIBtn.onClick.AddListener(GameManager.instance.RestPlayer);
                 break;
             case UIBtnType.Shop:
-                interactBtnText.text = "상점 열기";
-                interactBtn.onClick.AddListener(OpenShop);
+                interactUIBtnText.text = "상점 열기";
+                interactUIBtn.onClick.AddListener(OpenShop);
                 break;
             case UIBtnType.Island_Wheat:
-                interactBtnText.text = "밀밭을 사고 싶어!";
-                interactBtn.onClick.AddListener(() => SetFarmUpgradePanel(IslandType.Wheat));
+                interactUIBtnText.text = "밀밭을 사고 싶어!";
+                interactUIBtn.onClick.AddListener(() => SetFarmUpgradePanel(IslandType.Wheat));
                 break;
             case UIBtnType.Island_Beet:
-                interactBtnText.text = "비트밭을 사고 싶어!";
-                interactBtn.onClick.AddListener(() => SetFarmUpgradePanel(IslandType.Beet));
+                interactUIBtnText.text = "비트밭을 사고 싶어!";
+                interactUIBtn.onClick.AddListener(() => SetFarmUpgradePanel(IslandType.Beet));
                 break;
             case UIBtnType.Island_Cabbage:
-                interactBtnText.text = "양배추밭을 사고 싶어!";
-                interactBtn.onClick.AddListener(() => SetFarmUpgradePanel(IslandType.Cabbage));
+                interactUIBtnText.text = "양배추밭을 사고 싶어!";
+                interactUIBtn.onClick.AddListener(() => SetFarmUpgradePanel(IslandType.Cabbage));
                 break;
         }
 
@@ -279,15 +277,15 @@ public class UIManager : MonoBehaviour
 
     void OnInteractBtnEffect()
     {
-        if (interactBtn == null)
+        if (interactUIBtn == null)
             return;
 
-        interactBtn.gameObject.SetActive(true);
+        interactUIBtn.gameObject.SetActive(true);
 
         Sequence sequence = DOTween.Sequence();
 
-        Tween scaleBiggerTween = interactBtn.GetComponent<RectTransform>().DOScale(1.02f, 0.2f);
-        Tween scaleSmallerTween = interactBtn.GetComponent<RectTransform>().DOScale(1f, 0.2f);
+        Tween scaleBiggerTween = interactUIBtn.GetComponent<RectTransform>().DOScale(1.02f, 0.2f);
+        Tween scaleSmallerTween = interactUIBtn.GetComponent<RectTransform>().DOScale(1f, 0.2f);
 
         sequence.Append(scaleBiggerTween)
             .Append(scaleSmallerTween);
@@ -295,15 +293,15 @@ public class UIManager : MonoBehaviour
 
     public void OffInteractBtn()
     {
-        if (interactBtn == null)
+        if (interactUIBtn == null)
             return;
 
-        interactBtn.gameObject.SetActive(false);
+        interactUIBtn.gameObject.SetActive(false);
     }
 
     void OnClickInteractBtn()
     {
-        interactBtn.onClick?.Invoke();
+        interactUIBtn.onClick?.Invoke();
     }
 
     public void OnQuestClearBtn()
@@ -341,6 +339,8 @@ public class UIManager : MonoBehaviour
 
         foreach (ItemType type in Enum.GetValues(typeof(ItemType)))
         {
+            if(type == ItemType.None) continue;
+            
             GameObject newShopItem = Instantiate(shopItemPrefab, shopContent);
             shopItems.Add(newShopItem);
             ShopItem shopItem = newShopItem.GetComponent<ShopItem>();
@@ -349,7 +349,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    void RefreshShopItem(ItemData itemData, long quantity)
+    public void RefreshShopItem(ItemData itemData, long quantity)
     {
         GameObject findShopItem = shopItems.Find(item => item.GetComponent<ShopItem>().itemName == itemData.itemName);
         long itemQuantity = GameManager.instance.inventory.GetItemQuantity(itemData.type.ToString());
@@ -443,7 +443,7 @@ public class UIManager : MonoBehaviour
         inventoryPanel.Init();
     }
     
-    void RefreshInventoryPanel(ItemData itemData, long quantity)
+    public void RefreshInventoryPanel(ItemData itemData, long quantity)
     {
         inventoryPanel.RefreshInventoryPanel(itemData);
     }
@@ -513,6 +513,54 @@ public class UIManager : MonoBehaviour
     {
         GameManager.instance.islandManager.UnlockIsland((int)islandType);
         SetAddIslandBtn();
+    }
+
+    #endregion
+
+    #region ActionBtn
+
+    private void InitActionBtn()
+    {
+        actionBtn.OnBtnUp += OnActionBtnUp;
+    }
+
+    public void OnPlayerTargetChanged(ItemType itemType)
+    {
+        switch (itemType)
+        {
+            case ItemType.Tree:
+                actionBtn.SetBtnIcon(actionBtnIconSprites[0]);
+                break;
+            case ItemType.Rock:
+                actionBtn.SetBtnIcon(actionBtnIconSprites[1]);
+                break;
+            case ItemType.Wheat:
+            case ItemType.Beet:
+            case ItemType.Cabbage:
+            case ItemType.Carrot:
+            case ItemType.Cauliflower:
+            case ItemType.Kale:
+            case ItemType.Parsnip:
+            case ItemType.Potato:
+            case ItemType.Pumpkin:
+            case ItemType.Radish:
+            case ItemType.Sunflower:
+                actionBtn.SetBtnIcon(actionBtnIconSprites[2]);
+                break;
+            default:
+                actionBtn.SetBtnIcon(null);
+                break;
+        }
+    }
+    
+    private void OnActionBtnDown()
+    {
+        
+    }
+
+    private void OnActionBtnUp()
+    {
+        
     }
 
     #endregion

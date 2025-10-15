@@ -53,7 +53,18 @@ public class GameManager : MonoBehaviour
         inventory = new Inventory();
         inventory.Init();
 
+        
+        player.OnPlayerAction += uiManager.SetPlayerHp;
+        player.OnTargetChanged += uiManager.OnPlayerTargetChanged;
+        
+        inventory.OnItemAdded += uiManager.RefreshShopItem;
+        inventory.OnItemRemoved += uiManager.RefreshShopItem;
+        inventory.OnItemAdded += uiManager.RefreshInventoryPanel;
+        inventory.OnItemRemoved += uiManager.RefreshInventoryPanel;
+        
         uiManager.itemSellPanel.OnItemSell += SellItem;
+        uiManager.actionBtn.OnBtnDown += player.Interacting;
+        questManager.OnQuestProgressChanged += uiManager.SetQuestPanel;
     }
 
     public long GetLongFromPlayerPrefs(string key, long defaultValue = 0L)

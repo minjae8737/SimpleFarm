@@ -20,6 +20,8 @@ public class InventoryPanel : MonoBehaviour
 
         foreach (ItemType type in Enum.GetValues(typeof(ItemType)))
         {
+            if(type == ItemType.None) continue;
+            
             GameObject newInventoryItem = Instantiate(inventoryItemPrefab, content);
             inventoryItems.Add(newInventoryItem);
             InventoryItem inventoryItem = newInventoryItem.GetComponent<InventoryItem>();

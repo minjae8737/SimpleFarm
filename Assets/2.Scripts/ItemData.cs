@@ -4,6 +4,7 @@ using UnityEngine;
 
 public enum ItemType
 {
+    None = -1,
     Tree,
     Rock,
     Wheat,

@@ -26,6 +26,7 @@ public class Player : MonoBehaviour
     bool isActionAnim;
 
     public event Action<string> OnPlayerAction;
+    public event Action<ItemType> OnTargetChanged;
 
     void Awake()
     {
@@ -103,32 +104,42 @@ public class Player : MonoBehaviour
         {
             float dis = Vector2.Distance(transform.position, target.transform.position);
 
-            bool isObject = target.TryGetComponent<Produce>(out var component);
-
-            if (dis < minDistance && ((isObject && !component.isCoolTime) || !isObject))
+            bool isObject = target.TryGetComponent<Produce>(out var produce);
+            
+            if (dis < minDistance && ((isObject && !produce.isCoolTime) || !isObject))
             {
                 minDistance = dis;
                 nearest = target.gameObject;
             }
+            
         }
-
+        
         if (nearestTarget != nearest)
         {
-            if (nearestTarget != null)
+            if ((object)nearestTarget != null)
             {
                 nearestTarget.GetComponent<Marker>()?.OffMarker();
             }
 
             nearestTarget = nearest;
 
-            if (nearestTarget != null)
+            if ((object)nearestTarget != null && nearestTarget.TryGetComponent(out Produce produce))
+            {
+                OnTargetChanged?.Invoke(produce.type);
+            }
+            else
+            {
+                OnTargetChanged?.Invoke(ItemType.None);
+            }
+
+            if ((object)nearestTarget != null)
             {
                 nearestTarget.GetComponent<Marker>()?.OnMarker();
             }
         }
     }
 
-    void Interacting()
+    public void Interacting()
     {
         if (hp <= 0)
             return;

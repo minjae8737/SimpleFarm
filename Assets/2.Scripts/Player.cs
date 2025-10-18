@@ -49,8 +49,8 @@ public class Player : MonoBehaviour
 
     public void Init()
     {
-        maxHp = GameManager.instance.GetIntFromPlayerPrefs("PalyerMaxHp") == 0 ? 10 : GameManager.instance.GetIntFromPlayerPrefs("PalyerMaxHp");
-        hp = GameManager.instance.GetIntFromPlayerPrefs("PalyerHp") == 0 ? 10 : GameManager.instance.GetIntFromPlayerPrefs("PalyerHp"); ;
+        maxHp = GameManager.instance.GetIntFromPlayerPrefs("PalyerMaxHp", 10);
+        hp = GameManager.instance.GetIntFromPlayerPrefs("PalyerHp", 10);
     }
 
     void SaveData()

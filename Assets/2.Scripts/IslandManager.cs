@@ -7,28 +7,36 @@ using UnityEngine;
 
 public class IslandManager : MonoBehaviour
 {
-    
+    [Header("Data")]
     [SerializeField] private IslandData[] islandDatas;
     private Dictionary<string, int[]> islandLevelDic;
    
-    const int FARM_LEVEL_INDEX = 0;
-    const int AUTOPRODUCECHANCE_LEVEL_INDEX = 1;
-    const int PRODUCECOOLDOWN_LEVEL_INDEX = 2;
-    string IslandKey = "Island_";
+    private const int FARM_LEVEL_INDEX = 0;
+    private const int AUTOPRODUCECHANCE_LEVEL_INDEX = 1;
+    private const int PRODUCECOOLDOWN_LEVEL_INDEX = 2;
+    private string IslandKey = "Island_";
 
-    [Header("Island")]
+    [Header("Island Object")]
     [SerializeField] private GameObject[] islands;
-    [SerializeField] private  GameObject[] farmlands;
+    [SerializeField] private GameObject[] farmlands;
     private Dictionary<int, List<GameObject>> soils;
     private Dictionary<int, List<Produce>> crops;
 
     [SerializeField] private GameObject[] cropPrefabs;
+
+    [Header("Bridge")]
+    [SerializeField] private GameObject[] bridges;
+    [SerializeField] private GameObject[] boundaries;
+    
+    private string BridgeKey = "Bridge_";
+    private bool[] bridgesActive;
     
     public void Init()
     {
         islandLevelDic = new Dictionary<string, int[]>();
         soils = new Dictionary<int, List<GameObject>>();
         crops = new Dictionary<int, List<Produce>>();
+        bridgesActive =  new bool[bridges.Length];
         
         // Island level 초기화
         for (int i = 0; i < islandDatas.Length; i++)
@@ -79,6 +87,13 @@ public class IslandManager : MonoBehaviour
             }
             
             crops.Add(key, cropList);
+        }
+        
+        // bridge 초기화
+        for (int i = 0; i < bridgesActive.Length; i++)
+        {
+            int isActiveBridge = GameManager.instance.GetIntFromPlayerPrefs(BridgeKey + i);
+            bridgesActive[i] = isActiveBridge == 1;
         }
         
         // 첫번째 섬 초기화 
@@ -221,6 +236,7 @@ public class IslandManager : MonoBehaviour
         SaveData(islandIndex);
     }
 
+    
     public void LevelUpProduceCooldown(int islandIndex)
     {
         FarmData farmData = islandDatas[islandIndex].farmData;
@@ -323,7 +339,8 @@ public class IslandManager : MonoBehaviour
         // levelData
         for (int i = 0; i < islandDatas.Length; i++)
         {
-            string key = IslandKey + i; // key = Island_'n'
+            string key = IslandKey + i; // key = Island_
+                                        // 'n'
             int[] levelArr = islandLevelDic[key];  // 각 level을 저장한 배열
 
             GameManager.instance.SaveIntToPlayerPrefs(key + "_FarmLevel", levelArr[FARM_LEVEL_INDEX]); // key = Island_'n'_FarmLevel

@@ -25,7 +25,6 @@ public class IslandManager : MonoBehaviour
     [SerializeField] private GameObject[] cropPrefabs;
 
     [Header("Bridge")]
-    [SerializeField] private GameObject[] bridges;
     [SerializeField] private GameObject[] boundaries;
     
     private string BridgeKey = "Bridge_";
@@ -36,7 +35,6 @@ public class IslandManager : MonoBehaviour
         islandLevelDic = new Dictionary<string, int[]>();
         soils = new Dictionary<int, List<GameObject>>();
         crops = new Dictionary<int, List<Produce>>();
-        bridgesActive =  new bool[bridges.Length];
         
         // Island level 초기화
         for (int i = 0; i < islandDatas.Length; i++)

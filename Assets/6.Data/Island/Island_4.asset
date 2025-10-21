@@ -14,8 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   islandType: 3
   name: "\uB2F9\uADFC \uC12C"
-  addIslandBtnPos: {x: -13.79, y: -18.7, z: 0}
+  addIslandBtnPos: {x: 27.5, y: -9, z: 0}
   unlockPrice: 10000
+  boundaryNames:
+  - Boundary_Beet_Carrot
+  - Boundary_Wheat_Carrot
   farmData:
     farmType: 3
     name: "\uB2F9\uADFC \uB18D\uC7A5"

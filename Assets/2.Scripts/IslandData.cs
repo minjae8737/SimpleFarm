@@ -26,6 +26,7 @@ public class IslandData : ScriptableObject
     public string name;
     public Vector3 addIslandBtnPos;
     public long unlockPrice;
+    public string[] boundaryNames;
     
     public FarmData farmData;
 

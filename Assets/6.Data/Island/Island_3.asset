@@ -16,6 +16,8 @@ MonoBehaviour:
   name: "\uC591\uBC30\uCD94 \uC12C"
   addIslandBtnPos: {x: -13.79, y: -18.7, z: 0}
   unlockPrice: 10000
+  boundaryNames:
+  - Boundary_Wheat_Cabbage
   farmData:
     farmType: 2
     name: "\uC591\uBC30\uCD94 \uB18D\uC7A5"

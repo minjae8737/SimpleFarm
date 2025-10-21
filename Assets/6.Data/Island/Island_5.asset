@@ -14,12 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   islandType: 4
   name: "\uCEEC\uB9AC\uD50C\uB77C\uC6CC \uC12C"
-  addIslandBtnPos: {x: -13.79, y: -18.7, z: 0}
+  addIslandBtnPos: {x: -32, y: -7, z: 0}
   unlockPrice: 10000
+  boundaryNames:
+  - Boundary_Cabbage_Cauliflower
+  - Boundary_Wheat_Cauliflower
   farmData:
     farmType: 4
     name: "\uCEEC\uB9AC\uD50C\uB77C\uC6CC \uB18D\uC7A5"
-    maxFarmLevel: 25
+    maxFarmLevel: 20
     basicFarmGold: 100
     farmGoldPer: 1.05
     maxAutoProduceChanceLevel: 20

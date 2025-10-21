@@ -16,6 +16,8 @@ MonoBehaviour:
   name: "\uBE44\uD2B8 \uC12C"
   addIslandBtnPos: {x: 8.96, y: -18.7, z: 0}
   unlockPrice: 2000
+  boundaryNames:
+  - Boundary_Wheat_Beet
   farmData:
     farmType: 1
     name: "\uBE44\uD2B8 \uB18D\uC7A5"

@@ -24,17 +24,16 @@ public class IslandManager : MonoBehaviour
 
     [SerializeField] private GameObject[] cropPrefabs;
 
-    [Header("Bridge")]
-    [SerializeField] private GameObject[] boundaries;
-    
-    private string BridgeKey = "Bridge_";
-    private bool[] bridgesActive;
+    [Header("MapBoundary")]
+    [SerializeField] private GameObject[] boundariesObj;
+    private Dictionary<string, GameObject> boundariesDic;
     
     public void Init()
     {
         islandLevelDic = new Dictionary<string, int[]>();
         soils = new Dictionary<int, List<GameObject>>();
         crops = new Dictionary<int, List<Produce>>();
+        boundariesDic = new Dictionary<string, GameObject>();
         
         // Island level 초기화
         for (int i = 0; i < islandDatas.Length; i++)
@@ -87,11 +86,11 @@ public class IslandManager : MonoBehaviour
             crops.Add(key, cropList);
         }
         
-        // bridge 초기화
-        for (int i = 0; i < bridgesActive.Length; i++)
+        // boundary 초기화
+        foreach (GameObject boundaryObj in boundariesObj)
         {
-            int isActiveBridge = GameManager.instance.GetIntFromPlayerPrefs(BridgeKey + i);
-            bridgesActive[i] = isActiveBridge == 1;
+            string name = boundaryObj.name;
+            boundariesDic.Add(name, boundaryObj);
         }
         
         // 첫번째 섬 초기화 
@@ -108,6 +107,12 @@ public class IslandManager : MonoBehaviour
 
             bool isUlockIsland = levelArr[FARM_LEVEL_INDEX] > 0 || levelArr[AUTOPRODUCECHANCE_LEVEL_INDEX] > 0 || levelArr[PRODUCECOOLDOWN_LEVEL_INDEX] > 0;
             islands[i].SetActive(isUlockIsland);
+            
+            // 바운더리 해제
+            foreach (string boundaryName in islandDatas[i].boundaryNames)
+            {
+                boundariesDic[boundaryName].SetActive(!isUlockIsland);
+            }
         }
     }
 
@@ -145,6 +150,12 @@ public class IslandManager : MonoBehaviour
         levelArr[FARM_LEVEL_INDEX] = 1;
         levelArr[AUTOPRODUCECHANCE_LEVEL_INDEX] = 1;
         levelArr[PRODUCECOOLDOWN_LEVEL_INDEX] = 1;
+
+        // 바운더리 해제
+        foreach (string boundaryName in islandData.boundaryNames)
+        {
+            boundariesDic[boundaryName].SetActive(false);
+        }
 
         // 저장
         SaveData(islandIndex);

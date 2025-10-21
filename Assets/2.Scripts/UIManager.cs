@@ -12,7 +12,9 @@ public enum UIBtnType
     Shop,
     Island_Wheat,
     Island_Beet,
-    Island_Cabbage
+    Island_Cabbage,
+    Island_Carrot,
+    Island_Cauliflower,
 }
 
 public class UIManager : MonoBehaviour
@@ -269,6 +271,14 @@ public class UIManager : MonoBehaviour
             case UIBtnType.Island_Cabbage:
                 interactUIBtnText.text = "양배추밭을 사고 싶어!";
                 interactUIBtn.onClick.AddListener(() => SetFarmUpgradePanel(IslandType.Cabbage));
+                break;
+            case UIBtnType.Island_Carrot:
+                interactUIBtnText.text = "당근밭을 사고 싶어!";
+                interactUIBtn.onClick.AddListener(() => SetFarmUpgradePanel(IslandType.Carrot));
+                break;
+            case UIBtnType.Island_Cauliflower:
+                interactUIBtnText.text = "컬리플라워밭을 사고 싶어!";
+                interactUIBtn.onClick.AddListener(() => SetFarmUpgradePanel(IslandType.Cauliflower));
                 break;
         }
 

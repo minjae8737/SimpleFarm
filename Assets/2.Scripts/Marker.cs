@@ -31,10 +31,10 @@ public class Marker : MonoBehaviour
         marker_tr = marker.transform.GetChild(2);
         marker_tl = marker.transform.GetChild(3);
         
-        originalPos_bl = marker_bl.localPosition;
-        originalPos_br = marker_br.localPosition;
-        originalPos_tr = marker_tr.localPosition;
-        originalPos_tl = marker_tl.localPosition;
+        originalPos_bl = marker_bl.position;
+        originalPos_br = marker_br.position;
+        originalPos_tr = marker_tr.position;
+        originalPos_tl = marker_tl.position;
     }
 
     private void OnEnable()
@@ -60,20 +60,20 @@ public class Marker : MonoBehaviour
     
     private void ResetPositions()
     {
-        if (marker_bl != null) marker_bl.localPosition = originalPos_bl;
-        if (marker_br != null) marker_br.localPosition = originalPos_br;
-        if (marker_tr != null) marker_tr.localPosition = originalPos_tr;
-        if (marker_tl != null) marker_tl.localPosition = originalPos_tl;
+        if (marker_bl != null) marker_bl.position = originalPos_bl;
+        if (marker_br != null) marker_br.position = originalPos_br;
+        if (marker_tr != null) marker_tr.position = originalPos_tr;
+        if (marker_tl != null) marker_tl.position = originalPos_tl;
     }
 
     private void OnSacleEffect()
     {
         KillAllTweens();
         
-        tween_bl = marker_bl?.DOMove(marker_bl.localPosition + (Vector3.left + Vector3.down) * 0.1f, 0.5f).SetLoops(-1, LoopType.Yoyo);
-        tween_br = marker_br?.DOMove(marker_br.localPosition + (Vector3.right + Vector3.down) * 0.1f, 0.5f).SetLoops(-1, LoopType.Yoyo);
-        tween_tr = marker_tr?.DOMove(marker_tr.localPosition + (Vector3.right + Vector3.up) * 0.1f, 0.5f).SetLoops(-1, LoopType.Yoyo);
-        tween_tl = marker_tl?.DOMove(marker_tl.localPosition + (Vector3.left + Vector3.up) * 0.1f, 0.5f).SetLoops(-1, LoopType.Yoyo);
+        tween_bl = marker_bl?.DOMove(marker_bl.position + (Vector3.left + Vector3.down) * 0.1f, 0.5f).SetLoops(-1, LoopType.Yoyo);
+        tween_br = marker_br?.DOMove(marker_br.position + (Vector3.right + Vector3.down) * 0.1f, 0.5f).SetLoops(-1, LoopType.Yoyo);
+        tween_tr = marker_tr?.DOMove(marker_tr.position + (Vector3.right + Vector3.up) * 0.1f, 0.5f).SetLoops(-1, LoopType.Yoyo);
+        tween_tl = marker_tl?.DOMove(marker_tl.position + (Vector3.left + Vector3.up) * 0.1f, 0.5f).SetLoops(-1, LoopType.Yoyo);
     }
     
     private void KillAllTweens()

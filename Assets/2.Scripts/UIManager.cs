@@ -131,6 +131,16 @@ public class UIManager : MonoBehaviour
         farmUpgradePanel.OnClickCooldownUpgradeBtn += OnClickCooldownUpgradeBtn;
     }
 
+    public void PlayUIOpenSfx()
+    {
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.UIOpen);
+    }
+
+    public void PlayUICloseSfx()
+    {
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.UIClose);
+    }
+
     #region Gold
 
     public void RefreshGoldText()
@@ -330,17 +340,19 @@ public class UIManager : MonoBehaviour
         OffQuestClearBtn();
     }
 
+    #region Shop
+
     public void OpenShop()
     {
         shopPanel.SetActive(true);
         shopPanel.transform.DOPunchScale(new Vector3(0.02f, 0.02f, 0.02f), 0.2f, 1, 1f);
+        PlayUIOpenSfx();
     }
-
-    #region Shop
 
     public void CloseShop()
     {
         shopPanel.SetActive(false);
+        PlayUICloseSfx();
     }
 
     public void InitShopItems()
@@ -391,11 +403,13 @@ public class UIManager : MonoBehaviour
         SetItemInfoPanel(itemData);
         itemInfoPanel.SetActive(true);
         itemInfoPanel.transform.DOPunchScale(new Vector3(0.02f, 0.02f, 0.02f), 0.2f, 1, 1f);
+        PlayUIOpenSfx();
     }
 
     void OffItemInfoPanel()
     {
         itemInfoPanel.SetActive(false);
+        PlayUICloseSfx();
     }
 
     void SetItemInfoPanel(ItemData itemData)
@@ -411,10 +425,22 @@ public class UIManager : MonoBehaviour
     
     #region FarmUpgradePanel
 
+    public void OnFarmUpgradePanel()
+    {
+        farmUpgradePanel.gameObject.SetActive(true);
+        PlayUIOpenSfx();
+    }
+
+    public void OffFarmUpgradePanel()
+    {
+        farmUpgradePanel.gameObject.SetActive(false);
+        PlayUICloseSfx();
+    }
+    
     private void SetFarmUpgradePanel(IslandType islandType)
     {
         farmUpgradePanel.RefreshPanel(GameManager.instance.islandManager.GetFarmUpgradePanelDTO((int)islandType));
-        farmUpgradePanel.gameObject.SetActive(true);
+        OnFarmUpgradePanel();
     }
 
     private void OnClickFarmUpgradeBtn(IslandType islandType, long gold)
@@ -458,12 +484,13 @@ public class UIManager : MonoBehaviour
         inventoryPanel.RefreshInventoryPanel(itemData);
     }
 
-    public void OpenInventoryPanel()
+    public void OnInventoryPanel()
     {
         questPanel.SetActive(false);
         playerHp.SetActive(false);
         inventoryPanel.gameObject.SetActive(true);
         inventoryPanel.transform.DOPunchScale(new Vector3(0.02f, 0.02f, 0.02f), 0.2f, 1, 1f);
+        PlayUIOpenSfx();
     }
 
     public void OffInventoryPanel()
@@ -471,6 +498,7 @@ public class UIManager : MonoBehaviour
         inventoryPanel.gameObject.SetActive(false);
         questPanel.SetActive(true);
         playerHp.SetActive(true);
+        PlayUICloseSfx();
     }
 
     #endregion

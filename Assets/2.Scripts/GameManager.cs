@@ -128,6 +128,7 @@ public class GameManager : MonoBehaviour
     {
         player.RecoverHP();
         uiManager.RecorvePlayerHpEffect();
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.RecoverHp);
     }
 
     #region Item

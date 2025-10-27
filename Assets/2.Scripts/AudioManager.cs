@@ -21,7 +21,7 @@ public class AudioManager : MonoBehaviour
 
     public enum Sfx
     {
-        DropItem, PickUpItem, 
+        DropItem, PickUpItem, RecoverHp, UIOpen, UIClose
     }
 
 

@@ -25,6 +25,12 @@ public class QuestManager : MonoBehaviour
         SetQuest();
     }
 
+    private void Start()
+    {
+        if (CheckQuestCondition())
+            ClearQuest();
+    }
+
     private void OnApplicationQuit()
     {
         SaveQuest();

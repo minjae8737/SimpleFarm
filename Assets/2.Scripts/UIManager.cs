@@ -38,7 +38,7 @@ public class UIManager : MonoBehaviour
     public GameObject playerHp;
     private Image palyerHpImg;
     private Text playerHpText;
-    private float recoveHpDuration = 3f; // FillAmount 0 -> 1 까지 걸리는 시간
+    private float recoveHpDuration = 1f; // FillAmount 0 -> 1 까지 걸리는 시간
     
     [Space(5)]
     [Header("InteractButton")]
@@ -139,6 +139,16 @@ public class UIManager : MonoBehaviour
     public void PlayUICloseSfx()
     {
         AudioManager.instance.PlaySfx(AudioManager.Sfx.UIClose);
+    }
+    
+    public void PlayUIButtonClickEnabledSfx()
+    {
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.UIButtonClickEnabled);
+    }
+
+    public void PlayUIButtonClickDisabledSfx()
+    {
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.UIButtonClickDisabled);
     }
 
     #region Gold
@@ -338,6 +348,7 @@ public class UIManager : MonoBehaviour
     {
         GameManager.instance.questManager.GetReward();
         OffQuestClearBtn();
+        PlayUIButtonClickEnabledSfx();
     }
 
     #region Shop
@@ -445,29 +456,45 @@ public class UIManager : MonoBehaviour
 
     private void OnClickFarmUpgradeBtn(IslandType islandType, long gold)
     {
-        if (!GameManager.instance.CheckGold(gold)) return;
+        if (!GameManager.instance.CheckGold(gold))
+        {
+            PlayUIButtonClickDisabledSfx();
+            return;
+        }
         
         GameManager.instance.islandManager.LevelUpFarm((int)islandType);
         GameManager.instance.SetGold(-gold);
         farmUpgradePanel.RefreshPanel(GameManager.instance.islandManager.GetFarmUpgradePanelDTO((int)islandType));
+        PlayUIButtonClickEnabledSfx();
+
     }
 
     private void OnClickAutoUpgradeBtn(IslandType islandType, long gold)
     {
-        if (!GameManager.instance.CheckGold(gold)) return;
+        if (!GameManager.instance.CheckGold(gold))
+        {
+            PlayUIButtonClickDisabledSfx();
+            return;
+        }
         
         GameManager.instance.islandManager.LevelUpAutoProduceChance((int)islandType);
         GameManager.instance.SetGold(-gold);
         farmUpgradePanel.RefreshPanel(GameManager.instance.islandManager.GetFarmUpgradePanelDTO((int)islandType));
+        PlayUIButtonClickEnabledSfx();
     }
 
     private void OnClickCooldownUpgradeBtn(IslandType islandType, long gold)
     {
-        if (!GameManager.instance.CheckGold(gold)) return;
+        if (!GameManager.instance.CheckGold(gold))
+        {
+            PlayUIButtonClickDisabledSfx();
+            return;
+        }
         
         GameManager.instance.islandManager.LevelUpProduceCooldown((int)islandType);
         GameManager.instance.SetGold(-gold);
         farmUpgradePanel.RefreshPanel(GameManager.instance.islandManager.GetFarmUpgradePanelDTO((int)islandType));
+        PlayUIButtonClickEnabledSfx();
     }
     
     #endregion

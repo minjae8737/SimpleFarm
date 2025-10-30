@@ -7,26 +7,29 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [Header("# Stat")]
-    public int maxHp;
-    public int hp;
-    public int strength;
-    public float speed;
-    public float scanRange;
-    public LayerMask targetLayer;
-    Vector2 inputVec;
+    [SerializeField] private int maxHp;
+    public int MaxHp => maxHp;
+    [SerializeField] private int hp;
+    public int Hp => hp;
+    [SerializeField] private int strength;
+    [SerializeField] private float speed;
+    [SerializeField] private float scanRange;
+    [SerializeField] private LayerMask targetLayer;
+    private Vector2 inputVec;
     
-    Rigidbody2D rigid;
-    Collider2D[] targets;
-    GameObject nearestTarget;
+    private Rigidbody2D rigid;
+    private Collider2D[] targets;
+    private GameObject nearestTarget;
     
-    SpriteRenderer hairSprite;
-    SpriteRenderer bodySprite;
-    Animator hairAnim;
-    Animator bodyAnim;
-    PlayerAnimationEvent animationEvent;
-    bool isActionAnim;
+    private SpriteRenderer hairSprite;
+    private SpriteRenderer bodySprite;
+    private Animator hairAnim;
+    private Animator bodyAnim;
+    private PlayerAnimationEvent animationEvent;
+    private bool isActionAnim;
 
     public event Action<string> OnPlayerAction;
+    public event Action<int, GameObject> OnStrengthUsed; 
     public event Action<ItemType> OnTargetChanged;
 
     void Awake()
@@ -40,7 +43,7 @@ public class Player : MonoBehaviour
         
         isActionAnim = false;
 
-        animationEvent.OnStateEnd += OnInteractionEnd;
+        animationEvent.OnStateEnd += OnActionEnd;
     }
 
     private void OnApplicationQuit()
@@ -94,7 +97,7 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            Interacting();
+            DoAction();
         }
     }
 
@@ -142,7 +145,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void Interacting()
+    public void DoAction()
     {
         if (hp <= 0)
             return;
@@ -182,13 +185,14 @@ public class Player : MonoBehaviour
         
     }
 
-    public void OnInteractionEnd()
+    public void OnActionEnd()
     {
         if (nearestTarget != null)
         {
             nearestTarget.GetComponent<Produce>()?.OnInteract(strength);
             LoseHp();
             OnPlayerAction?.Invoke("Interact");
+            OnStrengthUsed?.Invoke(strength, nearestTarget);
         }
 
         isActionAnim = false;

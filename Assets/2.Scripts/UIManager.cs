@@ -20,11 +20,11 @@ public enum UIBtnType
 public class UIManager : MonoBehaviour
 {
     [Header("HUD")] 
-    public Text goldText;
+    [SerializeField] private Text goldText;
     
     [Space(5)]
     [Header("QuestPanel")]
-    public GameObject questPanel;
+    [SerializeField] private GameObject questPanel;
     private Image questRewardIcon;
     private Text questRewardText;
     private Text questDesc;
@@ -35,36 +35,36 @@ public class UIManager : MonoBehaviour
     
     [Space(5)]
     [Header("PlayerHp")]
-    public GameObject playerHp;
+    [SerializeField] private GameObject playerHp;
     private Image palyerHpImg;
     private Text playerHpText;
     private float recoveHpDuration = 1f; // FillAmount 0 -> 1 까지 걸리는 시간
     
     [Space(5)]
     [Header("InteractButton")]
-    public Button interactUIBtn;
+    [SerializeField] private Button interactUIBtn;
     private Text interactUIBtnText;
     
     [Space(5)]
     [Header("ActionButton")]
     public ActionBtn actionBtn;
 
-    public Sprite[] actionBtnIconSprites;
+    [SerializeField] private Sprite[] actionBtnIconSprites;
 
     [Header("Menu")] 
-    public Button inventoryBtn;
-    public Button magnetBtn;
+    [SerializeField] private Button inventoryBtn;
+    [SerializeField] private Button magnetBtn;
     private TextMeshProUGUI magnetBtnText;
 
     [Header("Shop")] 
-    public GameObject shopPanel;
+    [SerializeField] private GameObject shopPanel;
     private RectTransform shopContent;
-    public GameObject shopItemPrefab;
+    [SerializeField] private GameObject shopItemPrefab;
     private List<GameObject> shopItems;
     public ItemSellPanel itemSellPanel;
 
     [Header("Item")] 
-    public GameObject itemInfoPanel;
+    [SerializeField] private GameObject itemInfoPanel;
     private Text itemNameText;
     private Image itemIcon;
     private Text itemPriceText;
@@ -72,16 +72,23 @@ public class UIManager : MonoBehaviour
     private Text itemDescriptionText;
 
     [Header("Farm")]
-    public FarmUpgradePanel farmUpgradePanel;
+    [SerializeField] private FarmUpgradePanel farmUpgradePanel;
     
     [Header("Inventory")]
-    public InventoryPanel inventoryPanel;
+    [SerializeField] private InventoryPanel inventoryPanel;
     
     [Header("AddIslandBtn")]
-    public AddIslandBtn addIslandBtn;
+    [SerializeField] private AddIslandBtn addIslandBtn;
+    
+    [Header("FloatingText")]
+    [SerializeField] private Transform floatingTextPool;
+    [SerializeField] private int floatingTextPoolSize;
+    [SerializeField] private List<FloatingText> floatingTexts;
+    [SerializeField] private GameObject floatingTextPrefab;
+    
     
     [Header("Sprites")] 
-    public Sprite[] rewardIcons; // RewardsType과 매칭
+    [SerializeField] private Sprite[] rewardIcons; // RewardsType과 매칭
 
     public void Init()
     {
@@ -117,12 +124,16 @@ public class UIManager : MonoBehaviour
         // 메뉴 버튼
         magnetBtnText =  magnetBtn.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         
+        // 플로팅 텍스트
+        floatingTexts = new List<FloatingText>();
+        
         SetPlayerHp();
         RefreshGoldText();
         SetQuestPanel();
         InitShopItems();
         InitInventoryPanel();
         InitAddIslandBtn();
+        InitFloatingText();
         
         itemSellPanel.OffItemInfoPanel += OffItemInfoPanel;
         
@@ -185,7 +196,7 @@ public class UIManager : MonoBehaviour
 
     public void SetPlayerHp(string defaultPlayerAction = "")
     {
-        float playerHpAmount = (float)GameManager.instance.player.hp / GameManager.instance.player.maxHp;
+        float playerHpAmount = (float)GameManager.instance.player.Hp / GameManager.instance.player.MaxHp;
         palyerHpImg.fillAmount = playerHpAmount;
 
         SetPlayerHpText();
@@ -193,7 +204,7 @@ public class UIManager : MonoBehaviour
 
     void SetPlayerHpText()
     {
-        playerHpText.text = GameManager.instance.player.hp + " / " + GameManager.instance.player.maxHp;
+        playerHpText.text = GameManager.instance.player.Hp + " / " + GameManager.instance.player.MaxHp;
     }
 
     public void RecorvePlayerHpEffect()
@@ -626,6 +637,32 @@ public class UIManager : MonoBehaviour
     private void OnActionBtnUp()
     {
         
+    }
+
+    #endregion
+    
+    #region FloatingText
+
+    private void InitFloatingText()
+    {
+        for (int i = 0; i < floatingTextPoolSize; i++)
+        {
+            GameObject newFloatingText = Instantiate(floatingTextPrefab, floatingTextPool);
+            floatingTexts.Add(newFloatingText.GetComponent<FloatingText>());
+        }
+    }
+
+    public void ShowDamageText(int damage, GameObject target)
+    {
+        for (int i = 0; i < floatingTextPoolSize; i++)
+        {
+            if (!floatingTexts[i].gameObject.activeSelf)
+            {
+                floatingTexts[i].SetTextData(target.transform.position, damage.ToString());
+                floatingTexts[i].gameObject.SetActive(true);
+                break;
+            }
+        }
     }
 
     #endregion

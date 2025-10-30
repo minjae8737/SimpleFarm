@@ -56,6 +56,7 @@ public class GameManager : MonoBehaviour
         
         player.OnPlayerAction += uiManager.SetPlayerHp;
         player.OnTargetChanged += uiManager.OnPlayerTargetChanged;
+        player.OnStrengthUsed += uiManager.ShowDamageText;
         
         inventory.OnItemAdded += uiManager.RefreshShopItem;
         inventory.OnItemRemoved += uiManager.RefreshShopItem;
@@ -63,7 +64,7 @@ public class GameManager : MonoBehaviour
         inventory.OnItemRemoved += uiManager.RefreshInventoryPanel;
         
         uiManager.itemSellPanel.OnItemSell += SellItem;
-        uiManager.actionBtn.OnBtnDown += player.Interacting;
+        uiManager.actionBtn.OnBtnDown += player.DoAction;
         questManager.OnQuestProgressChanged += uiManager.SetQuestPanel;
     }
 

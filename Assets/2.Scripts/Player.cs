@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     [Header("# Stat")]
     public int maxHp;
     public int hp;
+    public int strength;
     public float speed;
     public float scanRange;
     public LayerMask targetLayer;
@@ -51,12 +52,14 @@ public class Player : MonoBehaviour
     {
         maxHp = GameManager.instance.GetIntFromPlayerPrefs("PalyerMaxHp", 10);
         hp = GameManager.instance.GetIntFromPlayerPrefs("PalyerHp", 10);
+        strength = GameManager.instance.GetIntFromPlayerPrefs("PalyerStrength", 1);
     }
 
     void SaveData()
     {
         GameManager.instance.SaveIntToPlayerPrefs("PalyerMaxHp", maxHp);
         GameManager.instance.SaveIntToPlayerPrefs("PalyerHp", hp);
+        GameManager.instance.SaveIntToPlayerPrefs("PalyerStrength", strength);
     }
 
     void Update()
@@ -95,7 +98,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    void SuchObject()
+    private void SuchObject()
     {
         GameObject nearest = null;
         float minDistance = Mathf.Infinity;
@@ -183,7 +186,7 @@ public class Player : MonoBehaviour
     {
         if (nearestTarget != null)
         {
-            nearestTarget.GetComponent<Produce>()?.OnInteract();
+            nearestTarget.GetComponent<Produce>()?.OnInteract(strength);
             LoseHp();
             OnPlayerAction?.Invoke("Interact");
         }

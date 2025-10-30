@@ -78,13 +78,13 @@ public class Produce : MonoBehaviour
         }
     }
 
-    public void OnInteract()
+    public void OnInteract(int playerStrength)
     {
         if (isCoolTime)
             return;
         
         OnHpBar();
-        hp -= 1; // FIXME 나중엔 플레이어 데미지 가져오기
+        hp -= playerStrength;
         SetHp();
 
         if (hp <= 0)

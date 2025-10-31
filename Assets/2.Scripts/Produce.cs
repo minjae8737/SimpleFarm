@@ -5,20 +5,23 @@ using UnityEngine;
 public class Produce : MonoBehaviour
 {
     [Header("# Produce Info")] 
-    public ItemType type;
-    public ProductData productData;
+    [SerializeField] private ItemType type;
+    public ItemType Type => type;
+    [SerializeField] private ProductData productData;
+    [SerializeField] private Vector2Int tileSize;
+    public  Vector2Int TileSize => tileSize;
 
     [Header("# Gauge UI")] 
-    public GameObject uiGaugeBar;
-    public GameObject uiGauge;
-    public GameObject uiHpBar;
-    public GameObject uiHp;
+    [SerializeField] private GameObject uiGaugeBar;
+    [SerializeField] private GameObject uiGauge;
+    [SerializeField] private GameObject uiHpBar;
+    [SerializeField] private GameObject uiHp;
 
-    float autoProduceChance; // (%)
-    float maxCoolTime;  // (sec)
-    float coolTime;
-    float maxHp;
-    float hp;
+    private float autoProduceChance; // (%)
+    private float maxCoolTime;  // (sec)
+    private float coolTime;
+    private float maxHp;
+    private float hp;
 
     public bool isCoolTime;
     

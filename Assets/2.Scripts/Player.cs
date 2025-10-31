@@ -131,7 +131,7 @@ public class Player : MonoBehaviour
 
             if ((object)nearestTarget != null && nearestTarget.TryGetComponent(out Produce produce))
             {
-                OnTargetChanged?.Invoke(produce.type);
+                OnTargetChanged?.Invoke(produce.Type);
             }
             else
             {
@@ -156,7 +156,7 @@ public class Player : MonoBehaviour
         
         isActionAnim = true;
 
-        switch (produce?.type)
+        switch (produce?.Type)
         {
             case ItemType.Wheat:
             case ItemType.Beet:

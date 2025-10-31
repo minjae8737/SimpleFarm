@@ -654,11 +654,17 @@ public class UIManager : MonoBehaviour
 
     public void ShowDamageText(int damage, GameObject target)
     {
+        float produceYSize = 0;
+        if (target.TryGetComponent(out Produce produce))
+        {
+            produceYSize = produce.TileSize.y;
+        }
+
         for (int i = 0; i < floatingTextPoolSize; i++)
         {
             if (!floatingTexts[i].gameObject.activeSelf)
             {
-                floatingTexts[i].SetTextData(target.transform.position, damage.ToString());
+                floatingTexts[i].SetTextData(target.transform.position + (Vector3.up * produceYSize / 2f), damage.ToString());
                 floatingTexts[i].gameObject.SetActive(true);
                 break;
             }

@@ -112,7 +112,7 @@ public class UIManager : MonoBehaviour
         interactUIBtnText =  interactUIBtn.transform.GetChild(0).GetComponent<Text>();
         
         // 상점
-        shopContent = shopPanel.transform.GetChild(0).transform.GetChild(1).transform.GetChild(0).transform.GetChild(0).GetComponent<RectTransform>();
+        shopContent = shopPanel.transform.GetChild(1).transform.GetChild(1).transform.GetChild(0).transform.GetChild(0).GetComponent<RectTransform>();
 
         // 아이템
         itemNameText = itemInfoPanel.transform.GetChild(0).GetComponent<Text>();

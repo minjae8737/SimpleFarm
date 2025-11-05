@@ -13,10 +13,9 @@ MonoBehaviour:
   m_Name: Quest_1
   m_EditorClassIdentifier: 
   type: 2
-  index: 0
+  index: 1
   name: "\uD018\uC2A4\uD2B8 \uBA85"
   desc: "\uBC00 10\uAC1C \uC218\uD655 \uD558\uAE30"
-  requiredItemType: 2
-  targetCount: 10
+  condition: {fileID: 11400000, guid: 80e050e66692b435abce319e63361545, type: 2}
   rewardsType: 0
   rewardAmount: 500

@@ -16,6 +16,7 @@ MonoBehaviour:
   index: 0
   name: "\uD018\uC2A4\uD2B8 \uBA85"
   desc: "\uBC00 5\uAC1C \uC218\uD655 \uD558\uAE30"
+  condition: {fileID: 11400000, guid: eb8861bacc53d4a598cc7070d79b4919, type: 2}
   requiredItemType: 2
   targetCount: 5
   rewardsType: 0

@@ -28,6 +28,8 @@ public class IslandManager : MonoBehaviour
     [SerializeField] private GameObject[] boundariesObj;
     private Dictionary<string, GameObject> boundariesDic;
     
+    public event Action OnIslandUnlocked;
+    
     public void Init()
     {
         islandLevelDic = new Dictionary<string, int[]>();
@@ -160,7 +162,20 @@ public class IslandManager : MonoBehaviour
         // 저장
         SaveData(islandIndex);
         
+        OnIslandUnlocked?.Invoke();
+        
         return true;
+    }
+
+    public bool IsUnlocked(int islandIndex)
+    {      
+        if (islandIndex >= islandDatas.Length) return false;
+        
+        IslandData islandData = islandDatas[islandIndex];
+        string key = IslandKey + islandIndex; // key = Island_'n'
+        int[] levelArr = islandLevelDic[key];  // 각 level을 저장한 배열
+
+        return levelArr[FARM_LEVEL_INDEX] > 0 || levelArr[AUTOPRODUCECHANCE_LEVEL_INDEX] > 0 || levelArr[PRODUCECOOLDOWN_LEVEL_INDEX] > 0;
     }
 
     private void CreateCrop(FarmData farmData, List<GameObject> soilList, int i, float produceChance, float produceCooldown, List<Produce> cropList)

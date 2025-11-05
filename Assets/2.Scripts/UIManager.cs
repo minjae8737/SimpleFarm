@@ -235,25 +235,36 @@ public class UIManager : MonoBehaviour
 
     public void SetQuestPanel()
     {
-        QuestData questData = GameManager.instance.questManager.GetCurrentQuestData();
+        QuestProgress questProgress = GameManager.instance.questManager.Progress;
 
-        if (questData == null)
+        if (questProgress.questData == null)
         {
             questPanel.SetActive(false);
             return;
         }
+        
+        string questDescStr = "";
 
-        string questDescStr = string.Format("{0} [{1}/{2}]", questData.desc, GameManager.instance.questManager.curCount,
-            questData.targetCount);
-        string questRewardAmountStr = ConvertGoldToText(questData.rewardAmount);
-
-
+        switch (questProgress.questData.type)
+        {
+            case QuestType.Behaviour:
+            case QuestType.Produce:
+            case QuestType.CollectItem:
+                questDescStr = string.Format("{0} [{1}/{2}]", questProgress.questData.desc, GameManager.instance.questManager.CurCount, GameManager.instance.questManager.TargetCount);
+                break;
+            case QuestType.IslandUnlocked:
+                questDescStr = string.Format("{0}", questProgress.questData.desc);
+                break;
+        }
+        
+        string questRewardAmountStr = ConvertGoldToText(questProgress.questData.rewardAmount);
+        
         questDesc.text = questDescStr;
-        questRewardIcon.sprite = rewardIcons[(int)questData.rewardsType];
+        questRewardIcon.sprite = rewardIcons[(int)questProgress.questData.rewardsType];
         questRewardText.text = questRewardAmountStr;
 
         questClearBtnDesc.text = questDescStr;
-        questClearBtnRewardIcon.sprite = rewardIcons[(int)questData.rewardsType];
+        questClearBtnRewardIcon.sprite = rewardIcons[(int)questProgress.questData.rewardsType];
         questClearBtnRewardText.text = questRewardAmountStr;
     }
 

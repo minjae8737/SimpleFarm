@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
@@ -17,13 +18,15 @@ public class SpeechBubble : MonoBehaviour
     [Header("Padding")]
     [SerializeField] private Vector2 padding;
     
-    private void Awake()
-    {
-        backgroundRect = transform.GetChild(0).GetComponent<RectTransform>();
-        text =  transform.GetChild(1).GetComponent<TextMeshProUGUI>();
-        RefreshSize();
-    }
+    private Sequence sequence;
 
+
+    private void OnEnable()
+    {
+        RefreshSize();
+        Effect();
+    }
+    
     private void LateUpdate()
     {
         transform.position = target.transform.position + positionOffset;    
@@ -47,5 +50,21 @@ public class SpeechBubble : MonoBehaviour
         backgroundRect.sizeDelta = textSize + padding;
 
         text.rectTransform.anchoredPosition = (backgroundRect.sizeDelta - Vector2.one) / 2f;
+    }
+
+    private void Effect()
+    {
+        sequence?.Kill();
+        
+        transform.localScale = Vector3.zero;
+        text.gameObject.SetActive(false);
+
+        sequence = DOTween.Sequence();
+        
+        // 커지는 효과
+        sequence.Append(transform.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack))
+            .AppendCallback(() => text.gameObject.SetActive(true));
+        sequence.AppendInterval(3f);
+        sequence.OnComplete(() => gameObject.SetActive(false));
     }
 }

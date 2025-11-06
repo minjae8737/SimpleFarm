@@ -4,6 +4,12 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
+public enum PlayerState
+{
+    LowHp,
+    
+}
+
 public class Player : MonoBehaviour
 {
     [Header("# Stat")]
@@ -31,6 +37,7 @@ public class Player : MonoBehaviour
     public event Action<string> OnPlayerAction;
     public event Action<int, GameObject> OnStrengthUsed; 
     public event Action<ItemType> OnTargetChanged;
+    public event Action<PlayerState> OnPlayerStateUpdated;
 
     void Awake()
     {
@@ -84,7 +91,6 @@ public class Player : MonoBehaviour
 
     void LateUpdate()
     {
-        
         hairAnim.SetFloat("Speed", inputVec.normalized.magnitude);
         bodyAnim.SetFloat("Speed", inputVec.normalized.magnitude);
 
@@ -148,7 +154,10 @@ public class Player : MonoBehaviour
     public void DoAction()
     {
         if (hp <= 0)
+        {
+            OnPlayerStateUpdated?.Invoke(PlayerState.LowHp);
             return;
+        }
         
         Produce produce = nearestTarget?.GetComponent<Produce>();
         

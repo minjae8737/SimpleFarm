@@ -57,6 +57,7 @@ public class GameManager : MonoBehaviour
         player.OnPlayerAction += uiManager.SetPlayerHp;
         player.OnTargetChanged += uiManager.OnPlayerTargetChanged;
         player.OnStrengthUsed += uiManager.ShowDamageText;
+        player.OnPlayerStateUpdated += uiManager.SetPlayerSpeechBubble;
         
         inventory.OnItemAdded += uiManager.RefreshShopItem;
         inventory.OnItemRemoved += uiManager.RefreshShopItem;

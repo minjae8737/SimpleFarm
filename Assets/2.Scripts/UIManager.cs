@@ -86,6 +86,13 @@ public class UIManager : MonoBehaviour
     [SerializeField] private List<FloatingText> floatingTexts;
     [SerializeField] private GameObject floatingTextPrefab;
     
+    [Header("Speech Bubble")]
+    [SerializeField] private SpeechBubble playerSpeechBubble;
+
+    private Dictionary<string, string> playerLinesDic = new Dictionary<string, string>()
+    {
+        { "LowHp", "잠깐 쉴래" },
+    };
     
     [Header("Sprites")] 
     [SerializeField] private Sprite[] rewardIcons; // RewardsType과 매칭
@@ -680,6 +687,16 @@ public class UIManager : MonoBehaviour
                 break;
             }
         }
+    }
+
+    #endregion
+
+    #region SpeechBubble
+
+    public void SetPlayerSpeechBubble(PlayerState playerState)
+    {
+        playerSpeechBubble.SetText(playerLinesDic[playerState.ToString()]);
+        playerSpeechBubble.gameObject.SetActive(true);
     }
 
     #endregion

@@ -23,7 +23,8 @@ public enum ItemType
 [CreateAssetMenu(fileName = "Item_", menuName = "ScriptableObject/Item")]
 public class ItemData : ScriptableObject
 {
-    [Header("# Info")] public ItemType type;
+    [Header("# Info")] 
+    public ItemType type;
     public string itemName;
     public string description;
     public int maxStackSize = 99999;

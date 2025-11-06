@@ -14726,7 +14726,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: spr_tileset_sunnysideworld_16px_820
+      name: anvil_0
       rect:
         serializedVersion: 2
         x: 592
@@ -14747,7 +14747,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: spr_tileset_sunnysideworld_16px_821
+      name: anvil_1
       rect:
         serializedVersion: 2
         x: 608
@@ -33741,6 +33741,8 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
+      anvil_0: 1582963463
+      anvil_1: 2043700892
       box_0: -776863803
       box_1: -512732727
       box_10: -656002975
@@ -35277,8 +35279,6 @@ TextureImporter:
       spr_tileset_sunnysideworld_16px_817: 675940555
       spr_tileset_sunnysideworld_16px_818: -1123744132
       spr_tileset_sunnysideworld_16px_819: -1760122871
-      spr_tileset_sunnysideworld_16px_820: 1582963463
-      spr_tileset_sunnysideworld_16px_821: 2043700892
       spr_tileset_sunnysideworld_16px_822: 2034361714
       spr_tileset_sunnysideworld_16px_823: 2122538779
       spr_tileset_sunnysideworld_16px_824: 53550435

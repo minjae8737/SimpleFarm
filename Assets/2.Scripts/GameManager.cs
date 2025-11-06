@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     [Header("# Item")] 
     public Inventory inventory;
     public ItemData[] itemDatas;
+    public Dictionary<ItemType, ItemData> itemDataDic;
 
     [Header("# Manager")] 
     public QuestManager questManager;
@@ -42,6 +43,7 @@ public class GameManager : MonoBehaviour
     private void OnApplicationQuit()
     {
         SaveGold();
+        inventory.SaveDataAll();
     }
 
     void Init()
@@ -49,10 +51,16 @@ public class GameManager : MonoBehaviour
         // 골드 초기화
         gold = GetLongFromPlayerPrefs(GoldKey);
 
+        // 아이템 데이터 Dictionary 초기화
+        itemDataDic = new Dictionary<ItemType, ItemData>();
+        foreach (ItemData itemData in itemDatas)
+        {
+            itemDataDic.Add(itemData.type, itemData);
+        }
+        
         // 인벤토리 초기화
         inventory = new Inventory();
         inventory.Init();
-
         
         player.OnPlayerAction += uiManager.SetPlayerHp;
         player.OnTargetChanged += uiManager.OnPlayerTargetChanged;
@@ -147,9 +155,9 @@ public class GameManager : MonoBehaviour
 
     public ItemData GetItemData(ItemType type)
     {
-        return itemDatas[(int)type];
+        return itemDataDic[type];
     }
-
+    
     void SellItem(ItemData itemData, long quantity)
     {
         inventory.RemoveItem(itemData, quantity);

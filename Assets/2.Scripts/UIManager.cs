@@ -15,6 +15,7 @@ public enum UIBtnType
     Island_Cabbage,
     Island_Carrot,
     Island_Cauliflower,
+    Anvil,
 }
 
 public class UIManager : MonoBehaviour
@@ -307,6 +308,10 @@ public class UIManager : MonoBehaviour
                 break;
             case UIBtnType.Shop:
                 interactUIBtnText.text = "상점 열기";
+                interactUIBtn.onClick.AddListener(OpenShop);
+                break;
+            case UIBtnType.Anvil:
+                interactUIBtnText.text = "도구 강화";
                 interactUIBtn.onClick.AddListener(OpenShop);
                 break;
             case UIBtnType.Island_Wheat:
@@ -699,5 +704,11 @@ public class UIManager : MonoBehaviour
         playerSpeechBubble.gameObject.SetActive(true);
     }
 
+    #endregion
+    
+    #region AnvilPanel
+    
+    
+    
     #endregion
 }

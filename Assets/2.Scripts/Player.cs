@@ -13,11 +13,11 @@ public enum PlayerState
 public class Player : MonoBehaviour
 {
     [Header("# Stat")]
+    [SerializeField] private PlayerStrength playerStrength;
     [SerializeField] private int maxHp;
     public int MaxHp => maxHp;
     [SerializeField] private int hp;
     public int Hp => hp;
-    [SerializeField] private int strength;
     [SerializeField] private float speed;
     [SerializeField] private float scanRange;
     [SerializeField] private LayerMask targetLayer;
@@ -38,6 +38,7 @@ public class Player : MonoBehaviour
     public event Action<int, GameObject> OnStrengthUsed; 
     public event Action<ItemType> OnTargetChanged;
     public event Action<PlayerState> OnPlayerStateUpdated;
+    
 
     void Awake()
     {
@@ -62,14 +63,14 @@ public class Player : MonoBehaviour
     {
         maxHp = GameManager.instance.GetIntFromPlayerPrefs("PalyerMaxHp", 10);
         hp = GameManager.instance.GetIntFromPlayerPrefs("PalyerHp", 10);
-        strength = GameManager.instance.GetIntFromPlayerPrefs("PalyerStrength", 1);
+        playerStrength.strength = GameManager.instance.GetIntFromPlayerPrefs("PalyerStrength", 1);
     }
 
     void SaveData()
     {
         GameManager.instance.SaveIntToPlayerPrefs("PalyerMaxHp", maxHp);
         GameManager.instance.SaveIntToPlayerPrefs("PalyerHp", hp);
-        GameManager.instance.SaveIntToPlayerPrefs("PalyerStrength", strength);
+        GameManager.instance.SaveIntToPlayerPrefs("PalyerStrength", playerStrength.strength);
     }
 
     void Update()
@@ -103,7 +104,8 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            DoAction();
+            // DoAction();
+            playerStrength.UpgradeStrength();
         }
     }
 
@@ -198,10 +200,10 @@ public class Player : MonoBehaviour
     {
         if (nearestTarget != null)
         {
-            nearestTarget.GetComponent<Produce>()?.OnInteract(strength);
+            nearestTarget.GetComponent<Produce>()?.OnInteract(playerStrength.strength);
             LoseHp();
             OnPlayerAction?.Invoke("Interact");
-            OnStrengthUsed?.Invoke(strength, nearestTarget);
+            OnStrengthUsed?.Invoke(playerStrength.strength, nearestTarget);
         }
 
         isActionAnim = false;

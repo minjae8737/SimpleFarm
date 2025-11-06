@@ -30,7 +30,7 @@ public class Inventory
         }
     }
 
-    private void SaveDataAll()
+    public void SaveDataAll()
     {
         foreach (ItemType type in Enum.GetValues(typeof(ItemType)))
         {
@@ -68,9 +68,29 @@ public class Inventory
             OnItemRemoved?.Invoke(itemData, quantity);
         }
     }
+    
+    public void RemoveItem(ItemType itemType, long quantity)
+    {
+        ItemData itemData = GameManager.instance.GetItemData(itemType);
+        
+        if (items.ContainsKey(ItemKey + itemData.type))
+        {
+            if (items[ItemKey + itemData.type] - quantity < 0)
+                return;
+            
+            items[ItemKey + itemData.type] -= quantity;
+            
+            OnItemRemoved?.Invoke(itemData, quantity);
+        }
+    }
 
     public long GetItemQuantity(string itemType)
     {
         return items[ItemKey + itemType];
+    }
+
+    public bool HasItem(ItemType itemType, long quantity)
+    {
+        return items[ItemKey + itemType] >= quantity;
     }
 }

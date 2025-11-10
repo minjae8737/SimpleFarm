@@ -14,6 +14,7 @@ public class Player : MonoBehaviour
 {
     [Header("# Stat")]
     [SerializeField] private PlayerStrength playerStrength;
+    public PlayerStrength PlayerStrength => playerStrength;
     [SerializeField] private int maxHp;
     public int MaxHp => maxHp;
     [SerializeField] private int hp;
@@ -63,14 +64,14 @@ public class Player : MonoBehaviour
     {
         maxHp = GameManager.instance.GetIntFromPlayerPrefs("PalyerMaxHp", 10);
         hp = GameManager.instance.GetIntFromPlayerPrefs("PalyerHp", 10);
-        playerStrength.strength = GameManager.instance.GetIntFromPlayerPrefs("PalyerStrength", 1);
+        playerStrength.SetStrength(GameManager.instance.GetIntFromPlayerPrefs("PalyerStrength", 1));
     }
 
     void SaveData()
     {
         GameManager.instance.SaveIntToPlayerPrefs("PalyerMaxHp", maxHp);
         GameManager.instance.SaveIntToPlayerPrefs("PalyerHp", hp);
-        GameManager.instance.SaveIntToPlayerPrefs("PalyerStrength", playerStrength.strength);
+        GameManager.instance.SaveIntToPlayerPrefs("PalyerStrength", playerStrength.Strength);
     }
 
     void Update()
@@ -104,8 +105,7 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            // DoAction();
-            playerStrength.UpgradeStrength();
+            DoAction();
         }
     }
 
@@ -200,10 +200,10 @@ public class Player : MonoBehaviour
     {
         if (nearestTarget != null)
         {
-            nearestTarget.GetComponent<Produce>()?.OnInteract(playerStrength.strength);
+            nearestTarget.GetComponent<Produce>()?.OnInteract(playerStrength.Strength);
             LoseHp();
             OnPlayerAction?.Invoke("Interact");
-            OnStrengthUsed?.Invoke(playerStrength.strength, nearestTarget);
+            OnStrengthUsed?.Invoke(playerStrength.Strength, nearestTarget);
         }
 
         isActionAnim = false;

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,15 +6,18 @@ using UnityEngine;
 [System.Serializable]
 public class PlayerStrength
 {
-    public int strength;
-    public int maxStrength = 99;
+    private int strength;
+    public int Strength => strength;
+    private const int maxStrength = 99;
     public PlayerStrengthUpgradeCondition[] upgradeConditions;
-    
+
+    public event Action OnPlayerStrengthUpdated;
+
     public void UpgradeStrength()
     {
         if (IsMaxStrength() || !CanUpgrade()) return;
 
-        PlayerStrengthUpgradeCondition condition = upgradeConditions[strength - 1];
+        PlayerStrengthUpgradeCondition condition = GetNextUpgradeCondition();
         
         strength++; // 힘 증가
         
@@ -28,7 +32,18 @@ public class PlayerStrength
         // 골드 감소
         long requiredGoldCost = condition.goldCost;
         GameManager.instance.SetGold(-requiredGoldCost);
-        
+        OnPlayerStrengthUpdated?.Invoke();
+    }
+
+    public PlayerStrengthUpgradeCondition GetNextUpgradeCondition()
+    {
+        PlayerStrengthUpgradeCondition condition = IsMaxStrength() ? null : upgradeConditions[strength - 1];
+        return condition;
+    }
+
+    public void SetStrength(int strength)
+    {
+        this.strength = strength;
     }
 
     public bool IsMaxStrength()
@@ -60,4 +75,5 @@ public class PlayerStrength
         
         return hasItem && hasGold;
     }
+    
 }

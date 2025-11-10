@@ -95,6 +95,9 @@ public class UIManager : MonoBehaviour
         { "LowHp", "잠깐 쉴래" },
     };
     
+    [Header("Anvil Panel")]
+    [SerializeField] private AnvilPanel anvilPanel;
+    
     [Header("Sprites")] 
     [SerializeField] private Sprite[] rewardIcons; // RewardsType과 매칭
 
@@ -312,7 +315,7 @@ public class UIManager : MonoBehaviour
                 break;
             case UIBtnType.Anvil:
                 interactUIBtnText.text = "도구 강화";
-                interactUIBtn.onClick.AddListener(OpenShop);
+                interactUIBtn.onClick.AddListener(OnAnvilPanel);
                 break;
             case UIBtnType.Island_Wheat:
                 interactUIBtnText.text = "밀밭을 사고 싶어!";
@@ -707,7 +710,24 @@ public class UIManager : MonoBehaviour
     #endregion
     
     #region AnvilPanel
+
+    public void OnAnvilPanel()
+    {
+        SetAnvilPanel();
+        anvilPanel.gameObject.SetActive(true);
+        anvilPanel.transform.DOPunchScale(new Vector3(0.02f, 0.02f, 0.02f), 0.2f, 1, 1f);
+    }
     
+    public void OffAnvilPanel()
+    {
+        anvilPanel.gameObject.SetActive(false);
+    }
+
+    public void SetAnvilPanel()
+    {
+        PlayerStrength playerStrength = GameManager.instance.player.PlayerStrength;
+        anvilPanel.SetPanel(playerStrength);
+    }
     
     
     #endregion

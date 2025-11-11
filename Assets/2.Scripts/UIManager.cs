@@ -716,11 +716,13 @@ public class UIManager : MonoBehaviour
         SetAnvilPanel();
         anvilPanel.gameObject.SetActive(true);
         anvilPanel.transform.DOPunchScale(new Vector3(0.02f, 0.02f, 0.02f), 0.2f, 1, 1f);
+        PlayUIOpenSfx();
     }
     
     public void OffAnvilPanel()
     {
         anvilPanel.gameObject.SetActive(false);
+        PlayUICloseSfx();
     }
 
     public void SetAnvilPanel()

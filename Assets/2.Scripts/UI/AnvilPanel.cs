@@ -16,11 +16,6 @@ public class AnvilPanel : MonoBehaviour
     [SerializeField] private Sprite goldIcon;
     [SerializeField] private Sprite[] btnSprites;
 
-    private void Awake()
-    {
-        upgradeBtn.onClick.AddListener(GameManager.instance.player.PlayerStrength.UpgradeStrength);
-    }
-
     public void SetPanel(PlayerStrength playerStrength)
     {
         PlayerStrengthUpgradeCondition condition = playerStrength.GetNextUpgradeCondition();
@@ -81,5 +76,10 @@ public class AnvilPanel : MonoBehaviour
 
         return item;
     }
-    
+
+    public void OnClickUpgradeBtn()
+    {
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.UIButtonClickEnabled);
+        GameManager.instance.player.PlayerStrength.UpgradeStrength();
+    }
 }

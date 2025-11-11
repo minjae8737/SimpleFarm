@@ -4,28 +4,43 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
+public enum PlayerState
+{
+    LowHp,
+    
+}
+
 public class Player : MonoBehaviour
 {
     [Header("# Stat")]
-    public int maxHp;
-    public int hp;
-    public float speed;
-    public float scanRange;
-    public LayerMask targetLayer;
-    Vector2 inputVec;
+    [SerializeField] private PlayerStrength playerStrength;
+    public PlayerStrength PlayerStrength => playerStrength;
+    [SerializeField] private int maxHp;
+    public int MaxHp => maxHp;
+    [SerializeField] private int hp;
+    public int Hp => hp;
+    [SerializeField] private float speed;
+    [SerializeField] private float scanRange;
+    [SerializeField] private LayerMask targetLayer;
+    [SerializeField] private DynamicJoystick dynamicJoystick;
+    private Vector2 inputVec;
     
-    Rigidbody2D rigid;
-    Collider2D[] targets;
-    GameObject nearestTarget;
+    private Rigidbody2D rigid;
+    private Collider2D[] targets;
+    private GameObject nearestTarget;
     
-    SpriteRenderer hairSprite;
-    SpriteRenderer bodySprite;
-    Animator hairAnim;
-    Animator bodyAnim;
-    PlayerAnimationEvent animationEvent;
-    bool isActionAnim;
+    private SpriteRenderer hairSprite;
+    private SpriteRenderer bodySprite;
+    private Animator hairAnim;
+    private Animator bodyAnim;
+    private PlayerAnimationEvent animationEvent;
+    private bool isActionAnim;
 
     public event Action<string> OnPlayerAction;
+    public event Action<int, GameObject> OnStrengthUsed; 
+    public event Action<ItemType> OnTargetChanged;
+    public event Action<PlayerState> OnPlayerStateUpdated;
+    
 
     void Awake()
     {
@@ -38,27 +53,34 @@ public class Player : MonoBehaviour
         
         isActionAnim = false;
 
-        animationEvent.OnStateEnd += OnInteractionEnd;
-        
-        Init();
+        animationEvent.OnStateEnd += OnActionEnd;
     }
 
-    void Init()
+    private void OnApplicationQuit()
     {
-        maxHp = PlayerPrefs.HasKey("PalyerMaxHp") ? PlayerPrefs.GetInt("PalyerMaxHp") : 10;
-        hp = PlayerPrefs.HasKey("PalyerHp") ? PlayerPrefs.GetInt("PalyerHp") : 10;
+        SaveData();
+    }
+
+    public void Init()
+    {
+        maxHp = GameManager.instance.GetIntFromPlayerPrefs("PalyerMaxHp", 10);
+        hp = GameManager.instance.GetIntFromPlayerPrefs("PalyerHp", 10);
+        playerStrength.SetStrength(GameManager.instance.GetIntFromPlayerPrefs("PalyerStrength", 1));
     }
 
     void SaveData()
     {
-        PlayerPrefs.SetInt("PalyerMaxHp", maxHp);
-        PlayerPrefs.SetInt("PalyerHp", hp);
+        GameManager.instance.SaveIntToPlayerPrefs("PalyerMaxHp", maxHp);
+        GameManager.instance.SaveIntToPlayerPrefs("PalyerHp", hp);
+        GameManager.instance.SaveIntToPlayerPrefs("PalyerStrength", playerStrength.Strength);
     }
 
     void Update()
     {
-        inputVec.x = Input.GetAxisRaw("Horizontal");
-        inputVec.y = Input.GetAxisRaw("Vertical");
+        // inputVec.x = Input.GetAxisRaw("Horizontal");
+        // inputVec.y = Input.GetAxisRaw("Vertical");
+        inputVec.x = dynamicJoystick.Horizontal;
+        inputVec.y = dynamicJoystick.Vertical;
     }
 
     void FixedUpdate()
@@ -74,7 +96,6 @@ public class Player : MonoBehaviour
 
     void LateUpdate()
     {
-        
         hairAnim.SetFloat("Speed", inputVec.normalized.magnitude);
         bodyAnim.SetFloat("Speed", inputVec.normalized.magnitude);
 
@@ -87,11 +108,11 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            Interacting();
+            DoAction();
         }
     }
 
-    void SuchObject()
+    private void SuchObject()
     {
         GameObject nearest = null;
         float minDistance = Mathf.Infinity;
@@ -100,35 +121,48 @@ public class Player : MonoBehaviour
         {
             float dis = Vector2.Distance(transform.position, target.transform.position);
 
-            bool isObject = target.TryGetComponent<Produce>(out var component);
-
-            if (dis < minDistance && ((isObject && !component.isCoolTime) || !isObject))
+            bool isObject = target.TryGetComponent<Produce>(out var produce);
+            
+            if (dis < minDistance && ((isObject && !produce.isCoolTime) || !isObject))
             {
                 minDistance = dis;
                 nearest = target.gameObject;
             }
+            
         }
-
+        
         if (nearestTarget != nearest)
         {
-            if (nearestTarget != null)
+            if ((object)nearestTarget != null)
             {
                 nearestTarget.GetComponent<Marker>()?.OffMarker();
             }
 
             nearestTarget = nearest;
 
-            if (nearestTarget != null)
+            if ((object)nearestTarget != null && nearestTarget.TryGetComponent(out Produce produce))
+            {
+                OnTargetChanged?.Invoke(produce.Type);
+            }
+            else
+            {
+                OnTargetChanged?.Invoke(ItemType.None);
+            }
+
+            if ((object)nearestTarget != null)
             {
                 nearestTarget.GetComponent<Marker>()?.OnMarker();
             }
         }
     }
 
-    void Interacting()
+    public void DoAction()
     {
         if (hp <= 0)
+        {
+            OnPlayerStateUpdated?.Invoke(PlayerState.LowHp);
             return;
+        }
         
         Produce produce = nearestTarget?.GetComponent<Produce>();
         
@@ -136,7 +170,7 @@ public class Player : MonoBehaviour
         
         isActionAnim = true;
 
-        switch (produce?.type)
+        switch (produce?.Type)
         {
             case ItemType.Wheat:
             case ItemType.Beet:
@@ -165,13 +199,14 @@ public class Player : MonoBehaviour
         
     }
 
-    public void OnInteractionEnd()
+    public void OnActionEnd()
     {
         if (nearestTarget != null)
         {
-            nearestTarget.GetComponent<Produce>()?.OnInteract();
+            nearestTarget.GetComponent<Produce>()?.OnInteract(playerStrength.Strength);
             LoseHp();
             OnPlayerAction?.Invoke("Interact");
+            OnStrengthUsed?.Invoke(playerStrength.Strength, nearestTarget);
         }
 
         isActionAnim = false;

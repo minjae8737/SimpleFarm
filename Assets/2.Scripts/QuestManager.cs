@@ -4,31 +4,48 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public enum QuestType { Behaviour, Produce, Drop }
+public enum QuestType { Behaviour, Produce, CollectItem, IslandUnlocked }
 public enum RewardsType { Gold }
 
 public class QuestManager : MonoBehaviour
 {
-    public QuestData[] datas;
-    string CurQuestIndexKey = "CurQuestIndex";
-    int curQuestIndex; // 현재 진행중인 퀘스트
-    string CurCountKey = "CurCount";
-    public int curCount;  // 현재 퀘스트 목표횟수
+    public QuestData[] quests;
+    private string CurQuestIndexKey = "CurQuestIndex";
+    private string CurCountKey = "CurCount";
+    private QuestProgress progress;
+    public QuestProgress Progress => progress;
+    public int CurCount => progress.curCount;
+    public int TargetCount => progress.questData.condition.GetTargetCount();
 
     public event Action OnQuestProgressChanged;
 
     public void Init()
     {
-        curQuestIndex = PlayerPrefs.HasKey(CurQuestIndexKey) ? PlayerPrefs.GetInt(CurQuestIndexKey) : 0;
-        curCount = PlayerPrefs.HasKey(CurCountKey) ? PlayerPrefs.GetInt(CurCountKey) : 0;
+        progress = new QuestProgress();
+        
+        progress.curQuestIndex = GameManager.instance.GetIntFromPlayerPrefs(CurQuestIndexKey);
+        progress.curCount = GameManager.instance.GetIntFromPlayerPrefs(CurCountKey);
+        progress.questData = progress.curQuestIndex < quests.Length ? quests[progress.curQuestIndex] : null;
 
         SetQuest();
+    }
+
+    private void Start()
+    {
+        if (CheckQuestCondition())
+            ClearQuest();
+    }
+
+    private void OnApplicationQuit()
+    {
+        SaveQuest();
     }
 
     void OnDisable()
     {
         GameManager.instance.player.OnPlayerAction -= OnPlayerAction;
         GameManager.instance.inventory.OnItemAdded -= OnItemDrop;
+        GameManager.instance.islandManager.OnIslandUnlocked -= OnIslandUnlocked;
     }
 
     void OnPlayerAction(string actionName)
@@ -39,56 +56,58 @@ public class QuestManager : MonoBehaviour
 
     void OnItemDrop(ItemData itemdata,long quantity)
     {
-        if (!itemdata.type.Equals(datas[curQuestIndex].requiredItemType))
+        if (!itemdata.type.Equals(progress.questData.condition.GetItemType()))
             return;
 
-        curCount++;
+        progress.curCount++;
         OnQuestProgressChanged?.Invoke();
 
         if (CheckQuestCondition())
             ClearQuest();
     }
-
-    public QuestData GetCurrentQuestData()
+    
+    private void OnIslandUnlocked()
     {
-        if (!CheckHaveQuestData())
-            return null;
-
-        return datas[curQuestIndex];
+        if (CheckQuestCondition())
+            ClearQuest();
     }
 
-    bool CheckHaveQuestData()
+    private bool CheckHaveQuestData()
     {
-        return curQuestIndex < datas.Length;
+        return progress.curQuestIndex < quests.Length;
     }
 
     public void SetQuest()
     {
-        if (curQuestIndex >= datas.Length)
+        if (progress.curQuestIndex >= quests.Length)
             return;
 
         GameManager.instance.inventory.OnItemAdded -= OnItemDrop;
         GameManager.instance.player.OnPlayerAction -= OnPlayerAction;
+        GameManager.instance.islandManager.OnIslandUnlocked -= OnIslandUnlocked;
 
-        switch (datas[curQuestIndex].type)
+        switch (progress.questData.type)
         {
             case QuestType.Behaviour:
                 GameManager.instance.player.OnPlayerAction += OnPlayerAction;
                 break;
             case QuestType.Produce:
                 break;
-            case QuestType.Drop:
+            case QuestType.CollectItem:
                 GameManager.instance.inventory.OnItemAdded += OnItemDrop;
+                break;
+            case QuestType.IslandUnlocked:
+                GameManager.instance.islandManager.OnIslandUnlocked += OnIslandUnlocked;
                 break;
         }
     }
 
     public bool CheckQuestCondition()
     {
-        if (curQuestIndex >= datas.Length)
+        if (progress.curQuestIndex >= quests.Length)
             return false;
-
-        return curCount >= datas[curQuestIndex].targetCount;
+        
+        return progress.questData.condition.isSatisfied(progress);
     }
 
     public void ClearQuest()
@@ -99,15 +118,16 @@ public class QuestManager : MonoBehaviour
     public void GetReward()
     {
         // 리워드 지급
-        switch (datas[curQuestIndex].rewardsType)
+        switch (progress.questData.rewardsType)
         {
             case RewardsType.Gold:
-                GameManager.instance.SetGold(datas[curQuestIndex].rewardAmount);
+                GameManager.instance.SetGold(progress.questData.rewardAmount);
                 break;
         }
 
-        curQuestIndex++;
-        curCount = 0;
+        progress.curQuestIndex++;
+        progress.curCount = 0;
+        progress.questData = progress.curQuestIndex < quests.Length ? quests[progress.curQuestIndex] : null;
 
         if (CheckHaveQuestData())
         {
@@ -121,6 +141,9 @@ public class QuestManager : MonoBehaviour
 
     }
 
-
-
+    private void SaveQuest()
+    {
+        GameManager.instance.SaveIntToPlayerPrefs(CurQuestIndexKey, progress.curQuestIndex);
+        GameManager.instance.SaveIntToPlayerPrefs(CurCountKey, progress.curCount);
+    }
 }

@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     [Header("# Item")] 
     public Inventory inventory;
     public ItemData[] itemDatas;
+    public Dictionary<ItemType, ItemData> itemDataDic;
 
     [Header("# Manager")] 
     public QuestManager questManager;
@@ -32,10 +33,17 @@ public class GameManager : MonoBehaviour
         Application.targetFrameRate = 60;
         Init();
 
+        player.Init();
         questManager.Init();
         islandManager.Init();
         objectPoolManager.Init();
         uiManager.Init();
+    }
+
+    private void OnApplicationQuit()
+    {
+        SaveGold();
+        inventory.SaveDataAll();
     }
 
     void Init()
@@ -43,11 +51,31 @@ public class GameManager : MonoBehaviour
         // 골드 초기화
         gold = GetLongFromPlayerPrefs(GoldKey);
 
+        // 아이템 데이터 Dictionary 초기화
+        itemDataDic = new Dictionary<ItemType, ItemData>();
+        foreach (ItemData itemData in itemDatas)
+        {
+            itemDataDic.Add(itemData.type, itemData);
+        }
+        
         // 인벤토리 초기화
         inventory = new Inventory();
         inventory.Init();
-
+        
+        player.OnPlayerAction += uiManager.SetPlayerHp;
+        player.OnTargetChanged += uiManager.OnPlayerTargetChanged;
+        player.OnStrengthUsed += uiManager.ShowDamageText;
+        player.OnPlayerStateUpdated += uiManager.SetPlayerSpeechBubble;
+        player.PlayerStrength.OnPlayerStrengthUpdated += uiManager.SetAnvilPanel;
+        
+        inventory.OnItemAdded += uiManager.RefreshShopItem;
+        inventory.OnItemRemoved += uiManager.RefreshShopItem;
+        inventory.OnItemAdded += uiManager.RefreshInventoryPanel;
+        inventory.OnItemRemoved += uiManager.RefreshInventoryPanel;
+        
         uiManager.itemSellPanel.OnItemSell += SellItem;
+        uiManager.actionBtn.OnBtnDown += player.DoAction;
+        questManager.OnQuestProgressChanged += uiManager.SetQuestPanel;
     }
 
     public long GetLongFromPlayerPrefs(string key, long defaultValue = 0L)
@@ -60,6 +88,30 @@ public class GameManager : MonoBehaviour
             return result;
 
         return defaultValue;
+    }
+    
+    public int GetIntFromPlayerPrefs(string key, int defaultValue = 0)
+    {
+        if (!PlayerPrefs.HasKey(key))
+            return defaultValue;
+
+        string longStr = PlayerPrefs.GetString(key);
+        if (int.TryParse(longStr, out int result))
+            return result;
+
+        return defaultValue;
+    }
+    
+    public void SaveLongToPlayerPrefs(string key, long value)
+    {
+        PlayerPrefs.SetString(key, value.ToString());
+        PlayerPrefs.Save();
+    }
+    
+    public void SaveIntToPlayerPrefs(string key, int value)
+    {
+        PlayerPrefs.SetString(key, value.ToString());
+        PlayerPrefs.Save();
     }
 
     #region Gold
@@ -78,7 +130,7 @@ public class GameManager : MonoBehaviour
 
     void SaveGold()
     {
-        PlayerPrefs.SetString(GoldKey, gold.ToString());
+        SaveLongToPlayerPrefs(GoldKey, gold);
     }
 
     #endregion
@@ -87,6 +139,7 @@ public class GameManager : MonoBehaviour
     {
         player.RecoverHP();
         uiManager.RecorvePlayerHpEffect();
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.RecoverHp);
     }
 
     #region Item
@@ -103,9 +156,9 @@ public class GameManager : MonoBehaviour
 
     public ItemData GetItemData(ItemType type)
     {
-        return itemDatas[(int)type];
+        return itemDataDic[type];
     }
-
+    
     void SellItem(ItemData itemData, long quantity)
     {
         inventory.RemoveItem(itemData, quantity);

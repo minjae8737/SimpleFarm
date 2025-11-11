@@ -201,6 +201,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 0
   productData: {fileID: 11400000, guid: efe23ec8f8393400e92f9eb241018080, type: 2}
+  tileSize: {x: 1, y: 1}
   uiGaugeBar: {fileID: 3204884099096199115}
   uiGauge: {fileID: 705026609342531143}
   uiHpBar: {fileID: 2444886857304086693}

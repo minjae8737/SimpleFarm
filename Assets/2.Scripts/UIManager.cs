@@ -11,54 +11,95 @@ public enum UIBtnType
     RecoverHP,
     Shop,
     Island_Wheat,
+    Island_Beet,
+    Island_Cabbage,
+    Island_Carrot,
+    Island_Cauliflower,
+    Anvil,
 }
 
 public class UIManager : MonoBehaviour
 {
     [Header("HUD")] 
-    public Text goldText;
-    public GameObject questPanel;
-    Image questRewardIcon;
-    Text questRewardText;
-    Text questDesc;
-    GameObject questClearBtn;
-    Image questClearBtnRewardIcon;
-    Text questClearBtnRewardText;
-    Text questClearBtnDesc;
-    public GameObject playerHp;
-    Image palyerHpImg;
-    Text playerHpText;
-    float recoveHpDuration = 3f; // FillAmount 0 -> 1 까지 걸리는 시간
-    public Button interactButton;
+    [SerializeField] private Text goldText;
+    
+    [Space(5)]
+    [Header("QuestPanel")]
+    [SerializeField] private GameObject questPanel;
+    private Image questRewardIcon;
+    private Text questRewardText;
+    private Text questDesc;
+    private GameObject questClearBtn;
+    private Image questClearBtnRewardIcon;
+    private Text questClearBtnRewardText;
+    private Text questClearBtnDesc;
+    
+    [Space(5)]
+    [Header("PlayerHp")]
+    [SerializeField] private GameObject playerHp;
+    private Image palyerHpImg;
+    private Text playerHpText;
+    private float recoveHpDuration = 1f; // FillAmount 0 -> 1 까지 걸리는 시간
+    
+    [Space(5)]
+    [Header("InteractButton")]
+    [SerializeField] private Button interactUIBtn;
+    private Text interactUIBtnText;
+    
+    [Space(5)]
+    [Header("ActionButton")]
+    public ActionBtn actionBtn;
+
+    [SerializeField] private Sprite[] actionBtnIconSprites;
 
     [Header("Menu")] 
-    public Button inventoryBtn;
-    public Button magnetBtn;
+    [SerializeField] private Button inventoryBtn;
+    [SerializeField] private Button magnetBtn;
     private TextMeshProUGUI magnetBtnText;
 
     [Header("Shop")] 
-    public GameObject shopPanel;
-    RectTransform shopContent;
-    public GameObject shopItemPrefab;
-    List<GameObject> shopItems;
+    [SerializeField] private GameObject shopPanel;
+    private RectTransform shopContent;
+    [SerializeField] private GameObject shopItemPrefab;
+    private List<GameObject> shopItems;
     public ItemSellPanel itemSellPanel;
 
     [Header("Item")] 
-    public GameObject itemInfoPanel;
-    Text itemNameText;
-    Image itemIcon;
-    Text itemPriceText;
-    Text itemQuantityText;
-    Text itemDescriptionText;
+    [SerializeField] private GameObject itemInfoPanel;
+    private Text itemNameText;
+    private Image itemIcon;
+    private Text itemPriceText;
+    private Text itemQuantityText;
+    private Text itemDescriptionText;
 
     [Header("Farm")]
-    public FarmUpgradePanel farmUpgradePanel;
+    [SerializeField] private FarmUpgradePanel farmUpgradePanel;
     
     [Header("Inventory")]
-    public InventoryPanel inventoryPanel;
+    [SerializeField] private InventoryPanel inventoryPanel;
+    
+    [Header("AddIslandBtn")]
+    [SerializeField] private AddIslandBtn addIslandBtn;
+    
+    [Header("FloatingText")]
+    [SerializeField] private Transform floatingTextPool;
+    [SerializeField] private int floatingTextPoolSize;
+    [SerializeField] private List<FloatingText> floatingTexts;
+    [SerializeField] private GameObject floatingTextPrefab;
+    
+    [Header("Speech Bubble")]
+    [SerializeField] private SpeechBubble playerSpeechBubble;
+
+    private Dictionary<string, string> playerLinesDic = new Dictionary<string, string>()
+    {
+        { "LowHp", "잠깐 쉴래" },
+    };
+    
+    [Header("Anvil Panel")]
+    [SerializeField] private AnvilPanel anvilPanel;
     
     [Header("Sprites")] 
-    public Sprite[] rewardIcons; // RewardsType과 매칭
+    [SerializeField] private Sprite[] rewardIcons; // RewardsType과 매칭
 
     public void Init()
     {
@@ -78,8 +119,11 @@ public class UIManager : MonoBehaviour
         questClearBtnRewardText = questClearReward.GetChild(1).GetComponent<Text>();
         questClearBtnDesc = questClearBtn.transform.GetChild(1).GetComponent<Text>();
 
+        // 상호작용 버튼
+        interactUIBtnText =  interactUIBtn.transform.GetChild(0).GetComponent<Text>();
+        
         // 상점
-        shopContent = shopPanel.transform.GetChild(0).transform.GetChild(1).transform.GetChild(0).transform.GetChild(0).GetComponent<RectTransform>();
+        shopContent = shopPanel.transform.GetChild(1).transform.GetChild(1).transform.GetChild(0).transform.GetChild(0).GetComponent<RectTransform>();
 
         // 아이템
         itemNameText = itemInfoPanel.transform.GetChild(0).GetComponent<Text>();
@@ -91,25 +135,42 @@ public class UIManager : MonoBehaviour
         // 메뉴 버튼
         magnetBtnText =  magnetBtn.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
         
+        // 플로팅 텍스트
+        floatingTexts = new List<FloatingText>();
+        
         SetPlayerHp();
         RefreshGoldText();
         SetQuestPanel();
         InitShopItems();
         InitInventoryPanel();
+        InitAddIslandBtn();
+        InitFloatingText();
         
-        GameManager.instance.player.OnPlayerAction += SetPlayerHp;
-        GameManager.instance.questManager.OnQuestProgressChanged += SetQuestPanel;
-
-        GameManager.instance.inventory.OnItemAdded += RefreshShopItem;
-        GameManager.instance.inventory.OnItemRemoved += RefreshShopItem;
-        GameManager.instance.inventory.OnItemAdded += RefreshInventoryPanel;
-        GameManager.instance.inventory.OnItemRemoved += RefreshInventoryPanel;
-
         itemSellPanel.OffItemInfoPanel += OffItemInfoPanel;
         
         farmUpgradePanel.OnClickFarmUpgradeBtn += OnClickFarmUpgradeBtn;
         farmUpgradePanel.OnClickAutoUpgradeBtn += OnClickAutoUpgradeBtn;
         farmUpgradePanel.OnClickCooldownUpgradeBtn += OnClickCooldownUpgradeBtn;
+    }
+
+    public void PlayUIOpenSfx()
+    {
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.UIOpen);
+    }
+
+    public void PlayUICloseSfx()
+    {
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.UIClose);
+    }
+    
+    public void PlayUIButtonClickEnabledSfx()
+    {
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.UIButtonClickEnabled);
+    }
+
+    public void PlayUIButtonClickDisabledSfx()
+    {
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.UIButtonClickDisabled);
     }
 
     #region Gold
@@ -144,9 +205,9 @@ public class UIManager : MonoBehaviour
 
     #endregion
 
-    void SetPlayerHp(string defaultPlayerAction = "")
+    public void SetPlayerHp(string defaultPlayerAction = "")
     {
-        float playerHpAmount = (float)GameManager.instance.player.hp / GameManager.instance.player.maxHp;
+        float playerHpAmount = (float)GameManager.instance.player.Hp / GameManager.instance.player.MaxHp;
         palyerHpImg.fillAmount = playerHpAmount;
 
         SetPlayerHpText();
@@ -154,7 +215,7 @@ public class UIManager : MonoBehaviour
 
     void SetPlayerHpText()
     {
-        playerHpText.text = GameManager.instance.player.hp + " / " + GameManager.instance.player.maxHp;
+        playerHpText.text = GameManager.instance.player.Hp + " / " + GameManager.instance.player.MaxHp;
     }
 
     public void RecorvePlayerHpEffect()
@@ -185,25 +246,36 @@ public class UIManager : MonoBehaviour
 
     public void SetQuestPanel()
     {
-        QuestData questData = GameManager.instance.questManager.GetCurrentQuestData();
+        QuestProgress questProgress = GameManager.instance.questManager.Progress;
 
-        if (questData == null)
+        if (questProgress.questData == null)
         {
             questPanel.SetActive(false);
             return;
         }
+        
+        string questDescStr = "";
 
-        string questDescStr = string.Format("{0} [{1}/{2}]", questData.desc, GameManager.instance.questManager.curCount,
-            questData.targetCount);
-        string questRewardAmountStr = ConvertGoldToText(questData.rewardAmount);
-
-
+        switch (questProgress.questData.type)
+        {
+            case QuestType.Behaviour:
+            case QuestType.Produce:
+            case QuestType.CollectItem:
+                questDescStr = string.Format("{0} [{1}/{2}]", questProgress.questData.desc, GameManager.instance.questManager.CurCount, GameManager.instance.questManager.TargetCount);
+                break;
+            case QuestType.IslandUnlocked:
+                questDescStr = string.Format("{0}", questProgress.questData.desc);
+                break;
+        }
+        
+        string questRewardAmountStr = ConvertGoldToText(questProgress.questData.rewardAmount);
+        
         questDesc.text = questDescStr;
-        questRewardIcon.sprite = rewardIcons[(int)questData.rewardsType];
+        questRewardIcon.sprite = rewardIcons[(int)questProgress.questData.rewardsType];
         questRewardText.text = questRewardAmountStr;
 
         questClearBtnDesc.text = questDescStr;
-        questClearBtnRewardIcon.sprite = rewardIcons[(int)questData.rewardsType];
+        questClearBtnRewardIcon.sprite = rewardIcons[(int)questProgress.questData.rewardsType];
         questClearBtnRewardText.text = questRewardAmountStr;
     }
 
@@ -229,18 +301,41 @@ public class UIManager : MonoBehaviour
 
     public void SetInteractBtn(UIBtnType type)
     {
-        interactButton.onClick.RemoveAllListeners();
+        interactUIBtn.onClick.RemoveAllListeners();
 
         switch (type)
         {
             case UIBtnType.RecoverHP:
-                interactButton.onClick.AddListener(GameManager.instance.RestPlayer);
+                interactUIBtnText.text = "휴식 하기";
+                interactUIBtn.onClick.AddListener(GameManager.instance.RestPlayer);
                 break;
             case UIBtnType.Shop:
-                interactButton.onClick.AddListener(OpenShop);
+                interactUIBtnText.text = "상점 열기";
+                interactUIBtn.onClick.AddListener(OpenShop);
+                break;
+            case UIBtnType.Anvil:
+                interactUIBtnText.text = "도구 강화";
+                interactUIBtn.onClick.AddListener(OnAnvilPanel);
                 break;
             case UIBtnType.Island_Wheat:
-                interactButton.onClick.AddListener(() => SetFarmUpgradePanel(IslandType.Wheat));
+                interactUIBtnText.text = "밀밭을 사고 싶어!";
+                interactUIBtn.onClick.AddListener(() => SetFarmUpgradePanel(IslandType.Wheat));
+                break;
+            case UIBtnType.Island_Beet:
+                interactUIBtnText.text = "비트밭을 사고 싶어!";
+                interactUIBtn.onClick.AddListener(() => SetFarmUpgradePanel(IslandType.Beet));
+                break;
+            case UIBtnType.Island_Cabbage:
+                interactUIBtnText.text = "양배추밭을 사고 싶어!";
+                interactUIBtn.onClick.AddListener(() => SetFarmUpgradePanel(IslandType.Cabbage));
+                break;
+            case UIBtnType.Island_Carrot:
+                interactUIBtnText.text = "당근밭을 사고 싶어!";
+                interactUIBtn.onClick.AddListener(() => SetFarmUpgradePanel(IslandType.Carrot));
+                break;
+            case UIBtnType.Island_Cauliflower:
+                interactUIBtnText.text = "컬리플라워밭을 사고 싶어!";
+                interactUIBtn.onClick.AddListener(() => SetFarmUpgradePanel(IslandType.Cauliflower));
                 break;
         }
 
@@ -249,15 +344,15 @@ public class UIManager : MonoBehaviour
 
     void OnInteractBtnEffect()
     {
-        if (interactButton == null)
+        if (interactUIBtn == null)
             return;
 
-        interactButton.gameObject.SetActive(true);
+        interactUIBtn.gameObject.SetActive(true);
 
         Sequence sequence = DOTween.Sequence();
 
-        Tween scaleBiggerTween = interactButton.GetComponent<RectTransform>().DOScale(1.02f, 0.2f);
-        Tween scaleSmallerTween = interactButton.GetComponent<RectTransform>().DOScale(1f, 0.2f);
+        Tween scaleBiggerTween = interactUIBtn.GetComponent<RectTransform>().DOScale(1.02f, 0.2f);
+        Tween scaleSmallerTween = interactUIBtn.GetComponent<RectTransform>().DOScale(1f, 0.2f);
 
         sequence.Append(scaleBiggerTween)
             .Append(scaleSmallerTween);
@@ -265,15 +360,15 @@ public class UIManager : MonoBehaviour
 
     public void OffInteractBtn()
     {
-        if (interactButton == null)
+        if (interactUIBtn == null)
             return;
 
-        interactButton.gameObject.SetActive(false);
+        interactUIBtn.gameObject.SetActive(false);
     }
 
     void OnClickInteractBtn()
     {
-        interactButton.onClick?.Invoke();
+        interactUIBtn.onClick?.Invoke();
     }
 
     public void OnQuestClearBtn()
@@ -290,19 +385,22 @@ public class UIManager : MonoBehaviour
     {
         GameManager.instance.questManager.GetReward();
         OffQuestClearBtn();
+        PlayUIButtonClickEnabledSfx();
     }
+
+    #region Shop
 
     public void OpenShop()
     {
         shopPanel.SetActive(true);
         shopPanel.transform.DOPunchScale(new Vector3(0.02f, 0.02f, 0.02f), 0.2f, 1, 1f);
+        PlayUIOpenSfx();
     }
-
-    #region Shop
 
     public void CloseShop()
     {
         shopPanel.SetActive(false);
+        PlayUICloseSfx();
     }
 
     public void InitShopItems()
@@ -311,6 +409,8 @@ public class UIManager : MonoBehaviour
 
         foreach (ItemType type in Enum.GetValues(typeof(ItemType)))
         {
+            if(type == ItemType.None) continue;
+            
             GameObject newShopItem = Instantiate(shopItemPrefab, shopContent);
             shopItems.Add(newShopItem);
             ShopItem shopItem = newShopItem.GetComponent<ShopItem>();
@@ -319,7 +419,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    void RefreshShopItem(ItemData itemData, long quantity)
+    public void RefreshShopItem(ItemData itemData, long quantity)
     {
         GameObject findShopItem = shopItems.Find(item => item.GetComponent<ShopItem>().itemName == itemData.itemName);
         long itemQuantity = GameManager.instance.inventory.GetItemQuantity(itemData.type.ToString());
@@ -351,11 +451,13 @@ public class UIManager : MonoBehaviour
         SetItemInfoPanel(itemData);
         itemInfoPanel.SetActive(true);
         itemInfoPanel.transform.DOPunchScale(new Vector3(0.02f, 0.02f, 0.02f), 0.2f, 1, 1f);
+        PlayUIOpenSfx();
     }
 
     void OffItemInfoPanel()
     {
         itemInfoPanel.SetActive(false);
+        PlayUICloseSfx();
     }
 
     void SetItemInfoPanel(ItemData itemData)
@@ -371,37 +473,65 @@ public class UIManager : MonoBehaviour
     
     #region FarmUpgradePanel
 
+    public void OnFarmUpgradePanel()
+    {
+        farmUpgradePanel.gameObject.SetActive(true);
+        PlayUIOpenSfx();
+    }
+
+    public void OffFarmUpgradePanel()
+    {
+        farmUpgradePanel.gameObject.SetActive(false);
+        PlayUICloseSfx();
+    }
+    
     private void SetFarmUpgradePanel(IslandType islandType)
     {
         farmUpgradePanel.RefreshPanel(GameManager.instance.islandManager.GetFarmUpgradePanelDTO((int)islandType));
-        farmUpgradePanel.gameObject.SetActive(true);
+        OnFarmUpgradePanel();
     }
 
     private void OnClickFarmUpgradeBtn(IslandType islandType, long gold)
     {
-        if (!GameManager.instance.CheckGold(gold)) return;
+        if (!GameManager.instance.CheckGold(gold))
+        {
+            PlayUIButtonClickDisabledSfx();
+            return;
+        }
         
         GameManager.instance.islandManager.LevelUpFarm((int)islandType);
         GameManager.instance.SetGold(-gold);
         farmUpgradePanel.RefreshPanel(GameManager.instance.islandManager.GetFarmUpgradePanelDTO((int)islandType));
+        PlayUIButtonClickEnabledSfx();
+
     }
 
     private void OnClickAutoUpgradeBtn(IslandType islandType, long gold)
     {
-        if (!GameManager.instance.CheckGold(gold)) return;
+        if (!GameManager.instance.CheckGold(gold))
+        {
+            PlayUIButtonClickDisabledSfx();
+            return;
+        }
         
         GameManager.instance.islandManager.LevelUpAutoProduceChance((int)islandType);
         GameManager.instance.SetGold(-gold);
         farmUpgradePanel.RefreshPanel(GameManager.instance.islandManager.GetFarmUpgradePanelDTO((int)islandType));
+        PlayUIButtonClickEnabledSfx();
     }
 
     private void OnClickCooldownUpgradeBtn(IslandType islandType, long gold)
     {
-        if (!GameManager.instance.CheckGold(gold)) return;
+        if (!GameManager.instance.CheckGold(gold))
+        {
+            PlayUIButtonClickDisabledSfx();
+            return;
+        }
         
         GameManager.instance.islandManager.LevelUpProduceCooldown((int)islandType);
         GameManager.instance.SetGold(-gold);
         farmUpgradePanel.RefreshPanel(GameManager.instance.islandManager.GetFarmUpgradePanelDTO((int)islandType));
+        PlayUIButtonClickEnabledSfx();
     }
     
     #endregion
@@ -413,17 +543,18 @@ public class UIManager : MonoBehaviour
         inventoryPanel.Init();
     }
     
-    void RefreshInventoryPanel(ItemData itemData, long quantity)
+    public void RefreshInventoryPanel(ItemData itemData, long quantity)
     {
         inventoryPanel.RefreshInventoryPanel(itemData);
     }
 
-    public void OpenInventoryPanel()
+    public void OnInventoryPanel()
     {
         questPanel.SetActive(false);
         playerHp.SetActive(false);
         inventoryPanel.gameObject.SetActive(true);
         inventoryPanel.transform.DOPunchScale(new Vector3(0.02f, 0.02f, 0.02f), 0.2f, 1, 1f);
+        PlayUIOpenSfx();
     }
 
     public void OffInventoryPanel()
@@ -431,6 +562,7 @@ public class UIManager : MonoBehaviour
         inventoryPanel.gameObject.SetActive(false);
         questPanel.SetActive(true);
         playerHp.SetActive(true);
+        PlayUICloseSfx();
     }
 
     #endregion
@@ -452,6 +584,153 @@ public class UIManager : MonoBehaviour
 
         magnetBtnText.text = "READY";
     }
+    
+    #endregion
+
+    #region AddIslandBtn
+
+    private void InitAddIslandBtn()
+    {
+        addIslandBtn.OnClick += OnclickAddIslandBtn;
+        SetAddIslandBtn();
+    }
+    
+    private void SetAddIslandBtn()
+    {
+        int currentIslandLevel = GameManager.instance.islandManager.GetCurrentIslandLevel();
+        AddIslandBtnDTO addIslandBtnDto = GameManager.instance.islandManager.GetAddIslandBtnDTO(currentIslandLevel);
+
+        if (addIslandBtnDto == null)
+        {
+            addIslandBtn.gameObject.SetActive(false);
+        }
+        else
+        {
+            addIslandBtn.gameObject.SetActive(true);
+            addIslandBtn.SetIslandBtn(addIslandBtnDto.islandType, addIslandBtnDto.islandName, ConvertGoldToText(addIslandBtnDto.unlockPrice), addIslandBtnDto.position);
+        }
+    }
+    
+    private void OnclickAddIslandBtn(IslandType islandType)
+    {
+        GameManager.instance.islandManager.UnlockIsland((int)islandType);
+        SetAddIslandBtn();
+    }
+
+    #endregion
+
+    #region ActionBtn
+
+    private void InitActionBtn()
+    {
+        actionBtn.OnBtnUp += OnActionBtnUp;
+    }
+
+    public void OnPlayerTargetChanged(ItemType itemType)
+    {
+        switch (itemType)
+        {
+            case ItemType.Tree:
+                actionBtn.SetBtnIcon(actionBtnIconSprites[0]);
+                break;
+            case ItemType.Rock:
+                actionBtn.SetBtnIcon(actionBtnIconSprites[1]);
+                break;
+            case ItemType.Wheat:
+            case ItemType.Beet:
+            case ItemType.Cabbage:
+            case ItemType.Carrot:
+            case ItemType.Cauliflower:
+            case ItemType.Kale:
+            case ItemType.Parsnip:
+            case ItemType.Potato:
+            case ItemType.Pumpkin:
+            case ItemType.Radish:
+            case ItemType.Sunflower:
+                actionBtn.SetBtnIcon(actionBtnIconSprites[2]);
+                break;
+            default:
+                actionBtn.SetBtnIcon(null);
+                break;
+        }
+    }
+    
+    private void OnActionBtnDown()
+    {
+        
+    }
+
+    private void OnActionBtnUp()
+    {
+        
+    }
+
+    #endregion
+    
+    #region FloatingText
+
+    private void InitFloatingText()
+    {
+        for (int i = 0; i < floatingTextPoolSize; i++)
+        {
+            GameObject newFloatingText = Instantiate(floatingTextPrefab, floatingTextPool);
+            floatingTexts.Add(newFloatingText.GetComponent<FloatingText>());
+        }
+    }
+
+    public void ShowDamageText(int damage, GameObject target)
+    {
+        float produceYSize = 0;
+        if (target.TryGetComponent(out Produce produce))
+        {
+            produceYSize = produce.TileSize.y;
+        }
+
+        for (int i = 0; i < floatingTextPoolSize; i++)
+        {
+            if (!floatingTexts[i].gameObject.activeSelf)
+            {
+                floatingTexts[i].SetTextData(target.transform.position + (Vector3.up * produceYSize / 2f), damage.ToString());
+                floatingTexts[i].gameObject.SetActive(true);
+                break;
+            }
+        }
+    }
+
+    #endregion
+
+    #region SpeechBubble
+
+    public void SetPlayerSpeechBubble(PlayerState playerState)
+    {
+        playerSpeechBubble.SetText(playerLinesDic[playerState.ToString()]);
+        playerSpeechBubble.gameObject.SetActive(true);
+    }
+
+    #endregion
+    
+    #region AnvilPanel
+
+    public void OnAnvilPanel()
+    {
+        SetAnvilPanel();
+        anvilPanel.gameObject.SetActive(true);
+        anvilPanel.transform.DOPunchScale(new Vector3(0.02f, 0.02f, 0.02f), 0.2f, 1, 1f);
+        PlayUIOpenSfx();
+    }
+    
+    public void OffAnvilPanel()
+    {
+        anvilPanel.gameObject.SetActive(false);
+        PlayUICloseSfx();
+    }
+
+    public void SetAnvilPanel()
+    {
+        PlayerStrength playerStrength = GameManager.instance.player.PlayerStrength;
+        anvilPanel.SetPanel(playerStrength);
+    }
+    
     
     #endregion
 }

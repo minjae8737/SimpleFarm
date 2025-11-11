@@ -40,11 +40,11 @@ public class DroppedItem : MonoBehaviour
 
         Vector3[] path = { myPos, midPoint, endPos };
         transform.DOPath(path, 0.3f, PathType.CatmullRom);
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.DropItem);
     }
 
     // 아이템 루팅 효과
-    public void 
-        PickUpItem()
+    public void PickUpItem()
     {
         isTracking = true;
 
@@ -64,6 +64,7 @@ public class DroppedItem : MonoBehaviour
 
     void OnPickupComplete()
     {
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.PickUpItem);
         GameManager.instance.PickUpItem(itemData);
         gameObject.SetActive(false);
     }

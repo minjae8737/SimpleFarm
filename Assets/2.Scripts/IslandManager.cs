@@ -7,25 +7,35 @@ using UnityEngine;
 
 public class IslandManager : MonoBehaviour
 {
+    [Header("Data")]
+    [SerializeField] private IslandData[] islandDatas;
+    private Dictionary<string, int[]> islandLevelDic;
+   
+    private const int FARM_LEVEL_INDEX = 0;
+    private const int AUTOPRODUCECHANCE_LEVEL_INDEX = 1;
+    private const int PRODUCECOOLDOWN_LEVEL_INDEX = 2;
+    private string IslandKey = "Island_";
 
-    public IslandData[] islandDatas;
-    public Dictionary<string, int[]> islandLevelDic;
-    const int FARM_LEVEL_INDEX = 0;
-    const int AUTOPRODUCECHANCE_LEVEL_INDEX = 1;
-    const int PRODUCECOOLDOWN_LEVEL_INDEX = 2;
-    string IslandKey = "Island_";
+    [Header("Island Object")]
+    [SerializeField] private GameObject[] islands;
+    [SerializeField] private GameObject[] farmlands;
+    private Dictionary<int, List<GameObject>> soils;
+    private Dictionary<int, List<Produce>> crops;
+
+    [SerializeField] private GameObject[] cropPrefabs;
+
+    [Header("MapBoundary")]
+    [SerializeField] private GameObject[] boundariesObj;
+    private Dictionary<string, GameObject> boundariesDic;
     
-    public GameObject[] farmlands;
-    public Dictionary<int, List<GameObject>> soils;
-    public Dictionary<int, List<Produce>> crops;
-
-    public GameObject[] cropPrefabs;
+    public event Action OnIslandUnlocked;
     
     public void Init()
     {
         islandLevelDic = new Dictionary<string, int[]>();
         soils = new Dictionary<int, List<GameObject>>();
         crops = new Dictionary<int, List<Produce>>();
+        boundariesDic = new Dictionary<string, GameObject>();
         
         // Island level 초기화
         for (int i = 0; i < islandDatas.Length; i++)
@@ -33,9 +43,9 @@ public class IslandManager : MonoBehaviour
             string key = IslandKey + i; // key = Island_'n'
             int[] levelArr = new int[3];  // 각 level을 저장할 배열
 
-            int farmLevel = PlayerPrefs.HasKey(key + "_FarmLevel") ? PlayerPrefs.GetInt(key + "_FarmLevel") : 0; // key = Island_'n'_FarmLevel , 0 is unlock
-            int autoLevel = PlayerPrefs.HasKey(key + "_AutoLevel") ? PlayerPrefs.GetInt(key + "_AutoLevel") : 0; // key = Island_'n'_AutoLevel , 0 is unlock
-            int cooldownLevel = PlayerPrefs.HasKey(key + "_CooldownLevel") ? PlayerPrefs.GetInt(key + "_CooldownLevel") : 0; // key = Island_'n'_CooldownLevel , 0 is unlock
+            int farmLevel = GameManager.instance.GetIntFromPlayerPrefs(key + "_FarmLevel"); // key = Island_'n'_FarmLevel , 0 is unlock
+            int autoLevel = GameManager.instance.GetIntFromPlayerPrefs(key + "_AutoLevel"); // key = Island_'n'_AutoLevel , 0 is unlock
+            int cooldownLevel = GameManager.instance.GetIntFromPlayerPrefs(key + "_CooldownLevel"); // key = Island_'n'_CooldownLevel , 0 is unlock
             
             levelArr[FARM_LEVEL_INDEX] = farmLevel;
             levelArr[AUTOPRODUCECHANCE_LEVEL_INDEX] = autoLevel;
@@ -43,9 +53,6 @@ public class IslandManager : MonoBehaviour
             
             islandLevelDic.Add(key, levelArr);
         }
-
-        // 첫번째 섬 초기화 
-        UnlockIsland(0);
         
         // soil 객체 등록
         for (int i = 0; i < farmlands.Length; i++)
@@ -68,38 +75,130 @@ public class IslandManager : MonoBehaviour
             
             List<GameObject> soilList = soils[key];
             List<Produce> cropList = new List<Produce>();
-            int farmLevel = islandLevelDic[IslandKey + key][FARM_LEVEL_INDEX];
             
+            int farmLevel = islandLevelDic[IslandKey + key][FARM_LEVEL_INDEX];
             float produceChance = GetAutoProduceChance(key, islandLevelDic[IslandKey + key][AUTOPRODUCECHANCE_LEVEL_INDEX]);
             float produceCooldown = GetProduceCooldown(key, islandLevelDic[IslandKey + key][PRODUCECOOLDOWN_LEVEL_INDEX]);
             
             for (int i = 0; i < farmLevel; i++)
             {
-                GameObject newCrop = Instantiate(cropPrefabs[(int)farmData.farmType], soilList[i].transform);
-                Produce produce = newCrop.GetComponent<Produce>();
-                produce.SetDatas(produceChance,produceCooldown);
-                cropList.Add(produce);
+                CreateCrop(farmData, soilList, i, produceChance, produceCooldown, cropList);
             }
             
             crops.Add(key, cropList);
         }
         
+        // boundary 초기화
+        foreach (GameObject boundaryObj in boundariesObj)
+        {
+            string name = boundaryObj.name;
+            boundariesDic.Add(name, boundaryObj);
+        }
+        
+        // 첫번째 섬 초기화 
+        UnlockIsland(0);
+        InitIsland();
     }
 
-    public void UnlockIsland(int islandIndex)
+    private void InitIsland()
     {
+        for (int i = 0; i < islandDatas.Length; i++)
+        {
+            string key = IslandKey + i; // key = Island_'n'
+            int[] levelArr = islandLevelDic[key]; // 각 level을 저장한 배열
+
+            bool isUlockIsland = levelArr[FARM_LEVEL_INDEX] > 0 || levelArr[AUTOPRODUCECHANCE_LEVEL_INDEX] > 0 || levelArr[PRODUCECOOLDOWN_LEVEL_INDEX] > 0;
+            islands[i].SetActive(isUlockIsland);
+            
+            // 바운더리 해제
+            foreach (string boundaryName in islandDatas[i].boundaryNames)
+            {
+                boundariesDic[boundaryName].SetActive(!isUlockIsland);
+            }
+        }
+    }
+
+    private void OnApplicationQuit()
+    {
+        SaveDataAll();
+    }
+
+    public bool UnlockIsland(int islandIndex)
+    {
+        if (islandIndex >= islandDatas.Length) return false;
+        
+        IslandData islandData = islandDatas[islandIndex];
+        FarmData farmData = islandData.farmData;
         string key = IslandKey + islandIndex; // key = Island_'n'
         int[] levelArr = islandLevelDic[key];  // 각 level을 저장한 배열
+        
+        // unlock 되어있는 섬이었다면 return
+        if (levelArr[FARM_LEVEL_INDEX] > 0 || levelArr[AUTOPRODUCECHANCE_LEVEL_INDEX] > 0 || levelArr[PRODUCECOOLDOWN_LEVEL_INDEX] > 0) return false;
 
-        if (levelArr[FARM_LEVEL_INDEX] > 1 || levelArr[AUTOPRODUCECHANCE_LEVEL_INDEX] > 1 || levelArr[PRODUCECOOLDOWN_LEVEL_INDEX] > 1) return;
+        // gold가 충분한지 
+        if (!GameManager.instance.CheckGold(islandData.unlockPrice)) return false;
 
+        List<GameObject> soilList = soils[islandIndex];
+        List<Produce> cropList = crops[islandIndex];
+        
+        float produceChance = GetAutoProduceChance(islandIndex, islandLevelDic[IslandKey + islandIndex][AUTOPRODUCECHANCE_LEVEL_INDEX]);
+        float produceCooldown = GetProduceCooldown(islandIndex, islandLevelDic[IslandKey + islandIndex][PRODUCECOOLDOWN_LEVEL_INDEX]);
+        
+        GameManager.instance.SetGold(-islandData.unlockPrice);
+        CreateCrop(farmData, soilList, 0, produceChance, produceCooldown, cropList);
+        islands[islandIndex].gameObject.SetActive(true);
+        
         // 언락되는 섬 level init
         levelArr[FARM_LEVEL_INDEX] = 1;
         levelArr[AUTOPRODUCECHANCE_LEVEL_INDEX] = 1;
         levelArr[PRODUCECOOLDOWN_LEVEL_INDEX] = 1;
 
+        // 바운더리 해제
+        foreach (string boundaryName in islandData.boundaryNames)
+        {
+            boundariesDic[boundaryName].SetActive(false);
+        }
+
         // 저장
         SaveData(islandIndex);
+        
+        OnIslandUnlocked?.Invoke();
+        
+        return true;
+    }
+
+    public bool IsUnlocked(int islandIndex)
+    {      
+        if (islandIndex >= islandDatas.Length) return false;
+        
+        IslandData islandData = islandDatas[islandIndex];
+        string key = IslandKey + islandIndex; // key = Island_'n'
+        int[] levelArr = islandLevelDic[key];  // 각 level을 저장한 배열
+
+        return levelArr[FARM_LEVEL_INDEX] > 0 || levelArr[AUTOPRODUCECHANCE_LEVEL_INDEX] > 0 || levelArr[PRODUCECOOLDOWN_LEVEL_INDEX] > 0;
+    }
+
+    private void CreateCrop(FarmData farmData, List<GameObject> soilList, int i, float produceChance, float produceCooldown, List<Produce> cropList)
+    {
+        GameObject newCrop = Instantiate(cropPrefabs[(int)farmData.farmType], soilList[i].transform);
+        Produce produce = newCrop.GetComponent<Produce>();
+        produce.SetDatas(produceChance,produceCooldown);
+        cropList.Add(produce);
+    }
+
+    public AddIslandBtnDTO GetAddIslandBtnDTO(int islandIndex)
+    {
+        if (islandIndex >= islandDatas.Length) return null;
+        
+        IslandData islandData = islandDatas[islandIndex];
+        
+        return new AddIslandBtnDTO
+        {
+            islandType = islandData.islandType,
+            islandName =  islandData.name,
+            unlockPrice = islandData.unlockPrice,
+            position = islandData.addIslandBtnPos
+        };
     }
 
     public void LevelUpFarm(int islandIndex)
@@ -124,6 +223,25 @@ public class IslandManager : MonoBehaviour
         SaveData(islandIndex);
     }
 
+    public int GetCurrentIslandLevel()
+    {
+        int level = 0;
+
+        foreach (KeyValuePair<string, int[]> levels in islandLevelDic)
+        {
+            string[] split = levels.Key.Split("_");
+            int islandLevel = int.Parse(split[1]);
+
+            // 언락되었고 && level 보다 다음 단계인 섬인경우  / unlock 되지 않은 섬들은 level = 0 으로 초기화되어있음
+            if (0 < levels.Value[0] && level < islandLevel)
+            {
+                level = islandLevel;
+            }
+        }
+        
+        return level + 1;
+    }
+
     public void LevelUpAutoProduceChance(int islandIndex)
     {
         FarmData farmData = islandDatas[islandIndex].farmData;
@@ -142,6 +260,7 @@ public class IslandManager : MonoBehaviour
         SaveData(islandIndex);
     }
 
+    
     public void LevelUpProduceCooldown(int islandIndex)
     {
         FarmData farmData = islandDatas[islandIndex].farmData;
@@ -234,9 +353,9 @@ public class IslandManager : MonoBehaviour
         string key = IslandKey + islandIndex; // key = Island_'n'
         int[] levelArr = islandLevelDic[key];  // 각 level을 저장한 배열
 
-        PlayerPrefs.SetInt(key + "_FarmLevel", levelArr[FARM_LEVEL_INDEX]); // key = Island_'n'_FarmLevel
-        PlayerPrefs.SetInt(key + "_AutoLevel", levelArr[AUTOPRODUCECHANCE_LEVEL_INDEX]); // key = Island_'n'_AutoLevel
-        PlayerPrefs.SetInt(key + "_CooldownLevel", levelArr[PRODUCECOOLDOWN_LEVEL_INDEX]); // key = Island_'n'_CooldownLevel
+        GameManager.instance.SaveIntToPlayerPrefs(key + "_FarmLevel", levelArr[FARM_LEVEL_INDEX]); // key = Island_'n'_FarmLevel
+        GameManager.instance.SaveIntToPlayerPrefs(key + "_AutoLevel", levelArr[AUTOPRODUCECHANCE_LEVEL_INDEX]); // key = Island_'n'_AutoLevel
+        GameManager.instance.SaveIntToPlayerPrefs(key + "_CooldownLevel", levelArr[PRODUCECOOLDOWN_LEVEL_INDEX]); // key = Island_'n'_CooldownLevel
     }
 
     public void SaveDataAll()
@@ -244,12 +363,13 @@ public class IslandManager : MonoBehaviour
         // levelData
         for (int i = 0; i < islandDatas.Length; i++)
         {
-            string key = IslandKey + i; // key = Island_'n'
+            string key = IslandKey + i; // key = Island_
+                                        // 'n'
             int[] levelArr = islandLevelDic[key];  // 각 level을 저장한 배열
 
-            PlayerPrefs.SetInt(key + "_FarmLevel", levelArr[FARM_LEVEL_INDEX]); // key = Island_'n'_FarmLevel
-            PlayerPrefs.SetInt(key + "_AutoLevel", levelArr[AUTOPRODUCECHANCE_LEVEL_INDEX]); // key = Island_'n'_AutoLevel
-            PlayerPrefs.SetInt(key + "_CooldownLevel", levelArr[PRODUCECOOLDOWN_LEVEL_INDEX]); // key = Island_'n'_CooldownLevel
+            GameManager.instance.SaveIntToPlayerPrefs(key + "_FarmLevel", levelArr[FARM_LEVEL_INDEX]); // key = Island_'n'_FarmLevel
+            GameManager.instance.SaveIntToPlayerPrefs(key + "_AutoLevel", levelArr[AUTOPRODUCECHANCE_LEVEL_INDEX]); // key = Island_'n'_AutoLevel
+            GameManager.instance.SaveIntToPlayerPrefs(key + "_CooldownLevel", levelArr[PRODUCECOOLDOWN_LEVEL_INDEX]); // key = Island_'n'_CooldownLevel
         }
     }
 }

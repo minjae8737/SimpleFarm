@@ -22,6 +22,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float speed;
     [SerializeField] private float scanRange;
     [SerializeField] private LayerMask targetLayer;
+    [SerializeField] private DynamicJoystick dynamicJoystick;
     private Vector2 inputVec;
     
     private Rigidbody2D rigid;
@@ -76,8 +77,10 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        inputVec.x = Input.GetAxisRaw("Horizontal");
-        inputVec.y = Input.GetAxisRaw("Vertical");
+        // inputVec.x = Input.GetAxisRaw("Horizontal");
+        // inputVec.y = Input.GetAxisRaw("Vertical");
+        inputVec.x = dynamicJoystick.Horizontal;
+        inputVec.y = dynamicJoystick.Vertical;
     }
 
     void FixedUpdate()

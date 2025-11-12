@@ -29,7 +29,7 @@ public class AnvilPanel : MonoBehaviour
         upgradeBtn.enabled = !isMaxStrength;
         upgradeBtn.GetComponent<Image>().sprite = canUpgrade ? btnSprites[1] : btnSprites[0];
         
-        if (condition != null)
+        if (!isMaxStrength && condition != null)
         {
             // 필요 아이템 추가
             for (int i = 0; i < condition.requiredItems.Length; i++)

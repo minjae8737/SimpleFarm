@@ -27,6 +27,7 @@ public class Player : MonoBehaviour
     
     private Rigidbody2D rigid;
     private Collider2D[] targets;
+    private int targetCount = 0;
     private GameObject nearestTarget;
     
     private SpriteRenderer hairSprite;
@@ -52,6 +53,7 @@ public class Player : MonoBehaviour
         animationEvent = transform.GetChild(1).GetComponent<PlayerAnimationEvent>();
         
         isActionAnim = false;
+        targets =  new Collider2D[30];
 
         animationEvent.OnStateEnd += OnActionEnd;
     }
@@ -85,7 +87,7 @@ public class Player : MonoBehaviour
 
     void FixedUpdate()
     {
-        targets = Physics2D.OverlapCircleAll(transform.position, scanRange, targetLayer);
+        targetCount = Physics2D.OverlapCircleNonAlloc(transform.position, scanRange, targets, targetLayer);
         if (!isActionAnim)
         { 
             rigid.MovePosition(rigid.position + (inputVec * speed * Time.fixedDeltaTime));
@@ -117,8 +119,9 @@ public class Player : MonoBehaviour
         GameObject nearest = null;
         float minDistance = Mathf.Infinity;
 
-        foreach (Collider2D target in targets)
+        for (int i = 0; i < targetCount; i++)
         {
+            Collider2D target = targets[i];
             float dis = Vector2.Distance(transform.position, target.transform.position);
 
             bool isObject = target.TryGetComponent<Produce>(out var produce);
@@ -128,8 +131,21 @@ public class Player : MonoBehaviour
                 minDistance = dis;
                 nearest = target.gameObject;
             }
-            
         }
+        
+        // foreach (Collider2D target in targets)
+        // {
+        //     float dis = Vector2.Distance(transform.position, target.transform.position);
+        //
+        //     bool isObject = target.TryGetComponent<Produce>(out var produce);
+        //     
+        //     if (dis < minDistance && ((isObject && !produce.isCoolTime) || !isObject))
+        //     {
+        //         minDistance = dis;
+        //         nearest = target.gameObject;
+        //     }
+        //     
+        // }
         
         if (nearestTarget != nearest)
         {

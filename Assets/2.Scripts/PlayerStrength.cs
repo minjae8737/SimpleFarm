@@ -8,7 +8,7 @@ public class PlayerStrength
 {
     private int strength;
     public int Strength => strength;
-    private const int maxStrength = 99;
+    private const int maxStrength = 10;
     public PlayerStrengthUpgradeCondition[] upgradeConditions;
 
     public event Action OnPlayerStrengthUpdated;

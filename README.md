@@ -21,6 +21,9 @@
 
 ---
 
+## 📅 작업 기간
+2025.07.24 ~ 2025.11.11
+
 ## 🎥 플레이 영상
 
 [YouTube 링크](https://www.youtube.com/watch?v=Oa23-0gLe24)
@@ -29,14 +32,11 @@
 
 ## 📌 주요 구현 내용
 
----
-
 ## 🌱 농장 시스템
 - `ScriptableObject` 기반 데이터 구조화
 - 생산 / 수확 / 자동수확 로직 구현
 - 농장 업그레이드 시스템 구현
 
----
 
 ## 📜 퀘스트 시스템
 - `ScriptableObject` 기반 데이터 설계
@@ -210,3 +210,4 @@ public class Inventory
 - 드랍 아이템 생성 비용 절감
 - AudioSource 풀을 이용한 SFX 재생 최적화
 
+---
